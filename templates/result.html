@@ -135,26 +135,27 @@
         font-size: 0.81rem;
         letter-spacing: 1.5px;
       }
+      /* Made info cards smaller and more compact */
       .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 13px;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 12px;
         width: 100%;
         max-width: 920px;
         padding: 0 20px;
-        margin-bottom: 30px;
+        margin-bottom: 24px;
         animation: fadeUp 0.9s 0.28s both;
       }
       .ic {
         background: rgba(255, 255, 255, 0.055);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 18px;
-        padding: 20px 18px 16px;
+        border-radius: 14px;
+        padding: 12px 14px 10px;
         backdrop-filter: blur(20px);
         position: relative;
         overflow: hidden;
         cursor: default;
-        transition: box-shadow 0.3s, border-color 0.3s;
+        transition: box-shadow 0.3s, border-color 0.3s, transform 0.2s;
         will-change: transform;
       }
       .ic::before {
@@ -165,32 +166,33 @@
         right: 0;
         height: 3px;
         background: linear-gradient(90deg, #ff6b35, #ffd700);
-        border-radius: 18px 18px 0 0;
+        border-radius: 14px 14px 0 0;
       }
       .ic:hover {
         border-color: rgba(255, 215, 0, 0.25);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.45);
+        transform: translateY(-3px);
       }
       .ic-ico {
-        font-size: 1.7rem;
-        margin-bottom: 7px;
+        font-size: 1.3rem;
+        margin-bottom: 4px;
         display: block;
       }
       .ic-lbl {
-        font-size: 0.59rem;
+        font-size: 0.55rem;
         font-weight: 700;
         letter-spacing: 2px;
         text-transform: uppercase;
         color: rgba(255, 215, 0, 0.55);
-        margin-bottom: 3px;
+        margin-bottom: 2px;
       }
       .ic-val {
-        font-size: 1.1rem;
+        font-size: 0.95rem;
         font-weight: 700;
         color: #fff;
       }
       .ic-val.big {
-        font-size: 2rem;
+        font-size: 1.5rem;
         background: linear-gradient(135deg, #ffd700, #ff9a3c);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -260,82 +262,67 @@
       }
       .split {
         display: grid;
-        grid-template-columns: 38fr 62fr;
-        height: 440px;
-        border-radius: 20px;
+        grid-template-columns: 42fr 58fr; /* Adjusted for Timeline fit */
+        height: 480px;
+        border-radius: 20px 20px 0 0;
         overflow: hidden;
         border: 1px solid rgba(255, 215, 0, 0.14);
         box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
       }
-      @media (max-width: 680px) {
+      @media (max-width: 800px) {
         .split {
           grid-template-columns: 1fr;
           height: auto;
+          border-radius: 20px;
         }
-        .map-panel {
-          height: 260px;
+        .events-panel {
+          height: auto;
+          min-height: 380px;
         }
         .sat-panel {
           height: 360px;
         }
       }
-      .map-panel {
+
+      /* Events panel replaces Map panel on the left */
+      .events-panel {
         background: #04040e;
         position: relative;
         border-right: 1px solid rgba(255, 215, 0, 0.1);
-        overflow: hidden;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
       }
+      .events-empty {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 0.8rem;
+        margin: auto;
+      }
+
+      /* SVG Map now overlays the Satellite panel */
       #mapSvg {
-        width: 100%;
-        height: 100%;
-        display: block;
-      }
-      .dp-r {
-        fill: #0e0e26;
-        stroke: rgba(255, 215, 0, 0.18);
-        stroke-width: 0.7;
-        transition: fill 0.2s;
-      }
-      .dp-r.sel {
-        fill: rgba(255, 215, 0, 0.22);
-        stroke: #ffd700;
-        stroke-width: 1.8;
-        filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
-      }
-      .map-district-tag {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 9px 14px;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
-      }
-      .map-district-tag span {
-        font-size: 0.78rem;
-        font-weight: 700;
-        color: #ffd700;
-        letter-spacing: 0.5px;
-      }
-      #mapMiniLoader {
         position: absolute;
         inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #04040e;
-        z-index: 2;
+        width: 100%;
+        height: 100%;
+        z-index: 4;
+        pointer-events: none;
       }
-      #mapMiniLoader .spin {
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        border: 2px solid rgba(255, 215, 0, 0.1);
-        border-top-color: #ffd700;
-        animation: spin 0.8s linear infinite;
+      .dp-r {
+        fill: transparent; /* Makes satellite visible underneath */
+        stroke: rgba(255, 255, 255, 0.25);
+        stroke-width: 0.8;
+        transition: fill 0.2s, stroke 0.2s;
       }
-      #mapMiniLoader.h {
-        display: none;
+      .dp-r.sel {
+        fill: rgba(255, 215, 0, 0.15); /* Highlight district slightly */
+        stroke: #ffd700;
+        stroke-width: 2.5;
+        filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));
       }
+
       .sat-panel {
         position: relative;
         background: #030310;
@@ -350,7 +337,7 @@
         inset: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: fill; /* Fill ensures alignment with the exact WMS BBOX */
         opacity: 0;
         transition: opacity 0.65s ease;
       }
@@ -364,11 +351,7 @@
         left: 0;
         right: 0;
         height: 80px;
-        background: linear-gradient(
-          to bottom,
-          rgba(4, 4, 20, 0.65),
-          transparent
-        );
+        background: linear-gradient(to bottom, rgba(4, 4, 20, 0.65), transparent);
         z-index: 3;
         pointer-events: none;
       }
@@ -387,7 +370,7 @@
         position: absolute;
         top: 12px;
         left: 14px;
-        z-index: 4;
+        z-index: 5;
         background: rgba(0, 0, 0, 0.78);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 215, 0, 0.5);
@@ -403,7 +386,7 @@
         position: absolute;
         top: 12px;
         right: 14px;
-        z-index: 4;
+        z-index: 5;
         background: rgba(0, 0, 0, 0.65);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.12);
@@ -413,14 +396,12 @@
         color: rgba(255, 255, 255, 0.45);
         letter-spacing: 0.4px;
       }
-
-      /* ── ALT-YEAR notice: shown when a substitute year is used ── */
       #altNote {
         position: absolute;
         bottom: 14px;
         left: 50%;
         transform: translateX(-50%);
-        z-index: 4;
+        z-index: 5;
         display: none;
         align-items: center;
         gap: 7px;
@@ -437,16 +418,12 @@
       #altNote.show {
         display: flex;
       }
-      #altNote .an-ico {
-        font-size: 0.85rem;
-      }
-
       #syncPill {
         position: absolute;
         bottom: 14px;
         left: 50%;
         transform: translateX(-50%);
-        z-index: 4;
+        z-index: 5;
         background: rgba(0, 0, 0, 0.72);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(100, 180, 255, 0.3);
@@ -484,7 +461,7 @@
         align-items: center;
         justify-content: center;
         background: rgba(3, 3, 14, 0.8);
-        z-index: 2;
+        z-index: 6;
         transition: opacity 0.4s;
       }
       #satLoader.h {
@@ -508,7 +485,7 @@
         justify-content: center;
         gap: 10px;
         background: rgba(3, 3, 14, 0.9);
-        z-index: 5;
+        z-index: 6;
         padding: 20px;
         text-align: center;
       }
@@ -532,10 +509,10 @@
       .sat-ctrl {
         background: rgba(4, 4, 18, 0.8);
         backdrop-filter: blur(22px);
-        border: 1px solid rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 215, 0, 0.14);
         border-top: none;
         border-radius: 0 0 20px 20px;
-        padding: 10px 18px 10px;
+        padding: 14px 18px;
       }
       #noDataNote {
         display: none;
@@ -645,62 +622,32 @@
         font-size: 0.56rem;
         color: rgba(255, 255, 255, 0.18);
       }
-      .div2 {
-        height: 1px;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(255, 215, 0, 0.15),
-          transparent
-        );
-        margin: 30px 0 26px;
-      }
-      .tl-wrap {
-        width: 100%;
-        max-width: 920px;
-        padding: 0 20px;
-        animation: fadeUp 0.9s 0.82s both;
-      }
+
+      /* Adjusted Timeline Styles */
       .tl-hdr {
-        text-align: center;
-        margin-bottom: 20px;
+        text-align: left;
+        margin-bottom: 12px;
       }
       .tl-tag2 {
         display: inline-block;
-        padding: 4px 16px;
+        padding: 4px 12px;
         border-radius: 20px;
         background: rgba(129, 140, 248, 0.12);
         border: 1px solid rgba(129, 140, 248, 0.28);
-        font-size: 0.66rem;
-        letter-spacing: 2px;
+        font-size: 0.6rem;
+        letter-spacing: 1.5px;
         color: #818cf8;
         text-transform: uppercase;
-        margin-bottom: 8px;
-      }
-      .tl-hdr h2 {
-        font-family: "Playfair Display", serif;
-        font-size: clamp(1.3rem, 4vw, 1.8rem);
-        background: linear-gradient(135deg, #c084fc, #818cf8, #38bdf8);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-      .tl-hdr p {
-        color: rgba(255, 255, 255, 0.26);
-        font-size: 0.73rem;
-        margin-top: 4px;
       }
       .sync-bar {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 10px;
-        margin-bottom: 16px;
-        padding: 8px 20px;
+        gap: 8px;
+        padding: 6px 14px;
         background: rgba(255, 215, 0, 0.04);
         border: 1px solid rgba(255, 215, 0, 0.1);
-        border-radius: 12px;
-        font-size: 0.68rem;
+        border-radius: 10px;
+        font-size: 0.62rem;
         color: rgba(255, 215, 0, 0.5);
       }
       .sync-bar .sb-sat {
@@ -714,60 +661,57 @@
         color: #ffd700;
         font-weight: 700;
         font-family: "Playfair Display", serif;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
       }
       .tl-outer {
-        overflow: hidden;
-        border-radius: 20px;
         position: relative;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
       }
       .tl-arr {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        width: 34px;
-        height: 34px;
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.07);
-        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: rgba(255, 255, 255, 0.48);
-        font-size: 1.05rem;
+        color: #fff;
+        font-size: 1rem;
         cursor: pointer;
         z-index: 5;
         backdrop-filter: blur(10px);
-        opacity: 0;
-        pointer-events: none;
         transition: all 0.25s;
       }
-      .tl-outer:hover .tl-arr {
-        opacity: 1;
-        pointer-events: all;
-      }
       .tl-arr:hover {
-        background: rgba(255, 215, 0, 0.15);
-        border-color: rgba(255, 215, 0, 0.4);
+        background: rgba(255, 215, 0, 0.2);
+        border-color: #ffd700;
         color: #ffd700;
       }
       .arrL {
-        left: 10px;
+        left: -10px;
       }
       .arrR {
-        right: 10px;
+        right: -10px;
       }
       .tl-arr.dis {
         opacity: 0 !important;
         pointer-events: none !important;
       }
       .tl-card {
-        border-radius: 20px;
-        padding: 28px 50px 24px;
+        width: 100%;
+        border-radius: 16px;
+        padding: 20px 22px;
         border: 1px solid rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(20px);
         background: rgba(100, 150, 255, 0.08);
-        min-height: 180px;
+        min-height: 160px;
         position: relative;
         overflow: hidden;
         transition: background 0.5s, border-color 0.5s;
@@ -776,14 +720,14 @@
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 6px;
       }
       .era-badge {
-        padding: 4px 12px;
+        padding: 3px 10px;
         border-radius: 20px;
-        font-size: 0.59rem;
+        font-size: 0.55rem;
         font-weight: 700;
         letter-spacing: 1px;
         text-transform: uppercase;
@@ -791,7 +735,7 @@
       }
       .yr-big {
         font-family: "Playfair Display", serif;
-        font-size: 2.8rem;
+        font-size: 2.2rem;
         font-weight: 800;
         line-height: 1;
         background: linear-gradient(
@@ -805,100 +749,69 @@
       }
       .tl-body {
         display: flex;
-        gap: 14px;
+        gap: 12px;
         align-items: flex-start;
       }
       .tl-ico {
-        font-size: 2.3rem;
+        font-size: 1.8rem;
         flex-shrink: 0;
         line-height: 1;
-        margin-top: 2px;
       }
       .tl-ttl {
-        font-size: 1.05rem;
+        font-size: 0.9rem;
         font-weight: 700;
         color: #fff;
-        margin-bottom: 7px;
+        margin-bottom: 5px;
         line-height: 1.35;
       }
       .tl-dsc {
-        color: rgba(255, 255, 255, 0.46);
-        font-size: 0.82rem;
-        line-height: 1.8;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.75rem;
+        line-height: 1.6;
       }
+
+      /* Transition Animations */
       @keyframes fR {
-        from {
-          transform: translateX(55px);
-          opacity: 0;
-        }
-        to {
-          transform: none;
-          opacity: 1;
-        }
+        from { transform: translateX(35px); opacity: 0; }
+        to { transform: none; opacity: 1; }
       }
       @keyframes fL {
-        from {
-          transform: translateX(-55px);
-          opacity: 0;
-        }
-        to {
-          transform: none;
-          opacity: 1;
-        }
+        from { transform: translateX(-35px); opacity: 0; }
+        to { transform: none; opacity: 1; }
       }
       @keyframes tL2 {
-        from {
-          transform: none;
-          opacity: 1;
-        }
-        to {
-          transform: translateX(-55px);
-          opacity: 0;
-        }
+        from { transform: none; opacity: 1; }
+        to { transform: translateX(-35px); opacity: 0; }
       }
       @keyframes tR2 {
-        from {
-          transform: none;
-          opacity: 1;
-        }
-        to {
-          transform: translateX(55px);
-          opacity: 0;
-        }
+        from { transform: none; opacity: 1; }
+        to { transform: translateX(35px); opacity: 0; }
       }
-      .aFR {
-        animation: fR 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
-      }
-      .aFL {
-        animation: fL 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
-      }
-      .aTL {
-        animation: tL2 0.26s ease-in both;
-      }
-      .aTR {
-        animation: tR2 0.26s ease-in both;
-      }
+      .aFR { animation: fR 0.38s cubic-bezier(0.22, 1, 0.36, 1) both; }
+      .aFL { animation: fL 0.38s cubic-bezier(0.22, 1, 0.36, 1) both; }
+      .aTL { animation: tL2 0.26s ease-in both; }
+      .aTR { animation: tR2 0.26s ease-in both; }
+
       .dots-sec {
-        margin-top: 16px;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
         gap: 10px;
       }
       .dots {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 6px;
+        gap: 4px;
         flex-wrap: wrap;
-        padding: 8px 14px;
+        padding: 8px 10px;
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 40px;
       }
       .dot {
-        width: 7px;
-        height: 7px;
+        width: 6px;
+        height: 6px;
         border-radius: 50%;
         cursor: pointer;
         opacity: 0.27;
@@ -917,69 +830,43 @@
       .dot.act::after {
         content: "";
         position: absolute;
-        inset: -4px;
+        inset: -3px;
         border-radius: 50%;
-        border: 1.5px solid currentColor;
+        border: 1px solid currentColor;
         animation: ring 2s ease-in-out infinite;
       }
       @keyframes ring {
         0%,
-        100% {
-          transform: scale(1);
-          opacity: 0.6;
-        }
-        50% {
-          transform: scale(2);
-          opacity: 0;
-        }
-      }
-      .dot::before {
-        content: attr(data-year);
-        position: absolute;
-        bottom: 175%;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.9);
-        color: #ffd700;
-        font-size: 0.56rem;
-        font-weight: 700;
-        padding: 3px 7px;
-        border-radius: 5px;
-        white-space: nowrap;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s;
-        z-index: 10;
-      }
-      .dot:hover::before {
-        opacity: 1;
+        100% { transform: scale(1); opacity: 0.6; }
+        50% { transform: scale(2); opacity: 0; }
       }
       .dot-gap {
         width: 1px;
-        height: 10px;
+        height: 8px;
         background: rgba(255, 255, 255, 0.1);
         flex-shrink: 0;
+        margin: 0 2px;
       }
       .playbar {
         display: flex;
         align-items: center;
         gap: 10px;
         width: 100%;
-        max-width: 490px;
       }
       .pb-btn {
-        width: 28px;
-        height: 28px;
+        width: 26px;
+        height: 26px;
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.07);
         border: 1px solid rgba(255, 255, 255, 0.12);
         color: rgba(255, 255, 255, 0.55);
-        font-size: 0.82rem;
+        font-size: 0.75rem;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         transition: all 0.2s;
+        flex-shrink: 0;
       }
       .pb-btn:hover {
         background: rgba(255, 215, 0, 0.12);
@@ -1000,12 +887,12 @@
         border-radius: 3px;
       }
       .ctr {
-        font-size: 0.68rem;
-        color: rgba(255, 255, 255, 0.26);
+        font-size: 0.65rem;
+        color: rgba(255, 255, 255, 0.3);
         white-space: nowrap;
-        min-width: 42px;
         text-align: right;
       }
+
       .back-btn {
         display: inline-flex;
         align-items: center;
@@ -1021,7 +908,7 @@
         text-decoration: none;
         letter-spacing: 0.5px;
         transition: all 0.3s;
-        animation: fadeUp 0.9s 1.1s both;
+        margin-top: 30px;
       }
       .back-btn:hover {
         background: rgba(255, 215, 0, 0.1);
@@ -1043,6 +930,7 @@
           Born {{ birth_year }} &nbsp;&middot;&nbsp; {{ district }}, Bihar
         </p>
       </div>
+
       <div class="grid">
         <div class="ic">
           <span class="ic-ico">&#128100;</span>
@@ -1069,58 +957,97 @@
           <div class="ic-val">{{ district }}</div>
         </div>
       </div>
-      <div class="divrow">
-        <div class="div"></div>
-      </div>
+      <div class="divrow"><div class="div"></div></div>
+
       <div class="split-wrap">
         <div class="split-header">
           <div>
-            <h2>&#128752; Satellite View: {{ district }}</h2>
+            <h2>&#128752; Satellite & Events: {{ district }}</h2>
             <p>
-              Satellite &amp; events stay in sync &bull; {{ birth_year }} &rarr;
-              {{ current_year }}
+              Synced timeline view &bull; {{ birth_year }} &rarr; {{ current_year }}
             </p>
           </div>
           <span class="sat-badge modis" id="satBadge">MODIS</span>
         </div>
+
         <div class="split">
-          <div class="map-panel">
-            <svg id="mapSvg" xmlns="http://www.w3.org/2000/svg"></svg>
-            <div id="mapMiniLoader">
-              <div class="spin"></div>
+          <div class="events-panel">
+            {% if events %}
+            <div>
+              <div class="tl-hdr">
+                <div class="tl-tag2">&#128220; History Since {{ birth_year }}</div>
+              </div>
+              <div class="sync-bar">
+                <span class="sb-sat">&#128752; Satellite</span>
+                <span style="color: rgba(255, 255, 255, 0.2)">&#8596;</span>
+                <span class="sb-ev">
+                  Showing: <span id="syncYrTxt">{{ [birth_year,2000]|max }}</span>
+                </span>
+              </div>
             </div>
-            <div class="map-district-tag">
-              <span>&#128205; {{ district }}</span>
+
+            <div class="tl-outer">
+              <div class="tl-arr arrL dis" id="arrL" onclick="tlPrev()">&#8249;</div>
+              <div class="tl-card" id="tlCard">
+                <div class="tl-top">
+                  <span class="era-badge" id="tlEra"></span>
+                  <div class="yr-big" id="tlYr"></div>
+                </div>
+                <div class="tl-body">
+                  <div class="tl-ico" id="tlIco"></div>
+                  <div>
+                    <div class="tl-ttl" id="tlTtl"></div>
+                    <div class="tl-dsc" id="tlDsc"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="tl-arr arrR" id="arrR" onclick="tlNext()">&#8250;</div>
             </div>
+
+            <div class="dots-sec">
+              <div class="dots" id="dotsEl"></div>
+              <div class="playbar">
+                <button class="pb-btn" id="pbBtn">&#9208;</button>
+                <div class="pb-track"><div class="pb-fill" id="pbFill"></div></div>
+                <span class="ctr" id="ctrTxt">1 / {{ events|length }}</span>
+              </div>
+            </div>
+            {% else %}
+            <div class="events-empty">No events found for this timeframe.</div>
+            {% endif %}
           </div>
+
           <div class="sat-panel">
             <div class="sat-imgs">
               <img class="sat-img active" id="satImgA" alt="" />
               <img class="sat-img" id="satImgB" alt="" />
             </div>
+            
+            <svg id="mapSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+
             <span id="satYearChip">{{ [birth_year,2000]|max }}</span>
             <span id="satSrcChip">Loading&hellip;</span>
-            <!-- Alt-year notice (hidden unless substituting a cloudy year) -->
+            
             <div id="altNote">
               <span class="an-ico">&#128247;</span>
               <span id="altNoteTxt"></span>
             </div>
-            <!-- Sync pill (hidden when altNote visible) -->
+            
             <div id="syncPill">&#128279; Syncing&hellip;</div>
             <div id="preloadBar"></div>
-            <div id="satLoader">
-              <div class="spin"></div>
-            </div>
+            
+            <div id="satLoader"><div class="spin"></div></div>
+            
             <div id="satErr">
               <p>Could not load satellite image.</p>
               <button onclick="retrySat()">&#8635; Retry</button>
             </div>
           </div>
         </div>
+        
         <div class="sat-ctrl">
           <div id="noDataNote">
-            &#128065; Imagery available from 2000. Showing earliest for pre-2000
-            years.
+            &#128065; Imagery available from 2000. Showing earliest for pre-2000 years.
           </div>
           <div class="slider-row">
             <button class="yr-btn" id="satPrev">&#8249;</button>
@@ -1137,324 +1064,251 @@
           <div class="yr-marks" id="yrMarks"></div>
         </div>
       </div>
-      {% if events %}
-      <div class="tl-wrap">
-        <div class="div2"></div>
-        <div class="tl-hdr">
-          <div class="tl-tag2">&#128220; Bihar Through Your Years</div>
-          <h2>History Since {{ birth_year }}</h2>
-          <p>
-            {{ events|length }} milestones &bull; Synced with satellite view
-            above
-          </p>
-        </div>
-        <div class="sync-bar">
-          <span class="sb-sat">&#128752; Satellite</span>
-          <span style="color: rgba(255, 255, 255, 0.2)">&#8596;</span>
-          <span class="sb-ev"
-            >Showing:
-            <span id="syncYrTxt">{{ [birth_year,2000]|max }}</span>
-          </span>
-          <span style="color: rgba(255, 255, 255, 0.15)">&bull;</span>
-          <span style="color: rgba(255, 255, 255, 0.28)"
-            >Events &amp; satellite auto-sync</span
-          >
-        </div>
-        <div class="tl-outer">
-          <div class="tl-arr arrL dis" id="arrL" onclick="tlPrev()">
-            &#8249;
-          </div>
-          <div class="tl-card" id="tlCard">
-            <div class="tl-top">
-              <span class="era-badge" id="tlEra"></span>
-              <div class="yr-big" id="tlYr"></div>
-            </div>
-            <div class="tl-body">
-              <div class="tl-ico" id="tlIco"></div>
-              <div>
-                <div class="tl-ttl" id="tlTtl"></div>
-                <div class="tl-dsc" id="tlDsc"></div>
-              </div>
-            </div>
-          </div>
-          <div class="tl-arr arrR" id="arrR" onclick="tlNext()">&#8250;</div>
-        </div>
-        <div class="dots-sec">
-          <div class="dots" id="dotsEl"></div>
-          <div class="playbar">
-            <button class="pb-btn" id="pbBtn">&#9208;</button>
-            <div class="pb-track">
-              <div class="pb-fill" id="pbFill"></div>
-            </div>
-            <span class="ctr" id="ctrTxt">1 / {{ events|length }}</span>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-      <div class="div2"></div>
+
       <a href="/" class="back-btn">&#8592; Start Over</a>
     </div>
+    
     <script>
-            /* Stars */
-            (function(){const c=document.getElementById('stars'),x=c.getContext('2d');let s=[];function r(){c.width=innerWidth;c.height=innerHeight;s=Array.from({length:180},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.5+.2,a:Math.random(),da:(Math.random()-.5)*.008}));}function d(){x.clearRect(0,0,c.width,c.height);s.forEach(p=>{p.a=Math.max(.05,Math.min(1,p.a+p.da));if(p.a<=.05||p.a>=1)p.da*=-1;x.beginPath();x.arc(p.x,p.y,p.r,0,2*Math.PI);x.fillStyle=`rgba(255,215,0,${p.a})`;x.fill();});requestAnimationFrame(d);}window.addEventListener('resize',r);r();d();})();
-            document.querySelectorAll('.ic').forEach(c=>{c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();const rx=((e.clientY-r.top)/r.height-.5)*-13;const ry=((e.clientX-r.left)/r.width-.5)*13;c.style.transform=`perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-5px)`;});c.addEventListener('mouseleave',()=>{c.style.transform='';});});
+      /* Stars */
+      (function(){const c=document.getElementById('stars'),x=c.getContext('2d');let s=[];function r(){c.width=innerWidth;c.height=innerHeight;s=Array.from({length:180},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.5+.2,a:Math.random(),da:(Math.random()-.5)*.008}));}function d(){x.clearRect(0,0,c.width,c.height);s.forEach(p=>{p.a=Math.max(.05,Math.min(1,p.a+p.da));if(p.a<=.05||p.a>=1)p.da*=-1;x.beginPath();x.arc(p.x,p.y,p.r,0,2*Math.PI);x.fillStyle=`rgba(255,215,0,${p.a})`;x.fill();});requestAnimationFrame(d);}window.addEventListener('resize',r);r();d();})();
+      document.querySelectorAll('.ic').forEach(c=>{c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();const rx=((e.clientY-r.top)/r.height-.5)*-13;const ry=((e.clientX-r.left)/r.width-.5)*13;c.style.transform=`perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-3px)`;});c.addEventListener('mouseleave',()=>{c.style.transform='';});});
 
-            /* Bihar mini-map */
-            const DISTRICT="{{district}}";
-            const NS='http://www.w3.org/2000/svg';
-            function _norm(s){return String(s).toLowerCase().replace(/[\s\-()+]/g,'');}
-            (async function(){
-              const svgEl=document.getElementById('mapSvg');const panel=svgEl.parentElement;
-              const W=panel.clientWidth||380,H=panel.clientHeight||380;
-              svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
-              let data;
-              try{const r=await fetch('/bihar_dist_ready.geojson');data=await r.json();}catch(e){document.getElementById('mapMiniLoader').classList.add('h');return;}
-              if(data.error){document.getElementById('mapMiniLoader').classList.add('h');return;}
-              let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
-              function bb(c){if(typeof c[0]==='number'){x0=Math.min(x0,c[0]);x1=Math.max(x1,c[0]);y0=Math.min(y0,c[1]);y1=Math.max(y1,c[1]);}else c.forEach(bb);}
-              data.features.forEach(f=>bb(f.geometry.coordinates));
-              const pad=16,sx=(W-2*pad)/(x1-x0),sy=(H-2*pad)/(y1-y0),s=Math.min(sx,sy);
-              const ox=(W-s*(x1-x0))/2,oy=(H-s*(y1-y0))/2;
-              function proj(lng,lat){return[ox+(lng-x0)*s,H-oy-(lat-y0)*s];}
-              function rD(ring){return ring.map(([ln,lt],i)=>{const[px,py]=proj(ln,lt);return(i?'L':'M')+px.toFixed(2)+' '+py.toFixed(2);}).join('')+'Z';}
-              function gD(g){return g.type==='Polygon'?g.coordinates.map(rD).join(''):g.type==='MultiPolygon'?g.coordinates.map(p=>p.map(rD).join('')).join(''):'';}
-              const grp=document.createElementNS(NS,'g');
-              data.features.forEach(feat=>{
-                const name=feat.properties.name;const d=gD(feat.geometry);if(!d)return;
-                const path=document.createElementNS(NS,'path');
-                path.setAttribute('d',d);path.setAttribute('class','dp-r'+(_norm(name)===_norm(DISTRICT)?' sel':''));
-                grp.appendChild(path);
-              });
-              svgEl.appendChild(grp);
-              document.getElementById('mapMiniLoader').classList.add('h');
-            })();
-
-            /* ══════════════════════════════════════════════════════════════════
-               SATELLITE VIEWER — with cloud-free year overrides
-
-               Root cause of clouds:
-               • 2015 (MODIS):      Bihar post-monsoon Nov-15 still hazy that year
-               • 2016 (EOX):        Sentinel-2A launched Jun 2015; 2016 mosaic has gaps/clouds
-               • 2017 (EOX):        2017 mosaic still has coverage holes over Bihar floodplain
-
-               Fix: substitute with known-clear alternatives
-               • 2015 → 2014  (MODIS Nov 15, verified clearer year)
-               • 2016 → 2018  (EOX s2cloudless-2018, full coverage, cloud-free)
-               • 2017 → 2018  (same)
-
-               The displayed year chip still shows the REQUESTED year so users see
-               what era they're in; the orange "📷 Showing 20XX imagery" pill
-               explains the substitution transparently.
-            ══════════════════════════════════════════════════════════════════ */
-
-            const BBOX = {{ (bbox or {
+      /* Bounding Box Config */
+      const BBOX = {{ (bbox or {
           "minLng": 83.3,
           "minLat": 24.3,
           "maxLng": 88.2,
           "maxLat": 27.5
       }) | tojson }};
 
-            const BIRTH_YEAR = {{ birth_year }};
-            const CUR_YEAR   = {{ current_year }};
-            const MIN_YEAR   = Math.max(BIRTH_YEAR, 2000);
-            const TOTAL_YRS  = CUR_YEAR - MIN_YEAR + 1;
-            const EOX_BASE   = 'https://tiles.maps.eox.at/wms';
-            const GIBS_BASE  = 'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi';
-            const EOX_AVAIL  = [2016,2017,2018,2019,2020,2021,2022,2023,2024];
+      /* Map Overlay perfectly projected to match the Satellite image bounding box */
+      const DISTRICT="{{district}}";
+      const NS='http://www.w3.org/2000/svg';
+      function _norm(s){return String(s).toLowerCase().replace(/[\s\-()+]/g,'');}
+      (async function(){
+        const svgEl=document.getElementById('mapSvg');
+        const panel=svgEl.parentElement;
+        const W=panel.clientWidth || 600, H=panel.clientHeight || 480;
+        svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
+        
+        let data;
+        try {
+          const r=await fetch('/bihar_dist_ready.geojson');
+          data=await r.json();
+        } catch(e) { return; }
+        
+        if(data.error) return;
 
-            /* ── CLOUD-FREE YEAR OVERRIDES ──
-               Keys  = years with known cloud / coverage issues for Bihar
-               Values = substitute years to fetch imagery from instead           */
-            const YEAR_OVERRIDE = {
-                2006:2007,
-                2008:2007,
-                2009:2010,
-                2011:2013,
-                2012:2013,
-                2015: 2014,   // MODIS: Nov-15-2015 hazy over Bihar → use 2014 (clear)
-                2016: 2018,   // EOX:   s2cloudless-2016 sparse (Sentinel-2 first year) → 2018
-                2017: 2018,   // EOX:   s2cloudless-2017 still patchy over Bihar → 2018
-            };
+        // Force overlay coordinates to map exactly to the WMS BBOX 
+        const bMinLng = BBOX.minLng;
+        const bMaxLng = BBOX.maxLng;
+        const bMinLat = BBOX.minLat;
+        const bMaxLat = BBOX.maxLat;
 
-            const cache = {};
-            let curYear    = MIN_YEAR;
-            let satPlay    = false;
-            let satTimer   = null;
-            let loadedCnt  = 0;
-            let activeSlot = 'A';
-            const satImgs  = {A:document.getElementById('satImgA'),B:document.getElementById('satImgB')};
+        const sx = W / (bMaxLng - bMinLng);
+        const sy = H / (bMaxLat - bMinLat);
 
-            function satInfo(year){
-              /* Determine the actual source year (may be substituted) */
-              const srcYear = (YEAR_OVERRIDE[year] !== undefined) ? YEAR_OVERRIDE[year] : year;
-              const isAlt   = (srcYear !== year);
+        function proj(lng, lat) {
+          return [ (lng - bMinLng) * sx, H - (lat - bMinLat) * sy ];
+        }
 
-              const lngSpan = BBOX.maxLng - BBOX.minLng;
-              const latSpan = BBOX.maxLat - BBOX.minLat;
-              const W = 1100;
-              const H = Math.min(700, Math.max(200, Math.round(W * latSpan / lngSpan)));
-              const b = `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
-              const q = `&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${W}&HEIGHT=${H}&FORMAT=image/jpeg`;
+        function rD(ring){return ring.map(([ln,lt],i)=>{const[px,py]=proj(ln,lt);return(i?'L':'M')+px.toFixed(2)+' '+py.toFixed(2);}).join('')+'Z';}
+        function gD(g){return g.type==='Polygon'?g.coordinates.map(rD).join(''):g.type==='MultiPolygon'?g.coordinates.map(p=>p.map(rD).join('')).join(''):'';}
+        
+        const grp=document.createElementNS(NS,'g');
+        data.features.forEach(feat=>{
+          const name=feat.properties.name;
+          const d=gD(feat.geometry);if(!d)return;
+          const path=document.createElementNS(NS,'path');
+          path.setAttribute('d',d);
+          path.setAttribute('class','dp-r'+(_norm(name)===_norm(DISTRICT)?' sel':''));
+          grp.appendChild(path);
+        });
+        svgEl.appendChild(grp);
+      })();
 
-              if(srcYear >= 2016){
-                /* EOX Sentinel-2 cloudless annual composite — guaranteed cloud-free */
-                const y = EOX_AVAIL.includes(srcYear)
-                  ? srcYear
-                  : (EOX_AVAIL.filter(v=>v<=srcYear).pop() || EOX_AVAIL[EOX_AVAIL.length-1]);
-                return {
-                  url    : `${EOX_BASE}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${q}`,
-                  label  : `Sentinel-2 Cloudless ${y}`,
-                  badge  : 'Sentinel-2', bCls: 's2',
-                  isAlt, srcYear, year
-                };
-              } else {
-                /* MODIS Terra Nov-15 — post-Bihar-monsoon, pre-winter-fog window
-                   Nov 15 = empirically clearest date for Gangetic plain (Oct end to Dec start) */
-                const y = Math.max(srcYear, 2000);
-                return {
-                  url    : `${GIBS_BASE}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${y}-03-15${q}`,
-                  label  : `MODIS Terra ${y}`,
-                  badge  : 'MODIS', bCls: 'modis',
-                  isAlt, srcYear, year
-                };
-              }
-            }
+      const BIRTH_YEAR = {{ birth_year }};
+      const CUR_YEAR   = {{ current_year }};
+      const MIN_YEAR   = Math.max(BIRTH_YEAR, 2000);
+      const TOTAL_YRS  = CUR_YEAR - MIN_YEAR + 1;
+      const EOX_BASE   = 'https://tiles.maps.eox.at/wms';
+      const GIBS_BASE  = 'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi';
+      const EOX_AVAIL  = [2016,2017,2018,2019,2020,2021,2022,2023,2024];
 
-            function preload(year){
-              if(cache[year]||year<MIN_YEAR||year>CUR_YEAR)return;
-              const info=satInfo(year);
-              cache[year]={url:info.url,ready:false};
-              const img=new Image();
-              img.onload=()=>{
-                cache[year].ready=true;loadedCnt++;
-                const pct=loadedCnt/TOTAL_YRS*100;
-                const bar=document.getElementById('preloadBar');
-                bar.style.width=pct+'%';
-                if(loadedCnt>=TOTAL_YRS)setTimeout(()=>{bar.style.opacity='0';},900);
-              };
-              img.onerror=()=>{cache[year]={url:info.url,ready:false,err:true};};
-              img.src=info.url;
-            }
-            setTimeout(()=>{for(let y=MIN_YEAR;y<=CUR_YEAR;y++)((yr,d)=>setTimeout(()=>preload(yr),d))(y,(y-MIN_YEAR)*80);},800);
+      const YEAR_OVERRIDE = {
+          2006:2007, 2008:2007, 2009:2010, 2011:2013, 2012:2013,
+          2015: 2014, 2016: 2018, 2017: 2018,
+      };
 
-            function crossfadeTo(url){
-              const next=activeSlot==='A'?'B':'A';
-              const nextImg=satImgs[next],curImg=satImgs[activeSlot];
-              const loader=document.getElementById('satLoader'),err=document.getElementById('satErr');
-              nextImg.onload=()=>{
-                loader.classList.add('h');err.classList.remove('show');
-                nextImg.classList.add('active');
-                setTimeout(()=>{curImg.classList.remove('active');activeSlot=next;},60);
-              };
-              nextImg.onerror=()=>{loader.classList.add('h');err.classList.add('show');};
-              nextImg.src=url;
-            }
+      const cache = {};
+      let curYear    = MIN_YEAR;
+      let satPlay    = false;
+      let satTimer   = null;
+      let loadedCnt  = 0;
+      let activeSlot = 'A';
+      const satImgs  = {A:document.getElementById('satImgA'),B:document.getElementById('satImgB')};
 
-            let _syncBlock=false;
+      function satInfo(year){
+        const srcYear = (YEAR_OVERRIDE[year] !== undefined) ? YEAR_OVERRIDE[year] : year;
+        const isAlt   = (srcYear !== year);
 
-            function loadSat(year, skipEventSync){
-              if(_syncBlock)return;
-              curYear=year;
-              document.getElementById('satSlider').value=year;
-              document.getElementById('satYearChip').textContent=year;       // Always show REQUESTED year
-              document.getElementById('satPrev').disabled=(year<=MIN_YEAR);
-              document.getElementById('satNext').disabled=(year>=CUR_YEAR);
-              document.getElementById('noDataNote').classList.toggle('show',BIRTH_YEAR<2000&&year<=2001);
+        const lngSpan = BBOX.maxLng - BBOX.minLng;
+        const latSpan = BBOX.maxLat - BBOX.minLat;
+        const W = 1100;
+        const H = Math.min(700, Math.max(200, Math.round(W * latSpan / lngSpan)));
+        const b = `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
+        const q = `&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${W}&HEIGHT=${H}&FORMAT=image/jpeg`;
 
-              const info=satInfo(year);
-              document.getElementById('satSrcChip').textContent=info.label;
-              const badge=document.getElementById('satBadge');
-              badge.textContent=info.badge;badge.className='sat-badge '+info.bCls;
+        if(srcYear >= 2016){
+          const y = EOX_AVAIL.includes(srcYear) ? srcYear : (EOX_AVAIL.filter(v=>v<=srcYear).pop() || EOX_AVAIL[EOX_AVAIL.length-1]);
+          return {
+            url    : `${EOX_BASE}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${q}`,
+            label  : `Sentinel-2 Cloudless ${y}`, badge: 'Sentinel-2', bCls: 's2', isAlt, srcYear, year
+          };
+        } else {
+          const y = Math.max(srcYear, 2000);
+          return {
+            url    : `${GIBS_BASE}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${y}-03-15${q}`,
+            label  : `MODIS Terra ${y}`, badge: 'MODIS', bCls: 'modis', isAlt, srcYear, year
+          };
+        }
+      }
 
-              /* ── Show / hide alt-year notice ── */
-              const altNote  = document.getElementById('altNote');
-              const syncPill = document.getElementById('syncPill');
-              if(info.isAlt){
-                document.getElementById('altNoteTxt').textContent =
-                  `Showing ${info.srcYear} imagery (${year} has cloud cover)`;
-                altNote.classList.add('show');
-                syncPill.classList.add('hidden');
-              } else {
-                altNote.classList.remove('show');
-                syncPill.classList.remove('hidden');
-              }
+      function preload(year){
+        if(cache[year]||year<MIN_YEAR||year>CUR_YEAR)return;
+        const info=satInfo(year);
+        cache[year]={url:info.url,ready:false};
+        const img=new Image();
+        img.onload=()=>{
+          cache[year].ready=true;loadedCnt++;
+          const pct=loadedCnt/TOTAL_YRS*100;
+          const bar=document.getElementById('preloadBar');
+          bar.style.width=pct+'%';
+          if(loadedCnt>=TOTAL_YRS)setTimeout(()=>{bar.style.opacity='0';},900);
+        };
+        img.onerror=()=>{cache[year]={url:info.url,ready:false,err:true};};
+        img.src=info.url;
+      }
+      setTimeout(()=>{for(let y=MIN_YEAR;y<=CUR_YEAR;y++)((yr,d)=>setTimeout(()=>preload(yr),d))(y,(y-MIN_YEAR)*80);},800);
 
-              document.getElementById('satErr').classList.remove('show');
-              if(cache[year]&&cache[year].ready){
-                document.getElementById('satLoader').classList.add('h');
-                crossfadeTo(cache[year].url);
-              } else {
-                document.getElementById('satLoader').classList.remove('h');
-                crossfadeTo(info.url);
-              }
+      function crossfadeTo(url){
+        const next=activeSlot==='A'?'B':'A';
+        const nextImg=satImgs[next],curImg=satImgs[activeSlot];
+        const loader=document.getElementById('satLoader'),err=document.getElementById('satErr');
+        nextImg.onload=()=>{
+          loader.classList.add('h');err.classList.remove('show');
+          nextImg.classList.add('active');
+          setTimeout(()=>{curImg.classList.remove('active');activeSlot=next;},60);
+        };
+        nextImg.onerror=()=>{loader.classList.add('h');err.classList.add('show');};
+        nextImg.src=url;
+      }
 
-              /* Sync events */
-              if(!skipEventSync&&EVS.length){
-                const idx=findEventIndex(year);
-                syncPill.textContent='↔ Event: '+EVS[idx].year;
-                syncPill.className=info.isAlt?'syncPill hidden':'syncPill event';
-                if(idx!==tlI){_syncBlock=true;goTo(idx,idx>tlI?'n':'p',true);_syncBlock=false;}
-              }
-              document.getElementById('syncYrTxt').textContent=year;
-            }
-            function retrySat(){loadSat(curYear);}
-            function findEventIndex(year){let b=0;for(let i=0;i<EVS.length;i++){if(EVS[i].year<=year)b=i;}return b;}
+      let _syncBlock=false;
 
-            /* Year tick marks */
-            (function(){
-              const span=CUR_YEAR-MIN_YEAR;
-              const step=span<=8?1:span<=18?2:span<=35?5:10;
-              let tks=[];for(let y=Math.ceil(MIN_YEAR/step)*step;y<=CUR_YEAR;y+=step)tks.push(y);
-              if(!tks.length||tks[0]>MIN_YEAR)tks.unshift(MIN_YEAR);if(tks[tks.length-1]<CUR_YEAR)tks.push(CUR_YEAR);
-              const w=document.getElementById('yrMarks');
-              tks.forEach(y=>{const s=document.createElement('span');s.className='ym';s.textContent=y;w.appendChild(s);});
-            })();
+      function loadSat(year, skipEventSync){
+        if(_syncBlock)return;
+        curYear=year;
+        document.getElementById('satSlider').value=year;
+        document.getElementById('satYearChip').textContent=year;
+        document.getElementById('satPrev').disabled=(year<=MIN_YEAR);
+        document.getElementById('satNext').disabled=(year>=CUR_YEAR);
+        document.getElementById('noDataNote').classList.toggle('show',BIRTH_YEAR<2000&&year<=2001);
 
-            document.getElementById('satSlider').addEventListener('input',e=>loadSat(+e.target.value));
-            document.getElementById('satPrev').addEventListener('click',()=>{if(curYear>MIN_YEAR)loadSat(curYear-1);});
-            document.getElementById('satNext').addEventListener('click',()=>{if(curYear<CUR_YEAR)loadSat(curYear+1);});
-            document.getElementById('playBtn').addEventListener('click',()=>{
-              satPlay=!satPlay;const btn=document.getElementById('playBtn');
-              if(satPlay){btn.textContent='\u23F8 Pause';btn.classList.add('playing');if(curYear>=CUR_YEAR)loadSat(MIN_YEAR);satTimer=setInterval(()=>{if(curYear>=CUR_YEAR){satPlay=false;clearInterval(satTimer);btn.textContent='\u25B6 Play';btn.classList.remove('playing');return;}loadSat(curYear+1);},1800);}
-              else{clearInterval(satTimer);btn.textContent='\u25B6 Play';btn.classList.remove('playing');}
-            });
-            document.addEventListener('keydown',e=>{
-              if(e.shiftKey&&e.key==='ArrowRight'){e.preventDefault();if(curYear<CUR_YEAR)loadSat(curYear+1);}
-              if(e.shiftKey&&e.key==='ArrowLeft'){e.preventDefault();if(curYear>MIN_YEAR)loadSat(curYear-1);}
-            });
+        const info=satInfo(year);
+        document.getElementById('satSrcChip').textContent=info.label;
+        const badge=document.getElementById('satBadge');
+        badge.textContent=info.badge;badge.className='sat-badge '+info.bCls;
 
-            /* ══ EVENTS TIMELINE ══ */
-            const EVS={{events|tojson}},TL_MS={{tl_interval}};
-            let tlI=0,tlPlay=true,tlT=null;
-            const strip=document.getElementById('dotsEl');let prevE='';
-            EVS.forEach((ev,i)=>{
-              if(i>0&&ev.era!==prevE){const g=document.createElement('div');g.className='dot-gap';strip.appendChild(g);}
-              const d=document.createElement('div');d.className='dot';d.dataset.idx=i;d.dataset.year=ev.year;
-              d.style.background=ev.color;d.style.color=ev.color;
-              d.addEventListener('click',()=>goTo(i,i>=tlI?'n':'p'));strip.appendChild(d);prevE=ev.era;
-            });
-            function updDots(){strip.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('act',i===tlI));}
-            function updCard(i){const ev=EVS[i];document.getElementById('tlYr').textContent=ev.year;document.getElementById('tlIco').textContent=ev.icon;document.getElementById('tlTtl').textContent=ev.title;document.getElementById('tlDsc').textContent='';const er=document.getElementById('tlEra');er.textContent=ev.era;er.style.cssText=`background:${ev.color}22;color:${ev.color};border-color:${ev.color}55`;const c=document.getElementById('tlCard');c.style.background=ev.color+'18';c.style.borderColor=ev.color+'40';document.getElementById('arrL').classList.toggle('dis',i===0);document.getElementById('arrR').classList.toggle('dis',i===EVS.length-1);document.getElementById('ctrTxt').textContent=`${i+1} / ${EVS.length}`;}
-            function resetProg(){clearTimeout(tlT);const f=document.getElementById('pbFill');f.style.transition='none';f.style.width='0%';if(!tlPlay)return;setTimeout(()=>{f.style.transition=`width ${TL_MS}ms linear`;f.style.width='100%';},60);tlT=setTimeout(()=>{const n=tlI<EVS.length-1?tlI+1:0;goTo(n,n>tlI?'n':'p');},TL_MS);}
-            function goTo(i,d,skipSatSync){
-              const c=document.getElementById('tlCard');
-              const oc=d==='n'?'aTL':'aTR',ic=d==='n'?'aFR':'aFL';
-              c.classList.add(oc);
-              setTimeout(()=>{
-                tlI=i;updCard(i);updDots();c.classList.remove(oc);c.classList.add(ic);setTimeout(()=>c.classList.remove(ic),400);
-                if(!skipSatSync&&!_syncBlock){
-                  const evYear=EVS[i].year;const satYear=Math.max(MIN_YEAR,Math.min(CUR_YEAR,evYear));
-                  _syncBlock=true;loadSat(satYear,true);_syncBlock=false;
-                }
-                document.getElementById('syncYrTxt').textContent=EVS[i].year;
-              },260);
-              resetProg();
-            }
-            function tlPrev(){if(tlI>0)goTo(tlI-1,'p');}function tlNext(){if(tlI<EVS.length-1)goTo(tlI+1,'n');}
-            document.getElementById('pbBtn').addEventListener('click',()=>{tlPlay=!tlPlay;document.getElementById('pbBtn').textContent=tlPlay?'\u23F8':'\u25B6';resetProg();});
-            document.addEventListener('keydown',e=>{if(e.shiftKey)return;if(e.key==='ArrowRight')tlNext();if(e.key==='ArrowLeft')tlPrev();if(e.key===' '){e.preventDefault();document.getElementById('pbBtn').click();}});
-            if(EVS.length){updCard(0);updDots();resetProg();}
-            loadSat(MIN_YEAR);
+        const altNote  = document.getElementById('altNote');
+        const syncPill = document.getElementById('syncPill');
+        if(info.isAlt){
+          document.getElementById('altNoteTxt').textContent = `Showing ${info.srcYear} imagery (${year} has cloud cover)`;
+          altNote.classList.add('show');
+          syncPill.classList.add('hidden');
+        } else {
+          altNote.classList.remove('show');
+          syncPill.classList.remove('hidden');
+        }
+
+        document.getElementById('satErr').classList.remove('show');
+        if(cache[year]&&cache[year].ready){
+          document.getElementById('satLoader').classList.add('h');
+          crossfadeTo(cache[year].url);
+        } else {
+          document.getElementById('satLoader').classList.remove('h');
+          crossfadeTo(info.url);
+        }
+
+        if(!skipEventSync&&typeof EVS !== 'undefined' && EVS.length){
+          const idx=findEventIndex(year);
+          syncPill.textContent='↔ Event: '+EVS[idx].year;
+          syncPill.className=info.isAlt?'syncPill hidden':'syncPill event';
+          if(idx!==tlI){_syncBlock=true;goTo(idx,idx>tlI?'n':'p',true);_syncBlock=false;}
+        }
+        document.getElementById('syncYrTxt').textContent=year;
+      }
+      function retrySat(){loadSat(curYear);}
+      function findEventIndex(year){let b=0;for(let i=0;i<EVS.length;i++){if(EVS[i].year<=year)b=i;}return b;}
+
+      (function(){
+        const span=CUR_YEAR-MIN_YEAR;
+        const step=span<=8?1:span<=18?2:span<=35?5:10;
+        let tks=[];for(let y=Math.ceil(MIN_YEAR/step)*step;y<=CUR_YEAR;y+=step)tks.push(y);
+        if(!tks.length||tks[0]>MIN_YEAR)tks.unshift(MIN_YEAR);if(tks[tks.length-1]<CUR_YEAR)tks.push(CUR_YEAR);
+        const w=document.getElementById('yrMarks');
+        tks.forEach(y=>{const s=document.createElement('span');s.className='ym';s.textContent=y;w.appendChild(s);});
+      })();
+
+      document.getElementById('satSlider').addEventListener('input',e=>loadSat(+e.target.value));
+      document.getElementById('satPrev').addEventListener('click',()=>{if(curYear>MIN_YEAR)loadSat(curYear-1);});
+      document.getElementById('satNext').addEventListener('click',()=>{if(curYear<CUR_YEAR)loadSat(curYear+1);});
+      document.getElementById('playBtn').addEventListener('click',()=>{
+        satPlay=!satPlay;const btn=document.getElementById('playBtn');
+        if(satPlay){btn.textContent='\u23F8 Pause';btn.classList.add('playing');if(curYear>=CUR_YEAR)loadSat(MIN_YEAR);satTimer=setInterval(()=>{if(curYear>=CUR_YEAR){satPlay=false;clearInterval(satTimer);btn.textContent='\u25B6 Play';btn.classList.remove('playing');return;}loadSat(curYear+1);},1800);}
+        else{clearInterval(satTimer);btn.textContent='\u25B6 Play';btn.classList.remove('playing');}
+      });
+      document.addEventListener('keydown',e=>{
+        if(e.shiftKey&&e.key==='ArrowRight'){e.preventDefault();if(curYear<CUR_YEAR)loadSat(curYear+1);}
+        if(e.shiftKey&&e.key==='ArrowLeft'){e.preventDefault();if(curYear>MIN_YEAR)loadSat(curYear-1);}
+      });
+
+      /* ══ EVENTS TIMELINE ══ */
+      {% if events %}
+      const EVS={{events|tojson}},TL_MS={{tl_interval}};
+      let tlI=0,tlPlay=true,tlT=null;
+      const strip=document.getElementById('dotsEl');let prevE='';
+      EVS.forEach((ev,i)=>{
+        if(i>0&&ev.era!==prevE){const g=document.createElement('div');g.className='dot-gap';strip.appendChild(g);}
+        const d=document.createElement('div');d.className='dot';d.dataset.idx=i;d.dataset.year=ev.year;
+        d.style.background=ev.color;d.style.color=ev.color;
+        d.addEventListener('click',()=>goTo(i,i>=tlI?'n':'p'));strip.appendChild(d);prevE=ev.era;
+      });
+      function updDots(){strip.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('act',i===tlI));}
+      function updCard(i){const ev=EVS[i];document.getElementById('tlYr').textContent=ev.year;document.getElementById('tlIco').textContent=ev.icon;document.getElementById('tlTtl').textContent=ev.title;document.getElementById('tlDsc').textContent='';const er=document.getElementById('tlEra');er.textContent=ev.era;er.style.cssText=`background:${ev.color}22;color:${ev.color};border-color:${ev.color}55`;const c=document.getElementById('tlCard');c.style.background=ev.color+'18';c.style.borderColor=ev.color+'40';document.getElementById('arrL').classList.toggle('dis',i===0);document.getElementById('arrR').classList.toggle('dis',i===EVS.length-1);document.getElementById('ctrTxt').textContent=`${i+1} / ${EVS.length}`;}
+      function resetProg(){clearTimeout(tlT);const f=document.getElementById('pbFill');f.style.transition='none';f.style.width='0%';if(!tlPlay)return;setTimeout(()=>{f.style.transition=`width ${TL_MS}ms linear`;f.style.width='100%';},60);tlT=setTimeout(()=>{const n=tlI<EVS.length-1?tlI+1:0;goTo(n,n>tlI?'n':'p');},TL_MS);}
+      function goTo(i,d,skipSatSync){
+        const c=document.getElementById('tlCard');
+        const oc=d==='n'?'aTL':'aTR',ic=d==='n'?'aFR':'aFL';
+        c.classList.add(oc);
+        setTimeout(()=>{
+          tlI=i;updCard(i);updDots();c.classList.remove(oc);c.classList.add(ic);setTimeout(()=>c.classList.remove(ic),400);
+          if(!skipSatSync&&!_syncBlock){
+            const evYear=EVS[i].year;const satYear=Math.max(MIN_YEAR,Math.min(CUR_YEAR,evYear));
+            _syncBlock=true;loadSat(satYear,true);_syncBlock=false;
+          }
+          document.getElementById('syncYrTxt').textContent=EVS[i].year;
+        },260);
+        resetProg();
+      }
+      function tlPrev(){if(tlI>0)goTo(tlI-1,'p');}function tlNext(){if(tlI<EVS.length-1)goTo(tlI+1,'n');}
+      document.getElementById('pbBtn').addEventListener('click',()=>{tlPlay=!tlPlay;document.getElementById('pbBtn').textContent=tlPlay?'\u23F8':'\u25B6';resetProg();});
+      document.addEventListener('keydown',e=>{if(e.shiftKey)return;if(e.key==='ArrowRight')tlNext();if(e.key==='ArrowLeft')tlPrev();if(e.key===' '){e.preventDefault();document.getElementById('pbBtn').click();}});
+      
+      if(EVS.length){updCard(0);updDots();resetProg();}
+      {% endif %}
+      
+      loadSat(MIN_YEAR);
     </script>
   </body>
 </html>

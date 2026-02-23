@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -8,7 +8,110 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Playfair+Display:wght@700;800&family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <script>
+      // Load saved theme before CSS paints to prevent flicker
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
     <style>
+      :root {
+        /* LIGHT MODE VARIABLES */
+        --bg-color: #f0f4f8;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --text-light: #94a3b8;
+        
+        --accent-gold: #d97706; 
+        --accent-gold-glow: rgba(217, 119, 6, 0.3);
+        --accent-gold-light: rgba(217, 119, 6, 0.1);
+        --accent-orange: #ea580c;
+
+        --grad-num: linear-gradient(160deg, #f59e0b 0%, #d97706 30%, #ea580c 65%, #c2410c 100%);
+        --grad-title: linear-gradient(90deg, #d97706 0%, #ea580c 45%, #d97706 100%);
+        --grad-btn: linear-gradient(135deg, #ea580c 0%, #f59e0b 50%, #ea580c 100%);
+        --btn-text: #fff;
+
+        --panel-bh: linear-gradient(145deg, rgba(109, 40, 217, 0.04) 0%, rgba(180, 70, 20, 0.05) 40%, rgba(255, 255, 255, 0.6) 100%);
+        --panel-form: rgba(255, 255, 255, 0.85);
+        --form-border: rgba(0, 0, 0, 0.1);
+        --div-line: rgba(0, 0, 0, 0.15);
+        --shadow-overlay: rgba(0, 0, 0, 0.05);
+
+        --input-bg: rgba(255, 255, 255, 0.9);
+        --input-border: rgba(0, 0, 0, 0.15);
+        --input-text: #1e293b;
+        --input-ph: #94a3b8;
+
+        --stat-bg: rgba(217, 119, 6, 0.06);
+        --stat-border: rgba(217, 119, 6, 0.2);
+
+        --map-overlay: rgba(255, 255, 255, 0.85);
+        --map-win-bg: #ffffff;
+        --map-win-border: rgba(0, 0, 0, 0.1);
+        --map-bar-bg: #f8fafc;
+        --map-area-bg: #e2e8f0;
+
+        --dist-fill: #ffffff;
+        --dist-stroke: rgba(0, 0, 0, 0.15);
+        --dist-hover-fill: #f1f5f9;
+        --dist-hover-stroke: #ea580c;
+        --dist-active-fill: rgba(234, 88, 12, 0.15);
+        --dist-active-stroke: #ea580c;
+
+        --tip-bg: rgba(255, 255, 255, 0.98);
+        --tip-text: #d97706;
+        --door-bg: linear-gradient(180deg, transparent, #ea580c 8%, #f59e0b 35%, #fff 50%, #f59e0b 65%, #ea580c 92%, transparent);
+      }
+
+      [data-theme="dark"] {
+        /* DARK MODE VARIABLES */
+        --bg-color: #010110;
+        --text-main: #fff;
+        --text-muted: rgba(255, 255, 255, 0.6);
+        --text-light: rgba(255, 255, 255, 0.3);
+        
+        --accent-gold: #ffd700;
+        --accent-gold-glow: rgba(255, 215, 0, 0.4);
+        --accent-gold-light: rgba(255, 215, 0, 0.07);
+        --accent-orange: #ff6b35;
+
+        --grad-num: linear-gradient(160deg, #ffe566 0%, #ffd700 30%, #ff9a3c 65%, #e85d00 100%);
+        --grad-title: linear-gradient(90deg, #ffd700 0%, #ff9a3c 45%, #ffd700 100%);
+        --grad-btn: linear-gradient(135deg, #ff6b35 0%, #ffd700 50%, #ff6b35 100%);
+        --btn-text: #0d0d2b;
+
+        --panel-bh: linear-gradient(145deg, rgba(109, 40, 217, 0.14) 0%, rgba(180, 70, 20, 0.08) 40%, rgba(5, 15, 50, 0.14) 100%);
+        --panel-form: rgba(0, 0, 14, 0.35);
+        --form-border: rgba(255, 215, 0, 0.1);
+        --div-line: rgba(255, 215, 0, 0.25);
+        --shadow-overlay: rgba(0, 0, 0, 0.6);
+
+        --input-bg: rgba(255, 255, 255, 0.07);
+        --input-border: rgba(255, 255, 255, 0.1);
+        --input-text: #fff;
+        --input-ph: rgba(255, 255, 255, 0.2);
+
+        --stat-bg: rgba(255, 215, 0, 0.07);
+        --stat-border: rgba(255, 215, 0, 0.18);
+
+        --map-overlay: rgba(0, 0, 16, 0.82);
+        --map-win-bg: linear-gradient(160deg, #05050f, #040410);
+        --map-win-border: rgba(255, 215, 0, 0.22);
+        --map-bar-bg: rgba(255, 255, 255, 0.03);
+        --map-area-bg: #030309;
+
+        --dist-fill: #0c0c22;
+        --dist-stroke: rgba(255, 215, 0, 0.2);
+        --dist-hover-fill: #1d1a42;
+        --dist-hover-stroke: rgba(255, 215, 0, 0.85);
+        --dist-active-fill: rgba(255, 215, 0, 0.26);
+        --dist-active-stroke: #ffd700;
+
+        --tip-bg: rgba(4, 4, 18, 0.97);
+        --tip-text: #ffd700;
+        --door-bg: linear-gradient(180deg, transparent, #ff6b35 8%, #ffd700 35%, #fff 50%, #ffd700 65%, #ff6b35 92%, transparent);
+      }
+
       *,
       *::before,
       *::after {
@@ -22,10 +125,40 @@
         overflow: hidden;
       }
       body {
-        background: #010110;
+        background: var(--bg-color);
         font-family: "Poppins", sans-serif;
-        color: #fff;
+        color: var(--text-main);
+        transition: background-color 0.4s ease, color 0.4s ease;
       }
+
+      /* ── Theme Toggle Button ── */
+      .theme-toggle {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 10000;
+        background: var(--panel-form);
+        border: 1px solid var(--form-border);
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      }
+      .theme-toggle:hover {
+        transform: scale(1.08);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      }
+      .icon-sun { display: none; }
+      .icon-moon { display: block; }
+      [data-theme="dark"] .icon-sun { display: block; }
+      [data-theme="dark"] .icon-moon { display: none; }
 
       /* ── Fixed BG layers ── */
       #stars {
@@ -51,14 +184,14 @@
       .orb1 {
         width: 700px;
         height: 700px;
-        background: rgba(109, 40, 217, 0.2);
+        background: rgba(109, 40, 217, 0.15);
         top: -200px;
         left: -180px;
       }
       .orb2 {
         width: 500px;
         height: 500px;
-        background: rgba(194, 65, 12, 0.18);
+        background: rgba(194, 65, 12, 0.15);
         bottom: -150px;
         right: -100px;
         animation-delay: -6s;
@@ -66,41 +199,25 @@
       .orb3 {
         width: 400px;
         height: 400px;
-        background: rgba(29, 78, 216, 0.15);
+        background: rgba(29, 78, 216, 0.12);
         top: 40%;
         left: 52%;
         animation-delay: -11s;
       }
       @keyframes drift {
-        from {
-          transform: translate(0, 0) scale(1);
-        }
-        to {
-          transform: translate(30px, 40px) scale(1.06);
-        }
+        from { transform: translate(0, 0) scale(1); }
+        to { transform: translate(30px, 40px) scale(1.06); }
       }
       @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
+        to { transform: rotate(360deg); }
       }
       @keyframes fadeUp {
-        from {
-          transform: translateY(24px);
-          opacity: 0;
-        }
-        to {
-          transform: none;
-          opacity: 1;
-        }
+        from { transform: translateY(24px); opacity: 0; }
+        to { transform: none; opacity: 1; }
       }
       @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
 
       /* ── Door animation ── */
@@ -115,23 +232,11 @@
         pointer-events: none;
         opacity: 0;
         visibility: hidden;
-        background: linear-gradient(
-          180deg,
-          transparent,
-          #ff6b35 8%,
-          #ffd700 35%,
-          #fff 50%,
-          #ffd700 65%,
-          #ff6b35 92%,
-          transparent
-        );
-        box-shadow: 0 0 28px #ffd700, 0 0 80px rgba(255, 215, 0, 0.6);
+        background: var(--door-bg);
+        box-shadow: 0 0 28px var(--accent-gold), 0 0 80px var(--accent-gold-glow);
         transition: opacity 0.2s;
       }
-      #dS.v {
-        opacity: 1;
-        visibility: visible;
-      }
+      #dS.v { opacity: 1; visibility: visible; }
       #dLt {
         position: fixed;
         inset: 0;
@@ -139,17 +244,10 @@
         pointer-events: none;
         opacity: 0;
         visibility: hidden;
-        background: radial-gradient(
-          ellipse at 50% 50%,
-          rgba(255, 215, 0, 0.22),
-          transparent 65%
-        );
+        background: radial-gradient(ellipse at 50% 50%, var(--accent-gold-glow), transparent 65%);
         transition: opacity 0.6s 0.3s;
       }
-      #dLt.v {
-        opacity: 1;
-        visibility: visible;
-      }
+      #dLt.v { opacity: 1; visibility: visible; }
       #dL {
         position: fixed;
         top: 0;
@@ -162,18 +260,10 @@
         backface-visibility: hidden;
         opacity: 0;
         visibility: hidden;
-        background: linear-gradient(
-            to left,
-            rgba(0, 0, 0, 0.6) 0%,
-            transparent 30%
-          ),
-          linear-gradient(135deg, #09091f, #0d0828);
-        border-right: 2px solid rgba(255, 215, 0, 0.6);
+        background: linear-gradient(to left, var(--shadow-overlay) 0%, transparent 30%), linear-gradient(135deg, var(--bg-color), var(--panel-form));
+        border-right: 2px solid var(--accent-gold-glow);
       }
-      #dL.v {
-        opacity: 1;
-        visibility: visible;
-      }
+      #dL.v { opacity: 1; visibility: visible; }
       #dL.o {
         transition: transform 1.1s cubic-bezier(0.645, 0.045, 0.355, 1);
         transform: perspective(1000px) rotateY(-110deg);
@@ -190,18 +280,10 @@
         backface-visibility: hidden;
         opacity: 0;
         visibility: hidden;
-        background: linear-gradient(
-            to right,
-            rgba(0, 0, 0, 0.6) 0%,
-            transparent 30%
-          ),
-          linear-gradient(135deg, #09091f, #0d0828);
-        border-left: 2px solid rgba(255, 215, 0, 0.6);
+        background: linear-gradient(to right, var(--shadow-overlay) 0%, transparent 30%), linear-gradient(135deg, var(--bg-color), var(--panel-form));
+        border-left: 2px solid var(--accent-gold-glow);
       }
-      #dR.v {
-        opacity: 1;
-        visibility: visible;
-      }
+      #dR.v { opacity: 1; visibility: visible; }
       #dR.o {
         transition: transform 1.1s cubic-bezier(0.645, 0.045, 0.355, 1);
         transform: perspective(1000px) rotateY(110deg);
@@ -235,35 +317,20 @@
         align-items: center;
         padding: 40px 56px;
         overflow: hidden;
-        background: linear-gradient(
-          145deg,
-          rgba(109, 40, 217, 0.14) 0%,
-          rgba(180, 70, 20, 0.08) 40%,
-          rgba(5, 15, 50, 0.14) 100%
-        );
+        background: var(--panel-bh);
       }
       /* Animated gradient glow that moves */
       .bh-panel::before {
         content: "";
         position: absolute;
         inset: 0;
-        background: radial-gradient(
-          ellipse 80% 60% at 50% 50%,
-          rgba(255, 150, 30, 0.07),
-          transparent 70%
-        );
+        background: radial-gradient(ellipse 80% 60% at 50% 50%, var(--accent-gold-light), transparent 70%);
         animation: glowPulse 5s ease-in-out infinite alternate;
         z-index: 0;
       }
       @keyframes glowPulse {
-        from {
-          opacity: 0.6;
-          transform: scale(1);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1.08);
-        }
+        from { opacity: 0.6; transform: scale(1); }
+        to { opacity: 1; transform: scale(1.08); }
       }
       /* Right border glow */
       .bh-panel::after {
@@ -273,13 +340,7 @@
         top: 0;
         width: 1px;
         height: 100%;
-        background: linear-gradient(
-          to bottom,
-          transparent 0%,
-          rgba(255, 215, 0, 0.4) 20%,
-          rgba(255, 215, 0, 0.4) 80%,
-          transparent 100%
-        );
+        background: linear-gradient(to bottom, transparent 0%, var(--accent-gold-glow) 20%, var(--accent-gold-glow) 80%, transparent 100%);
       }
 
       /* Bihar map watermark SVG */
@@ -304,34 +365,32 @@
         width: 520px;
         height: 520px;
         margin: -260px 0 0 -260px;
-        border: 1px solid rgba(255, 215, 0, 0.07);
+        border: 1px solid var(--form-border);
         animation: ringR 45s linear infinite;
       }
       .r2 {
         width: 390px;
         height: 390px;
         margin: -195px 0 0 -195px;
-        border: 1px dashed rgba(255, 215, 0, 0.06);
+        border: 1px dashed var(--form-border);
         animation: ringR 30s linear infinite reverse;
       }
       .r3 {
         width: 280px;
         height: 280px;
         margin: -140px 0 0 -140px;
-        border: 1px solid rgba(255, 215, 0, 0.08);
+        border: 1px solid var(--form-border);
         animation: ringR 20s linear infinite;
       }
       .r4 {
         width: 180px;
         height: 180px;
         margin: -90px 0 0 -90px;
-        border: 1px dashed rgba(255, 215, 0, 0.1);
+        border: 1px dashed var(--form-border);
         animation: ringR 12s linear infinite reverse;
       }
       @keyframes ringR {
-        to {
-          transform: rotate(360deg);
-        }
+        to { transform: rotate(360deg); }
       }
 
       /* ── Celebration content ── */
@@ -345,7 +404,7 @@
       .bh-eyebrow {
         font-size: 0.68rem;
         letter-spacing: 5px;
-        color: rgba(255, 215, 0, 0.4);
+        color: var(--accent-gold);
         text-transform: uppercase;
         margin-bottom: 20px;
         animation: fadeIn 1s 0.1s both;
@@ -356,13 +415,8 @@
         animation: iconFloat 3.5s ease-in-out infinite;
       }
       @keyframes iconFloat {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-12px) scale(1.05);
-        }
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-12px) scale(1.05); }
       }
 
       /* GIANT NUMBER */
@@ -378,34 +432,22 @@
         font-size: clamp(7rem, 14vw, 10.5rem);
         font-weight: 800;
         line-height: 0.9;
-        background: linear-gradient(
-          160deg,
-          #ffe566 0%,
-          #ffd700 30%,
-          #ff9a3c 65%,
-          #e85d00 100%
-        );
+        background: var(--grad-num);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        filter: drop-shadow(0 0 50px rgba(255, 215, 0, 0.45));
+        filter: drop-shadow(0 0 50px var(--accent-gold-glow));
         animation: numPop 1.2s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
       }
       @keyframes numPop {
-        from {
-          transform: scale(0.55) translateY(30px);
-          opacity: 0;
-        }
-        to {
-          transform: none;
-          opacity: 1;
-        }
+        from { transform: scale(0.55) translateY(30px); opacity: 0; }
+        to { transform: none; opacity: 1; }
       }
       .bh-vaan {
         font-family: "Noto Sans Devanagari", sans-serif;
         font-size: clamp(2.2rem, 4.5vw, 3.2rem);
         font-weight: 700;
-        color: rgba(255, 245, 200, 0.9);
+        color: var(--text-main);
         margin-left: 6px;
         padding-bottom: 0.5rem;
         animation: fadeUp 1s 0.55s both;
@@ -418,12 +460,7 @@
         font-weight: 800;
         letter-spacing: 4px;
         line-height: 1.2;
-        background: linear-gradient(
-          90deg,
-          #ffd700 0%,
-          #ff9a3c 45%,
-          #ffd700 100%
-        );
+        background: var(--grad-title);
         background-size: 200%;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -432,12 +469,8 @@
         margin-bottom: 18px;
       }
       @keyframes shimmer {
-        0% {
-          background-position: 0%;
-        }
-        100% {
-          background-position: 200%;
-        }
+        0% { background-position: 0%; }
+        100% { background-position: 200%; }
       }
 
       /* Decorative divider */
@@ -451,22 +484,14 @@
       .bh-div-line {
         flex: 1;
         height: 1px;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(255, 215, 0, 0.35)
-        );
+        background: linear-gradient(90deg, transparent, var(--div-line));
       }
       .bh-div-line.r {
-        background: linear-gradient(
-          90deg,
-          rgba(255, 215, 0, 0.35),
-          transparent
-        );
+        background: linear-gradient(90deg, var(--div-line), transparent);
       }
       .bh-div-ico {
         font-size: 1rem;
-        color: rgba(255, 215, 0, 0.65);
+        color: var(--accent-gold);
       }
 
       /* Date line */
@@ -481,23 +506,23 @@
       .bh-date-main {
         font-size: 1.05rem;
         font-weight: 700;
-        color: rgba(255, 255, 255, 0.8);
+        color: var(--text-main);
         letter-spacing: 2px;
       }
       .bh-dot {
         width: 4px;
         height: 4px;
         border-radius: 50%;
-        background: rgba(255, 215, 0, 0.4);
+        background: var(--accent-gold-glow);
       }
       .bh-date-yr {
         font-size: 0.85rem;
-        color: rgba(255, 215, 0, 0.55);
+        color: var(--accent-gold);
         letter-spacing: 1.5px;
       }
       .bh-est {
         font-size: 0.72rem;
-        color: rgba(255, 255, 255, 0.25);
+        color: var(--text-muted);
         letter-spacing: 2px;
         margin-bottom: 22px;
         animation: fadeUp 1s 0.95s both;
@@ -514,8 +539,8 @@
       }
       .bh-stat {
         padding: 9px 16px;
-        background: rgba(255, 215, 0, 0.07);
-        border: 1px solid rgba(255, 215, 0, 0.18);
+        background: var(--stat-bg);
+        border: 1px solid var(--stat-border);
         border-radius: 12px;
         min-width: 82px;
       }
@@ -523,13 +548,13 @@
         font-family: "Playfair Display", serif;
         font-size: 1.2rem;
         font-weight: 700;
-        color: #ffd700;
+        color: var(--accent-gold);
         display: block;
         line-height: 1.1;
       }
       .bh-stat .sl {
         font-size: 0.58rem;
-        color: rgba(255, 255, 255, 0.32);
+        color: var(--text-muted);
         letter-spacing: 1.2px;
         text-transform: uppercase;
         margin-top: 2px;
@@ -542,30 +567,25 @@
         align-items: center;
         gap: 10px;
         padding: 10px 26px;
-        background: rgba(255, 107, 53, 0.1);
-        border: 1px solid rgba(255, 107, 53, 0.3);
+        background: var(--stat-bg);
+        border: 1px solid var(--stat-border);
         border-radius: 50px;
         animation: cdPulse 2.5s ease-in-out infinite, fadeUp 1s 1.15s both;
       }
       @keyframes cdPulse {
-        0%,
-        100% {
-          box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.2);
-        }
-        50% {
-          box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
-        }
+        0%, 100% { box-shadow: 0 0 0 0 var(--accent-gold-light); }
+        50% { box-shadow: 0 0 0 10px rgba(255, 107, 53, 0); }
       }
       .bh-cd .cd-n {
         font-family: "Playfair Display", serif;
         font-size: 1.8rem;
-        color: #ffd700;
+        color: var(--accent-gold);
         line-height: 1;
         font-weight: 800;
       }
       .bh-cd .cd-lbl {
         font-size: 0.82rem;
-        color: #ff9a3c;
+        color: var(--accent-orange);
         font-weight: 700;
         letter-spacing: 0.5px;
         font-family: "Noto Sans Devanagari", sans-serif;
@@ -578,8 +598,8 @@
         left: 0;
         right: 0;
         height: 36px;
-        background: rgba(255, 215, 0, 0.06);
-        border-top: 1px solid rgba(255, 215, 0, 0.1);
+        background: var(--stat-bg);
+        border-top: 1px solid var(--form-border);
         display: flex;
         align-items: center;
         overflow: hidden;
@@ -596,20 +616,16 @@
         font-size: 0.65rem;
         font-weight: 700;
         letter-spacing: 2px;
-        color: rgba(255, 215, 0, 0.4);
+        color: var(--text-muted);
         text-transform: uppercase;
         flex-shrink: 0;
       }
       .ticker-sep {
-        color: rgba(255, 215, 0, 0.25);
+        color: var(--text-light);
       }
       @keyframes tickerMove {
-        from {
-          transform: translateX(0);
-        }
-        to {
-          transform: translateX(-50%);
-        }
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
       }
 
       /* ── RIGHT PANEL: Form ── */
@@ -622,7 +638,7 @@
         align-items: center;
         justify-content: center;
         padding: 36px 52px 36px 48px;
-        background: rgba(0, 0, 14, 0.35);
+        background: var(--panel-form);
         backdrop-filter: blur(32px) saturate(150%);
       }
 
@@ -631,7 +647,7 @@
         position: absolute;
         width: 120px;
         height: 120px;
-        border-color: rgba(255, 215, 0, 0.1);
+        border-color: var(--form-border);
         border-style: solid;
       }
       .fp-corner.tl {
@@ -659,28 +675,22 @@
         width: 52px;
         height: 52px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #ffd700, #ff6b35);
+        background: var(--grad-btn);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 26px;
-        box-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+        box-shadow: 0 0 30px var(--accent-gold-glow);
         animation: logoPulse 2.8s ease-in-out infinite;
       }
       @keyframes logoPulse {
-        0%,
-        100% {
-          box-shadow: 0 0 25px rgba(255, 107, 53, 0.4);
-        }
-        50% {
-          box-shadow: 0 0 50px rgba(255, 215, 0, 0.8),
-            0 0 100px rgba(255, 215, 0, 0.15);
-        }
+        0%, 100% { box-shadow: 0 0 25px var(--accent-gold-glow); }
+        50% { box-shadow: 0 0 50px var(--accent-gold), 0 0 100px var(--accent-gold-light); }
       }
       .fp-brand-text h1 {
         font-family: "Playfair Display", serif;
         font-size: 1.65rem;
-        background: linear-gradient(90deg, #ffd700, #ff9a3c, #fff);
+        background: var(--grad-title);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -688,7 +698,7 @@
       }
       .fp-brand-text p {
         font-size: 0.7rem;
-        color: rgba(255, 255, 255, 0.3);
+        color: var(--text-muted);
         letter-spacing: 0.8px;
         margin-top: 1px;
       }
@@ -718,37 +728,32 @@
         border: 1.5px solid;
       }
       .fp-step-dot.cur {
-        background: rgba(255, 215, 0, 0.15);
-        border-color: #ffd700;
-        color: #ffd700;
-        box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+        background: var(--accent-gold-light);
+        border-color: var(--accent-gold);
+        color: var(--accent-gold);
+        box-shadow: 0 0 12px var(--accent-gold-glow);
       }
       .fp-step-dot.nxt {
         background: transparent;
-        border-color: rgba(255, 255, 255, 0.12);
-        color: rgba(255, 255, 255, 0.2);
+        border-color: var(--form-border);
+        color: var(--text-light);
       }
       .fp-step-lbl {
         font-size: 0.62rem;
-        color: rgba(255, 255, 255, 0.28);
+        color: var(--text-muted);
         letter-spacing: 0.5px;
       }
       .fp-step-line {
         width: 24px;
         height: 1px;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--form-border);
       }
 
       /* Divider */
       .fp-div {
         width: 100%;
         height: 1px;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(255, 215, 0, 0.25),
-          transparent
-        );
+        background: linear-gradient(90deg, transparent, var(--div-line), transparent);
         margin-bottom: 26px;
         animation: fadeIn 1s 0.4s both;
       }
@@ -758,24 +763,18 @@
         margin-bottom: 20px;
         animation: fadeUp 1s both;
       }
-      .field:nth-child(1) {
-        animation-delay: 0.45s;
-      }
-      .field:nth-child(2) {
-        animation-delay: 0.55s;
-      }
+      .field:nth-child(1) { animation-delay: 0.45s; }
+      .field:nth-child(2) { animation-delay: 0.55s; }
       label {
         display: block;
         font-size: 0.68rem;
         font-weight: 700;
         letter-spacing: 1.6px;
         text-transform: uppercase;
-        color: rgba(255, 215, 0, 0.65);
+        color: var(--accent-gold);
         margin-bottom: 9px;
       }
-      .inp-w {
-        position: relative;
-      }
+      .inp-w { position: relative; }
       .ico {
         position: absolute;
         left: 16px;
@@ -787,39 +786,29 @@
       }
       input {
         width: 100%;
-        background: rgba(255, 255, 255, 0.07);
-        border: 1.5px solid rgba(255, 255, 255, 0.1);
+        background: var(--input-bg);
+        border: 1.5px solid var(--input-border);
         border-radius: 14px;
         padding: 15px 15px 15px 48px;
-        color: #fff;
+        color: var(--input-text);
         font-family: "Poppins", sans-serif;
         font-size: 0.95rem;
         outline: none;
         transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
       }
-      input::placeholder {
-        color: rgba(255, 255, 255, 0.2);
-      }
+      input::placeholder { color: var(--input-ph); }
       input:focus {
-        border-color: rgba(255, 215, 0, 0.65);
-        background: rgba(255, 215, 0, 0.05);
-        box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.1),
-          0 4px 20px rgba(0, 0, 0, 0.2);
+        border-color: var(--accent-gold);
+        background: var(--accent-gold-light);
+        box-shadow: 0 0 0 4px var(--accent-gold-light), 0 4px 20px rgba(0, 0, 0, 0.1);
       }
-      input[type="number"]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-      }
+      input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
       /* Next button */
       #nextBtn {
         width: 100%;
         padding: 17px;
-        background: linear-gradient(
-          135deg,
-          #ff6b35 0%,
-          #ffd700 50%,
-          #ff6b35 100%
-        );
+        background: var(--grad-btn);
         background-size: 200%;
         border: none;
         border-radius: 14px;
@@ -827,21 +816,19 @@
         font-family: "Poppins", sans-serif;
         font-size: 1rem;
         font-weight: 800;
-        color: #0d0d2b;
+        color: var(--btn-text);
         letter-spacing: 2px;
         text-transform: uppercase;
         transition: background-position 0.5s, transform 0.2s, box-shadow 0.3s;
-        box-shadow: 0 8px 35px rgba(255, 107, 53, 0.55);
+        box-shadow: 0 8px 35px var(--accent-gold-glow);
         animation: fadeUp 1s 0.65s both;
       }
       #nextBtn:hover {
         background-position: 100%;
         transform: translateY(-3px);
-        box-shadow: 0 16px 55px rgba(255, 215, 0, 0.65);
+        box-shadow: 0 16px 55px var(--accent-gold-glow);
       }
-      #nextBtn:active {
-        transform: translateY(-1px);
-      }
+      #nextBtn:active { transform: translateY(-1px); }
       .btn-in {
         display: flex;
         align-items: center;
@@ -853,22 +840,18 @@
         display: inline-block;
         transition: transform 0.3s;
       }
-      #nextBtn:hover .arr {
-        transform: translateX(6px);
-      }
+      #nextBtn:hover .arr { transform: translateX(6px); }
 
       /* Footer */
       .fp-foot {
         margin-top: 22px;
         text-align: center;
         font-size: 0.64rem;
-        color: rgba(255, 255, 255, 0.18);
+        color: var(--text-light);
         line-height: 1.7;
         animation: fadeUp 1s 0.75s both;
       }
-      .fp-foot strong {
-        color: rgba(255, 215, 0, 0.3);
-      }
+      .fp-foot strong { color: var(--accent-gold); }
 
       /* ════════════════════════════════════════════
    MAP MODAL (bigger, refined)
@@ -880,7 +863,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(0, 0, 16, 0.82);
+        background: var(--map-overlay);
         backdrop-filter: blur(20px);
         opacity: 0;
         visibility: hidden;
@@ -893,29 +876,25 @@
       #mapWin {
         width: min(1000px, 96vw);
         height: min(750px, 93vh);
-        background: linear-gradient(160deg, #05050f, #040410);
-        border: 1px solid rgba(255, 215, 0, 0.22);
+        background: var(--map-win-bg);
+        border: 1px solid var(--map-win-border);
         border-radius: 22px;
-        box-shadow: 0 60px 180px rgba(0, 0, 0, 0.98),
-          0 0 0 1px rgba(255, 255, 255, 0.03),
-          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        box-shadow: 0 60px 180px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
         display: flex;
         flex-direction: column;
         overflow: hidden;
         transform: scale(0.91) translateY(32px);
         transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
       }
-      #mapOverlay.open #mapWin {
-        transform: none;
-      }
+      #mapOverlay.open #mapWin { transform: none; }
       #mapBar {
         flex-shrink: 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 14px 22px 12px;
-        background: rgba(255, 255, 255, 0.03);
-        border-bottom: 1px solid rgba(255, 215, 0, 0.09);
+        background: var(--map-bar-bg);
+        border-bottom: 1px solid var(--map-win-border);
       }
       .win-dots {
         display: flex;
@@ -927,53 +906,32 @@
         height: 13px;
         border-radius: 50%;
       }
-      .wd1 {
-        background: #ff5f57;
-        cursor: pointer;
-      }
-      .wd2 {
-        background: #febc2e;
-      }
-      .wd3 {
-        background: #28c840;
-      }
-      .win-mid {
-        text-align: center;
-      }
+      .wd1 { background: #ff5f57; cursor: pointer; }
+      .wd2 { background: #febc2e; }
+      .wd3 { background: #28c840; }
+      .win-mid { text-align: center; }
       .win-mid h3 {
         font-family: "Playfair Display", serif;
         font-size: 1.05rem;
-        background: linear-gradient(90deg, #ffd700, #ff9a3c, #fff);
+        background: var(--grad-title);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
       .win-mid p {
         font-size: 0.66rem;
-        color: rgba(255, 255, 255, 0.25);
+        color: var(--text-muted);
         margin-top: 1px;
       }
-      .win-steps {
-        display: flex;
-        gap: 6px;
-        align-items: center;
-      }
-      .ws {
-        width: 22px;
-        height: 4px;
-        border-radius: 2px;
-      }
-      .ws.done {
-        background: rgba(255, 215, 0, 0.38);
-      }
-      .ws.active {
-        background: linear-gradient(90deg, #ff6b35, #ffd700);
-      }
+      .win-steps { display: flex; gap: 6px; align-items: center; }
+      .ws { width: 22px; height: 4px; border-radius: 2px; }
+      .ws.done { background: var(--accent-gold-glow); }
+      .ws.active { background: var(--grad-title); }
       #mapStatus {
         flex-shrink: 0;
         padding: 6px 20px;
-        background: rgba(255, 215, 0, 0.025);
-        border-bottom: 1px solid rgba(255, 215, 0, 0.065);
+        background: var(--accent-gold-light);
+        border-bottom: 1px solid var(--map-win-border);
         display: flex;
         align-items: center;
         gap: 9px;
@@ -983,27 +941,27 @@
         width: 7px;
         height: 7px;
         border-radius: 50%;
-        background: rgba(255, 215, 0, 0.2);
+        background: var(--accent-gold-glow);
         flex-shrink: 0;
         transition: all 0.3s;
       }
       #mapStatus.picked #sDot {
-        background: #ffd700;
-        box-shadow: 0 0 8px #ffd700;
+        background: var(--accent-gold);
+        box-shadow: 0 0 8px var(--accent-gold);
       }
       #sTxt {
         font-size: 0.72rem;
-        color: rgba(255, 215, 0, 0.48);
+        color: var(--text-muted);
         transition: color 0.3s;
       }
       #mapStatus.picked #sTxt {
-        color: #ffd700;
+        color: var(--accent-gold);
         font-weight: 600;
       }
       #mapArea {
         flex: 1;
         overflow: hidden;
-        background: #030309;
+        background: var(--map-area-bg);
         cursor: crosshair;
         position: relative;
       }
@@ -1013,70 +971,68 @@
         display: block;
       }
       .dp {
-        fill: #0c0c22;
-        stroke: rgba(255, 215, 0, 0.2);
+        fill: var(--dist-fill);
+        stroke: var(--dist-stroke);
         stroke-width: 0.8;
         cursor: pointer;
         transition: fill 0.15s, stroke 0.15s, filter 0.15s;
       }
       .dp:hover {
-        fill: #1d1a42;
-        stroke: rgba(255, 215, 0, 0.85);
+        fill: var(--dist-hover-fill);
+        stroke: var(--dist-hover-stroke);
         stroke-width: 1.8;
-        filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.45));
+        filter: drop-shadow(0 0 6px var(--accent-gold-glow));
       }
       .dp.active {
-        fill: rgba(255, 215, 0, 0.26);
-        stroke: #ffd700;
+        fill: var(--dist-active-fill);
+        stroke: var(--dist-active-stroke);
         stroke-width: 2.5;
-        filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.75));
+        filter: drop-shadow(0 0 14px var(--accent-gold-glow));
         animation: distPulse 1.3s ease-in-out infinite;
       }
-      /* District name labels — mobile only */
-    .dist-lbl {
-      font-family: 'Poppins', sans-serif;
-      font-size: 5px;
-      font-weight: 700;
-      fill: rgba(255, 220, 55, 0.95);
-      text-anchor: middle;
-      dominant-baseline: central;
-      pointer-events: none;
-      paint-order: stroke;
-      stroke: rgba(3, 3, 9, 0.98);
-      stroke-width: 4px;
-      stroke-linejoin: round;
-      display: none;           /* hidden on desktop */
-    }
-    @media (max-width: 768px) {
-      .dist-lbl { display: block; }
-      .dist-lbl.act { fill: #ffffff; font-size: 8px; }
-    }
+      .dist-lbl {
+        font-family: 'Poppins', sans-serif;
+        font-size: 5px;
+        font-weight: 700;
+        fill: var(--accent-gold);
+        text-anchor: middle;
+        dominant-baseline: central;
+        pointer-events: none;
+        paint-order: stroke;
+        stroke: var(--bg-color);
+        stroke-width: 4px;
+        stroke-linejoin: round;
+        display: none;
+      }
+      @media (max-width: 768px) {
+        .dist-lbl { display: block; }
+        .dist-lbl.act { fill: var(--text-main); font-size: 8px; }
+      }
 
       @keyframes distPulse {
-        0%,
-        100% {
-          fill: rgba(255, 215, 0, 0.26);
-          filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.75));
+        0%, 100% {
+          fill: var(--dist-active-fill);
+          filter: drop-shadow(0 0 14px var(--accent-gold-glow));
         }
         50% {
-          fill: rgba(255, 215, 0, 0.4);
-          filter: drop-shadow(0 0 26px rgba(255, 215, 0, 1));
+          fill: var(--accent-gold-glow);
+          filter: drop-shadow(0 0 26px var(--accent-gold));
         }
       }
       #mTip {
         position: absolute;
         display: none;
-        background: rgba(4, 4, 18, 0.97);
-        border: 1px solid rgba(255, 215, 0, 0.6);
+        background: var(--tip-bg);
+        border: 1px solid var(--accent-gold);
         border-radius: 10px;
-        color: #ffd700;
+        color: var(--tip-text);
         font-size: 0.76rem;
         font-weight: 700;
         padding: 6px 14px;
         pointer-events: none;
         z-index: 5;
         white-space: nowrap;
-        box-shadow: 0 6px 28px rgba(0, 0, 0, 0.8);
+        box-shadow: 0 6px 28px rgba(0, 0, 0, 0.4);
       }
       #mZoom {
         position: absolute;
@@ -1090,10 +1046,10 @@
       .mzb {
         width: 32px;
         height: 32px;
-        background: rgba(8, 8, 30, 0.92);
-        border: 1px solid rgba(255, 215, 0, 0.18);
+        background: var(--tip-bg);
+        border: 1px solid var(--map-win-border);
         border-radius: 8px;
-        color: rgba(255, 215, 0, 0.65);
+        color: var(--accent-gold);
         font-size: 1.1rem;
         cursor: pointer;
         display: flex;
@@ -1103,9 +1059,9 @@
         font-family: monospace;
       }
       .mzb:hover {
-        background: rgba(255, 215, 0, 0.14);
-        border-color: #ffd700;
-        color: #ffd700;
+        background: var(--accent-gold-light);
+        border-color: var(--accent-gold);
+        color: var(--accent-gold);
       }
       #mLoad {
         position: absolute;
@@ -1113,20 +1069,18 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #030309;
+        background: var(--map-area-bg);
         z-index: 3;
       }
       #mLoad .spin {
         width: 34px;
         height: 34px;
         border-radius: 50%;
-        border: 3px solid rgba(255, 215, 0, 0.1);
-        border-top-color: #ffd700;
+        border: 3px solid var(--accent-gold-light);
+        border-top-color: var(--accent-gold);
         animation: spin 0.8s linear infinite;
       }
-      #mLoad.h {
-        display: none;
-      }
+      #mLoad.h { display: none; }
 
       /* ── Celebration toast ── */
       #celebToast {
@@ -1135,16 +1089,15 @@
         left: 50%;
         transform: translateX(-50%) translateY(-90px);
         z-index: 9000;
-        background: rgba(4, 4, 20, 0.97);
-        border: 1px solid rgba(255, 215, 0, 0.55);
+        background: var(--tip-bg);
+        border: 1px solid var(--accent-gold);
         border-radius: 60px;
         padding: 13px 32px;
         display: flex;
         align-items: center;
         gap: 12px;
         white-space: nowrap;
-        box-shadow: 0 14px 60px rgba(0, 0, 0, 0.85),
-          0 0 40px rgba(255, 215, 0, 0.12);
+        box-shadow: 0 14px 60px rgba(0, 0, 0, 0.4), 0 0 40px var(--accent-gold-glow);
         transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s;
         opacity: 0;
         pointer-events: none;
@@ -1153,13 +1106,11 @@
         transform: translateX(-50%) translateY(0);
         opacity: 1;
       }
-      #celebToast .ct-ico {
-        font-size: 1.5rem;
-      }
+      #celebToast .ct-ico { font-size: 1.5rem; }
       #celebToast .ct-txt {
         font-family: "Playfair Display", serif;
         font-size: 1rem;
-        background: linear-gradient(90deg, #ffd700, #ff9a3c, #fff);
+        background: var(--grad-title);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -1169,256 +1120,71 @@
       /* ════════════════════════════════════════════
          RESPONSIVE — TABLET & MOBILE
       ════════════════════════════════════════════ */
-
-      /* Allow vertical scroll when panels stack */
       @media (max-width: 768px) {
-        html,
-        body {
-          overflow-y: auto;
-          height: auto;
-        }
+        html, body { overflow-y: auto; height: auto; }
+        #step1 { flex-direction: column; height: auto; min-height: 100vh; }
+        .bh-panel { flex: none; width: 100%; padding: 32px 20px 56px; min-height: auto; }
+        .r1 { width: 300px; height: 300px; margin: -150px 0 0 -150px; }
+        .r2 { width: 220px; height: 220px; margin: -110px 0 0 -110px; }
+        .r3 { width: 150px; height: 150px; margin: -75px 0 0 -75px; }
+        .r4 { width: 100px; height: 100px; margin: -50px 0 0 -50px; }
+        .orb1 { width: 280px; height: 280px; }
+        .orb2 { width: 230px; height: 230px; }
+        .orb3 { width: 180px; height: 180px; }
+        .bh-num { font-size: 5.5rem; }
+        .bh-vaan { font-size: 2rem; }
+        .bh-title { font-size: 1.7rem; letter-spacing: 2px; }
+        .bh-eyebrow { letter-spacing: 3px; }
+        .bh-stats { gap: 8px; }
+        .bh-stat { flex: 1 1 calc(50% - 8px); min-width: calc(50% - 8px); }
+        .bh-ticker { display: none; }
+        .form-panel { flex: none; width: 100%; padding: 32px 20px 48px; min-height: auto; }
+        .fp-corner { display: none; }
+        .fp-brand-text h1 { font-size: 1.4rem; }
+        .fp-logo { width: 44px; height: 44px; font-size: 22px; }
+        .fp-step-lbl { display: none; }
+        .fp-step-line { width: 18px; }
+        #mapWin { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; border: none; margin: 0; }
+        #mapBar { padding: 10px 12px 8px; flex-wrap: wrap; gap: 4px; }
+        .win-mid p { display: none; }
+        .win-mid h3 { font-size: 0.9rem; }
+        .win-steps { gap: 4px; }
+        .mzb { width: 44px; height: 44px; font-size: 1.3rem; border-radius: 10px; }
+        #mZoom { bottom: 20px; right: 12px; gap: 8px; }
+        #celebToast { left: 12px; right: 12px; width: auto; transform: translateY(-90px); white-space: normal; border-radius: 16px; padding: 12px 20px; }
+        #celebToast.show { transform: translateY(0); }
       }
-
-      @media (max-width: 768px) {
-        #step1 {
-          flex-direction: column;
-          height: auto;
-          min-height: 100vh;
-        }
-
-        /* Left panel */
-        .bh-panel {
-          flex: none;
-          width: 100%;
-          padding: 32px 20px 56px;
-          min-height: auto;
-        }
-
-        /* Shrink rings so they don't overflow on mobile */
-        .r1 {
-          width: 300px;
-          height: 300px;
-          margin: -150px 0 0 -150px;
-        }
-        .r2 {
-          width: 220px;
-          height: 220px;
-          margin: -110px 0 0 -110px;
-        }
-        .r3 {
-          width: 150px;
-          height: 150px;
-          margin: -75px 0 0 -75px;
-        }
-        .r4 {
-          width: 100px;
-          height: 100px;
-          margin: -50px 0 0 -50px;
-        }
-
-        /* Shrink orbs */
-        .orb1 {
-          width: 280px;
-          height: 280px;
-        }
-        .orb2 {
-          width: 230px;
-          height: 230px;
-        }
-        .orb3 {
-          width: 180px;
-          height: 180px;
-        }
-
-        /* Typography */
-        .bh-num {
-          font-size: 5.5rem;
-        }
-        .bh-vaan {
-          font-size: 2rem;
-        }
-        .bh-title {
-          font-size: 1.7rem;
-          letter-spacing: 2px;
-        }
-        .bh-eyebrow {
-          letter-spacing: 3px;
-        }
-
-        /* Stats: 2 per row */
-        .bh-stats {
-          gap: 8px;
-        }
-        .bh-stat {
-          flex: 1 1 calc(50% - 8px);
-          min-width: calc(50% - 8px);
-        }
-
-        /* Hide ticker on mobile */
-        .bh-ticker {
-          display: none;
-        }
-
-        /* Right panel */
-        .form-panel {
-          flex: none;
-          width: 100%;
-          padding: 32px 20px 48px;
-          min-height: auto;
-        }
-        .fp-corner {
-          display: none;
-        }
-        .fp-brand-text h1 {
-          font-size: 1.4rem;
-        }
-        .fp-logo {
-          width: 44px;
-          height: 44px;
-          font-size: 22px;
-        }
-
-        /* Hide step labels to save space */
-        .fp-step-lbl {
-          display: none;
-        }
-        .fp-step-line {
-          width: 18px;
-        }
-
-        /* Map modal: full-screen on mobile */
-        #mapWin {
-          width: 100vw;
-          height: 100vh;
-          height: 100dvh;
-          border-radius: 0;
-          border: none;
-          margin: 0;
-        }
-        #mapBar {
-          padding: 10px 12px 8px;
-          flex-wrap: wrap;
-          gap: 4px;
-        }
-        .win-mid p {
-          display: none;
-        }
-        .win-mid h3 {
-          font-size: 0.9rem;
-        }
-        .win-steps {
-          gap: 4px;
-        }
-
-        /* Larger touch targets for zoom buttons */
-        .mzb {
-          width: 44px;
-          height: 44px;
-          font-size: 1.3rem;
-          border-radius: 10px;
-        }
-        #mZoom {
-          bottom: 20px;
-          right: 12px;
-          gap: 8px;
-        }
-
-        /* Toast: full-width, no translateX centering trick */
-        #celebToast {
-          left: 12px;
-          right: 12px;
-          width: auto;
-          transform: translateY(-90px);
-          white-space: normal;
-          border-radius: 16px;
-          padding: 12px 20px;
-        }
-        #celebToast.show {
-          transform: translateY(0);
-        }
-      }
-
-      /* Small phones (≤ 480px) */
       @media (max-width: 480px) {
-        .bh-panel {
-          padding: 28px 16px 48px;
-        }
-        .bh-num {
-          font-size: 4.5rem;
-        }
-        .bh-title {
-          font-size: 1.3rem;
-          letter-spacing: 1.5px;
-        }
-        .bh-vaan {
-          font-size: 1.6rem;
-        }
-        .bh-eyebrow {
-          font-size: 0.6rem;
-          letter-spacing: 2px;
-        }
-        .bh-icon-row {
-          font-size: 2.2rem;
-        }
-        .bh-cd .cd-n {
-          font-size: 1.5rem;
-        }
-        .bh-cd {
-          padding: 8px 16px;
-          gap: 8px;
-        }
-        .bh-stat .sn {
-          font-size: 1rem;
-        }
-        .bh-stat .sl {
-          font-size: 0.55rem;
-        }
-
-        .form-panel {
-          padding: 28px 16px 40px;
-        }
-        .field {
-          margin-bottom: 16px;
-        }
-        input {
-          padding: 13px 13px 13px 44px;
-          font-size: 0.88rem;
-        }
-        #nextBtn {
-          padding: 15px;
-          font-size: 0.9rem;
-        }
-        .fp-brand {
-          gap: 10px;
-          margin-bottom: 20px;
-        }
-        .fp-brand-text h1 {
-          font-size: 1.2rem;
-        }
-        .fp-logo {
-          width: 40px;
-          height: 40px;
-          font-size: 20px;
-        }
-        .fp-steps {
-          gap: 5px;
-          margin-bottom: 20px;
-        }
-
-        /* Map bar ultra-compact */
-        .win-dots {
-          display: none;
-        }
-        .win-steps {
-          display: none;
-        }
-        #mapBar {
-          justify-content: center;
-        }
+        .bh-panel { padding: 28px 16px 48px; }
+        .bh-num { font-size: 4.5rem; }
+        .bh-title { font-size: 1.3rem; letter-spacing: 1.5px; }
+        .bh-vaan { font-size: 1.6rem; }
+        .bh-eyebrow { font-size: 0.6rem; letter-spacing: 2px; }
+        .bh-icon-row { font-size: 2.2rem; }
+        .bh-cd .cd-n { font-size: 1.5rem; }
+        .bh-cd { padding: 8px 16px; gap: 8px; }
+        .bh-stat .sn { font-size: 1rem; }
+        .bh-stat .sl { font-size: 0.55rem; }
+        .form-panel { padding: 28px 16px 40px; }
+        .field { margin-bottom: 16px; }
+        input { padding: 13px 13px 13px 44px; font-size: 0.88rem; }
+        #nextBtn { padding: 15px; font-size: 0.9rem; }
+        .fp-brand { gap: 10px; margin-bottom: 20px; }
+        .fp-brand-text h1 { font-size: 1.2rem; }
+        .fp-logo { width: 40px; height: 40px; font-size: 20px; }
+        .fp-steps { gap: 5px; margin-bottom: 20px; }
+        .win-dots { display: none; }
+        .win-steps { display: none; }
+        #mapBar { justify-content: center; }
       }
     </style>
   </head>
   <body>
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme">
+      <span class="icon-sun">☀️</span>
+      <span class="icon-moon">🌙</span>
+    </button>
+
     <canvas id="stars"></canvas>
     <canvas id="celebCanvas"></canvas>
     <div class="orb orb1"></div>
@@ -1438,18 +1204,13 @@
       <input type="hidden" id="fDist" name="district" />
       <input type="hidden" id="fBbox" name="bbox" />
     </form>
-    <!-- ════════════════════════ STEP 1 ════════════════════════ -->
     <div id="step1">
-      <!-- ── LEFT: Bihar Day Panel ── -->
       <div class="bh-panel">
-        <!-- Watermark SVG (Bihar map outline) -->
         <svg id="biharBg" xmlns="http://www.w3.org/2000/svg"></svg>
-        <!-- Decorative rings -->
         <div class="ring r1"></div>
         <div class="ring r2"></div>
         <div class="ring r3"></div>
         <div class="ring r4"></div>
-        <!-- Content -->
         <div class="bh-content">
           <div class="bh-eyebrow">
             &#10022; &nbsp; बिहार राज्य स्थापना दिवस &nbsp; &#10022;
@@ -1496,7 +1257,6 @@
             <span class="cd-lbl">दिन शेष है &nbsp;&#9203;</span>
           </div>
         </div>
-        <!-- Bottom ticker -->
         <div class="bh-ticker">
           <div class="ticker-track">
             <span class="ticker-item">&#127963; 114वां बिहार दिवस</span>
@@ -1522,12 +1282,10 @@
           </div>
         </div>
       </div>
-      <!-- ── RIGHT: Form Panel ── -->
       <div class="form-panel">
         <div class="fp-corner tl"></div>
         <div class="fp-corner br"></div>
         <div style="width: 100%; max-width: 400px">
-          <!-- Branding -->
           <div class="fp-brand">
             <div class="fp-logo">{{ app_logo }}</div>
             <div class="fp-brand-text">
@@ -1535,7 +1293,6 @@
               <p>{{ app_subtitle }}</p>
             </div>
           </div>
-          <!-- Steps -->
           <div class="fp-steps">
             <div class="fp-step">
               <div class="fp-step-dot cur">1</div>
@@ -1553,7 +1310,6 @@
             </div>
           </div>
           <div class="fp-div"></div>
-          <!-- Fields -->
           <div class="field">
             <label>&#128100; आपका नाम / Your Name</label>
             <div class="inp-w">
@@ -1593,7 +1349,6 @@
         </div>
       </div>
     </div>
-    <!-- ════════════════════ MAP MODAL ════════════════════ -->
     <div id="mapOverlay">
       <div id="mapWin">
         <div id="mapBar">
@@ -1631,6 +1386,14 @@
       </div>
     </div>
     <script>
+      /* ── THEME TOGGLE ── */
+      document.getElementById('themeToggle').addEventListener('click', () => {
+        let current = document.documentElement.getAttribute('data-theme');
+        let nextTheme = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        localStorage.setItem('theme', nextTheme);
+      });
+
       /* ── STARS ── */
       (function () {
         const c = document.getElementById("stars"),
@@ -1649,12 +1412,13 @@
         }
         function d() {
           x.clearRect(0, 0, c.width, c.height);
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
           s.forEach((p) => {
             p.a = Math.max(0.04, Math.min(1, p.a + p.da));
             if (p.a <= 0.04 || p.a >= 1) p.da *= -1;
             x.beginPath();
             x.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
-            x.fillStyle = `rgba(255,215,0,${p.a})`;
+            x.fillStyle = isDark ? `rgba(255,215,0,${p.a})` : `rgba(217,119,6,${p.a * 0.4})`;
             x.fill();
           });
           requestAnimationFrame(d);
@@ -1710,16 +1474,11 @@
           return;
         }
         if (data.error) return;
-        let x0 = Infinity,
-          x1 = -Infinity,
-          y0 = Infinity,
-          y1 = -Infinity;
+        let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
         function bb(c) {
           if (typeof c[0] === "number") {
-            x0 = Math.min(x0, c[0]);
-            x1 = Math.max(x1, c[0]);
-            y0 = Math.min(y0, c[1]);
-            y1 = Math.max(y1, c[1]);
+            x0 = Math.min(x0, c[0]); x1 = Math.max(x1, c[0]);
+            y0 = Math.min(y0, c[1]); y1 = Math.max(y1, c[1]);
           } else c.forEach(bb);
         }
         data.features.forEach((f) => bb(f.geometry.coordinates));
@@ -1734,12 +1493,10 @@
         }
         function rD(ring) {
           return (
-            ring
-              .map(([ln, lt], i) => {
+            ring.map(([ln, lt], i) => {
                 const [px, py] = proj(ln, lt);
                 return (i ? "L" : "M") + px.toFixed(1) + " " + py.toFixed(1);
-              })
-              .join("") + "Z"
+              }).join("") + "Z"
           );
         }
         function gD(g) {
@@ -1751,15 +1508,12 @@
         }
         const grp = document.createElementNS("http://www.w3.org/2000/svg", "g");
         data.features.forEach((f) => {
-          const path = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "path"
-          );
+          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
           const d = gD(f.geometry);
           if (!d) return;
           path.setAttribute("d", d);
           path.setAttribute("fill", "none");
-          path.setAttribute("stroke", "rgba(255,215,0,1)");
+          path.setAttribute("stroke", "var(--accent-gold)");
           path.setAttribute("stroke-width", "1.2");
           grp.appendChild(path);
         });
@@ -1773,20 +1527,16 @@
         cv.height = innerHeight;
         cv.style.display = "block";
         const ctx = cv.getContext("2d");
-        const cols = [
-          "#FFD700",
-          "#FF9A3C",
-          "#fff",
-          "#FFE566",
-          "#FF6B35",
-          "#FFC107",
-        ];
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const cols = isDark 
+            ? ["#FFD700", "#FF9A3C", "#fff", "#FFE566", "#FF6B35", "#FFC107"]
+            : ["#d97706", "#ea580c", "#c2410c", "#b45309", "#f59e0b"];
+
         const ps = Array.from({ length: 90 }, () => {
           const a = Math.random() * Math.PI * 2,
             sp = Math.random() * 12 + 3;
           return {
-            x,
-            y,
+            x, y,
             vx: Math.cos(a) * sp,
             vy: Math.sin(a) * sp - Math.random() * 5,
             r: Math.random() * 5 + 1,
@@ -1833,15 +1583,11 @@
         cv.height = innerHeight;
         cv.style.display = "block";
         const ctx = cv.getContext("2d");
-        const cols = [
-          "#FFD700",
-          "#FF6B35",
-          "#FF9A3C",
-          "#fff",
-          "#A855F7",
-          "#3B82F6",
-          "#FFE566",
-        ];
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const cols = isDark 
+            ? ["#FFD700", "#FF6B35", "#FF9A3C", "#fff", "#A855F7", "#3B82F6", "#FFE566"]
+            : ["#d97706", "#ea580c", "#c2410c", "#b45309", "#f59e0b"];
+
         const ps = Array.from({ length: 130 }, () => ({
           x: Math.random() * cv.width,
           y: -30,
@@ -1917,24 +1663,8 @@
 
       /* ══ PURE-SVG BIHAR MAP (modal) ══ */
       const NS = "http://www.w3.org/2000/svg";
-      let svgEl,
-        vbX = 0,
-        vbY = 0,
-        vbW = 800,
-        vbH = 600,
-        activePath = null,
-        mapReady = false;
-      let isDrag = false,
-        dSX = 0,
-        dSY = 0,
-        dVX = 0,
-        dVY = 0;
-
-      /*
-       * featMap: district name → GeoJSON feature object.
-       * Used by mArea.touchend to look up features via elementFromPoint,
-       * bypassing the iOS Safari SVG touchend reliability issue.
-       */
+      let svgEl, vbX = 0, vbY = 0, vbW = 800, vbH = 600, activePath = null, mapReady = false;
+      let isDrag = false, dSX = 0, dSY = 0, dVX = 0, dVY = 0;
       const featMap = {};
 
       function setSt(t, p = false) {
@@ -1946,34 +1676,23 @@
       }
       function rToD(ring, proj) {
         return (
-          ring
-            .map(([ln, lt], i) => {
+          ring.map(([ln, lt], i) => {
               const [px, py] = proj(ln, lt);
               return (i ? "L" : "M") + px.toFixed(2) + " " + py.toFixed(2);
-            })
-            .join("") + "Z"
+            }).join("") + "Z"
         );
       }
       function gToD(g, proj) {
-        if (g.type === "Polygon")
-          return g.coordinates.map((r) => rToD(r, proj)).join("");
-        if (g.type === "MultiPolygon")
-          return g.coordinates
-            .map((p) => p.map((r) => rToD(r, proj)).join(""))
-            .join("");
+        if (g.type === "Polygon") return g.coordinates.map((r) => rToD(r, proj)).join("");
+        if (g.type === "MultiPolygon") return g.coordinates.map((p) => p.map((r) => rToD(r, proj)).join("")).join("");
         return "";
       }
       function animateVB(tx, ty, tw, th) {
-        const S = 28,
-          ox = vbX,
-          oy = vbY,
-          ow = vbW,
-          oh = vbH;
+        const S = 28, ox = vbX, oy = vbY, ow = vbW, oh = vbH;
         let i = 0;
         (function step() {
           if (i > S) return;
-          const t = i / S,
-            e = 1 - Math.pow(1 - t, 3);
+          const t = i / S, e = 1 - Math.pow(1 - t, 3);
           vbX = ox + (tx - ox) * e;
           vbY = oy + (ty - oy) * e;
           vbW = ow + (tw - ow) * e;
@@ -1986,43 +1705,34 @@
       function zoomToPath(path, pf = 2.4) {
         const bb = path.getBBox();
         const sz = Math.max(bb.width * pf, bb.height * pf);
-        const cx = bb.x + bb.width / 2,
-          cy = bb.y + bb.height / 2;
+        const cx = bb.x + bb.width / 2, cy = bb.y + bb.height / 2;
         const area = document.getElementById("mapArea");
         const ar = area.clientWidth / (area.clientHeight || 1);
-        const fW = sz,
-          fH = sz / ar;
+        const fW = sz, fH = sz / ar;
         animateVB(cx - fW / 2, cy - fH / 2, fW, fH);
       }
 
-      /* ─────────────────────────────────────────
-     Shared district selection logic.
-     Called by both desktop click AND mobile touchend.
-     cx/cy = client coordinates for sparkBurst.
-  ───────────────────────────────────────── */
       function selectDistrict(path, feat, cx, cy) {
-        if (activePath && activePath !== path)
-          activePath.setAttribute("class", "dp");
+        if (activePath && activePath !== path) activePath.setAttribute("class", "dp");
         activePath = path;
         const prevLbl = document.querySelector('.dist-lbl.act');
         if (prevLbl) prevLbl.classList.remove('act');
         const curLbl = document.querySelector(`.dist-lbl[data-name="${feat.properties.name}"]`);
         if (curLbl) curLbl.classList.add('act');
         path.setAttribute("class", "dp active");
-        path.parentNode.appendChild(path); // bring selected district to front (z-order)
+        path.parentNode.appendChild(path);
         document.getElementById("mTip").style.display = "none";
 
         const name = feat.properties.name;
         sparkBurst(cx, cy);
         const nm = document.getElementById("fName").value || "आप";
-        document.getElementById("ctTxt").textContent =
-          "✓ " + name + " चुना गया, " + nm + "!";
+        document.getElementById("ctTxt").textContent = "✓ " + name + " चुना गया, " + nm + "!";
         const toast = document.getElementById("celebToast");
         toast.classList.add("show");
         setTimeout(() => toast.classList.remove("show"), 2800);
         setSt("✓ <strong>" + name + "</strong> चुना गया — खुल रहा है…", true);
         document.getElementById("fDist").value = name;
-        // Compute this district's bbox from GeoJSON geometry
+        
         let _minLng=Infinity,_maxLng=-Infinity,_minLat=Infinity,_maxLat=-Infinity;
         (function _cc(c){
           if(typeof c[0]==='number'){
@@ -2030,9 +1740,7 @@
             _minLat=Math.min(_minLat,c[1]); _maxLat=Math.max(_maxLat,c[1]);
           } else { c.forEach(_cc); }
         })(feat.geometry.coordinates);
-        document.getElementById('fBbox').value = JSON.stringify({
-          minLng:_minLng, minLat:_minLat, maxLng:_maxLng, maxLat:_maxLat
-        });
+        document.getElementById('fBbox').value = JSON.stringify({ minLng:_minLng, minLat:_minLat, maxLng:_maxLng, maxLat:_maxLat });
 
         zoomToPath(path, 2.4);
 
@@ -2040,17 +1748,13 @@
         setTimeout(() => {
           document.getElementById("dL").classList.add("v");
           document.getElementById("dR").classList.add("v");
-          requestAnimationFrame(() =>
-            requestAnimationFrame(() => {
+          requestAnimationFrame(() => requestAnimationFrame(() => {
               document.getElementById("dL").classList.add("o");
               document.getElementById("dR").classList.add("o");
             })
           );
         }, 680);
-        setTimeout(
-          () => document.getElementById("dLt").classList.add("v"),
-          840
-        );
+        setTimeout(() => document.getElementById("dLt").classList.add("v"), 840);
         setTimeout(() => document.getElementById("subForm").submit(), 1400);
       }
 
@@ -2060,7 +1764,7 @@
         vbW = area.clientWidth || 880;
         vbH = area.clientHeight || 620;
         svgEl.setAttribute("viewBox", `0 0 ${vbW} ${vbH}`);
-      
+       
         let data;
         try {
           const r = await fetch("/bihar_dist_ready.geojson");
@@ -2073,7 +1777,7 @@
           setSt("⚠ " + data.error);
           return;
         }
-      
+       
         let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
         function bb(c) {
           if (typeof c[0] === "number") {
@@ -2082,42 +1786,27 @@
           } else c.forEach(bb);
         }
         data.features.forEach((f) => bb(f.geometry.coordinates));
-      
-        const pad = 30,
-          sx = (vbW - 2 * pad) / (x1 - x0),
-          sy = (vbH - 2 * pad) / (y1 - y0),
-          s  = Math.min(sx, sy);
-        const ox = (vbW - s * (x1 - x0)) / 2,
-              oy = (vbH - s * (y1 - y0)) / 2;
-        function proj(lng, lat) {
-          return [ox + (lng - x0) * s, vbH - oy - (lat - y0) * s];
-        }
-      
-        /* Paths group + label group (labels must be in a SEPARATE group
-           appended AFTER grp so they always render above all district paths) */
-        const grp    = document.createElementNS(NS, "g");
+       
+        const pad = 30, sx = (vbW - 2 * pad) / (x1 - x0), sy = (vbH - 2 * pad) / (y1 - y0), s = Math.min(sx, sy);
+        const ox = (vbW - s * (x1 - x0)) / 2, oy = (vbH - s * (y1 - y0)) / 2;
+        function proj(lng, lat) { return [ox + (lng - x0) * s, vbH - oy - (lat - y0) * s]; }
+       
+        const grp = document.createElementNS(NS, "g");
         const lblGrp = document.createElementNS(NS, "g");
         lblGrp.id = "dlg";
         const tip = document.getElementById("mTip");
-      
+       
         data.features.forEach((feat) => {
           const name = feat.properties.name;
           const d = gToD(feat.geometry, proj);
           if (!d) return;
-      
-          /* ── Path ── */
+       
           const path = document.createElementNS(NS, "path");
           path.setAttribute("d", d);
           path.setAttribute("class", "dp");
           path.setAttribute("data-name", name);
-      
-          /* Store feature for mobile touchend → elementFromPoint lookup */
           featMap[name] = feat;
-      
-          /* ── Mouse events (desktop only) ──
-             Note: parentNode.appendChild intentionally removed from mouseenter —
-             moving the element mid-touch breaks iOS Safari touch targeting.
-             It lives only in selectDistrict() now.                            */
+       
           path.addEventListener("mouseenter", () => {
             if (path !== activePath) path.setAttribute("class", "dp");
             tip.textContent = name;
@@ -2133,31 +1822,21 @@
             if (path !== activePath) path.setAttribute("class", "dp");
             tip.style.display = "none";
           });
-      
-          /* Desktop click only — touchend on mArea calls e.preventDefault()
-             which suppresses the synthetic click on mobile (no double-fire). */
-          path.addEventListener("click", (e) =>
-            selectDistrict(path, feat, e.clientX, e.clientY)
-          );
-      
+          path.addEventListener("click", (e) => selectDistrict(path, feat, e.clientX, e.clientY));
           grp.appendChild(path);
-      
-          /* ── District name label (mobile only — shown via CSS @media) ──
-             Centroid = projected midpoint of this feature's bounding box.
-             Using bbox midpoint (not polygon centroid) is fast and accurate
-             enough for Bihar's roughly convex districts.                    */
+       
           let _ring = [];
           if (feat.geometry.type === "Polygon") {
-            _ring = feat.geometry.coordinates[0];          // outer ring
+            _ring = feat.geometry.coordinates[0];
           } else if (feat.geometry.type === "MultiPolygon") {
-            feat.geometry.coordinates.forEach((poly) => {  // largest ring = main body
+            feat.geometry.coordinates.forEach((poly) => {
               if (poly[0].length > _ring.length) _ring = poly[0];
             });
           }
           let _sx = 0, _sy = 0;
           _ring.forEach(([lng, lat]) => { _sx += lng; _sy += lat; });
           const [lx, ly] = proj(_sx / _ring.length, _sy / _ring.length);
-      
+       
           const lbl = document.createElementNS(NS, "text");
           lbl.setAttribute("x", lx.toFixed(1));
           lbl.setAttribute("y", ly.toFixed(1));
@@ -2166,17 +1845,16 @@
           lbl.textContent = name;
           lblGrp.appendChild(lbl);
         });
-      
+       
         svgEl.appendChild(grp);
-        svgEl.appendChild(lblGrp);  /* labels always on top of all district paths */
-      
+        svgEl.appendChild(lblGrp);
+       
         document.getElementById("mLoad").classList.add("h");
         setSt("Tap/click your district to continue");
         mapReady = true;
       }
       
-
-      /* ── Zoom & pan (desktop mouse) ── */
+      /* ── Zoom & pan ── */
       function doZoom(f, cx, cy) {
         cx = cx ?? vbX + vbW / 2;
         cy = cy ?? vbY + vbH / 2;
@@ -2188,42 +1866,24 @@
       }
       function resetZoom() {
         const a = document.getElementById("mapArea");
-        vbX = 0;
-        vbY = 0;
-        vbW = a.clientWidth || 880;
-        vbH = a.clientHeight || 620;
+        vbX = 0; vbY = 0; vbW = a.clientWidth || 880; vbH = a.clientHeight || 620;
         applyVB();
       }
-      document
-        .getElementById("zIn")
-        .addEventListener("click", () => doZoom(0.7));
-      document
-        .getElementById("zOut")
-        .addEventListener("click", () => doZoom(1.42));
+      document.getElementById("zIn").addEventListener("click", () => doZoom(0.7));
+      document.getElementById("zOut").addEventListener("click", () => doZoom(1.42));
       document.getElementById("zRst").addEventListener("click", resetZoom);
 
       const mArea = document.getElementById("mapArea");
-      mArea.addEventListener(
-        "wheel",
-        (e) => {
+      mArea.addEventListener("wheel", (e) => {
           if (!mapReady) return;
           e.preventDefault();
           const r = mArea.getBoundingClientRect();
-          doZoom(
-            e.deltaY > 0 ? 1.14 : 0.88,
-            vbX + ((e.clientX - r.left) / r.width) * vbW,
-            vbY + ((e.clientY - r.top) / r.height) * vbH
-          );
-        },
-        { passive: false }
-      );
+          doZoom(e.deltaY > 0 ? 1.14 : 0.88, vbX + ((e.clientX - r.left) / r.width) * vbW, vbY + ((e.clientY - r.top) / r.height) * vbH);
+        }, { passive: false });
       mArea.addEventListener("mousedown", (e) => {
         if (e.target.classList.contains("dp")) return;
         isDrag = true;
-        dSX = e.clientX;
-        dSY = e.clientY;
-        dVX = vbX;
-        dVY = vbY;
+        dSX = e.clientX; dSY = e.clientY; dVX = vbX; dVY = vbY;
         mArea.style.cursor = "grabbing";
       });
       window.addEventListener("mousemove", (e) => {
@@ -2237,74 +1897,37 @@
         isDrag = false;
         mArea.style.cursor = "crosshair";
       });
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeMap();
-      });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMap(); });
 
-      /* ════════════════════════════════════════════
-     TOUCH — pan, pinch-zoom & district select
-     ALL handled on mArea (parent div), NOT on
-     individual SVG <path> elements.
-
-     WHY: iOS Safari does NOT reliably fire touchend
-     on SVG child elements. The parent div ALWAYS
-     receives touchend. We use elementFromPoint()
-     to identify which district was tapped.
-  ════════════════════════════════════════════ */
+      /* ── TOUCH ── */
       (function () {
-        let tpX = 0,
-          tpY = 0,
-          tpVX = 0,
-          tpVY = 0;
-        let pinchD0 = 0,
-          pinchW0 = 0,
-          pinchH0 = 0,
-          pinchVX0 = 0,
-          pinchVY0 = 0;
-        let touchMoved = false; // true if finger moved >8px (pan), false = tap
+        let tpX = 0, tpY = 0, tpVX = 0, tpVY = 0;
+        let pinchD0 = 0, pinchW0 = 0, pinchH0 = 0, pinchVX0 = 0, pinchVY0 = 0;
+        let touchMoved = false;
 
         function ptDist(a, b) {
-          const dx = a.clientX - b.clientX,
-            dy = a.clientY - b.clientY;
+          const dx = a.clientX - b.clientX, dy = a.clientY - b.clientY;
           return Math.sqrt(dx * dx + dy * dy);
         }
-        function ptMid(a, b) {
-          return {
-            x: (a.clientX + b.clientX) / 2,
-            y: (a.clientY + b.clientY) / 2,
-          };
-        }
+        function ptMid(a, b) { return { x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 }; }
 
-        mArea.addEventListener(
-          "touchstart",
-          function (e) {
+        mArea.addEventListener("touchstart", function (e) {
             e.preventDefault();
             touchMoved = false;
             if (e.touches.length === 1) {
-              tpX = e.touches[0].clientX;
-              tpY = e.touches[0].clientY;
-              tpVX = vbX;
-              tpVY = vbY;
+              tpX = e.touches[0].clientX; tpY = e.touches[0].clientY; tpVX = vbX; tpVY = vbY;
             } else if (e.touches.length === 2) {
               pinchD0 = ptDist(e.touches[0], e.touches[1]);
-              pinchW0 = vbW;
-              pinchH0 = vbH;
-              pinchVX0 = vbX;
-              pinchVY0 = vbY;
+              pinchW0 = vbW; pinchH0 = vbH; pinchVX0 = vbX; pinchVY0 = vbY;
             }
-          },
-          { passive: false }
-        );
+          }, { passive: false });
 
-        mArea.addEventListener(
-          "touchmove",
-          function (e) {
+        mArea.addEventListener("touchmove", function (e) {
             if (!mapReady) return;
             e.preventDefault();
             if (e.touches.length === 1) {
-              const dx = e.touches[0].clientX - tpX,
-                dy = e.touches[0].clientY - tpY;
-              if (Math.sqrt(dx * dx + dy * dy) > 8) touchMoved = true; // finger moved: it's a pan
+              const dx = e.touches[0].clientX - tpX, dy = e.touches[0].clientY - tpY;
+              if (Math.sqrt(dx * dx + dy * dy) > 8) touchMoved = true;
               const r = mArea.getBoundingClientRect();
               vbX = tpVX - (dx / r.width) * vbW;
               vbY = tpVY - (dy / r.height) * vbH;
@@ -2312,44 +1935,28 @@
             } else if (e.touches.length === 2) {
               touchMoved = true;
               const d = ptDist(e.touches[0], e.touches[1]);
-              const scale = pinchD0 / d;
-              const mid = ptMid(e.touches[0], e.touches[1]);
+              const scale = pinchD0 / d, mid = ptMid(e.touches[0], e.touches[1]);
               const r = mArea.getBoundingClientRect();
               const cx = pinchVX0 + ((mid.x - r.left) / r.width) * pinchW0;
               const cy = pinchVY0 + ((mid.y - r.top) / r.height) * pinchH0;
-              vbW = pinchW0 * scale;
-              vbH = pinchH0 * scale;
+              vbW = pinchW0 * scale; vbH = pinchH0 * scale;
               vbX = cx - ((mid.x - r.left) / r.width) * vbW;
               vbY = cy - ((mid.y - r.top) / r.height) * vbH;
               applyVB();
             }
-          },
-          { passive: false }
-        );
+          }, { passive: false });
 
-        mArea.addEventListener(
-          "touchend",
-          function (e) {
+        mArea.addEventListener("touchend", function (e) {
             if (!mapReady) return;
-            /* Only treat as district tap if single finger AND finger did NOT pan */
             if (e.changedTouches.length !== 1 || touchMoved) return;
-
             const touch = e.changedTouches[0];
-
-            /* elementFromPoint reliably finds the SVG path at the tap point,
-         even when touchend doesn't fire on the path itself (iOS Safari) */
             const el = document.elementFromPoint(touch.clientX, touch.clientY);
             if (!el || !el.classList.contains("dp")) return;
-
-            /* It's a district tap — prevent synthetic click (avoids double-fire) */
             e.preventDefault();
-
             const name = el.getAttribute("data-name");
             const feat = featMap[name];
             if (feat) selectDistrict(el, feat, touch.clientX, touch.clientY);
-          },
-          { passive: false }
-        );
+          }, { passive: false });
       })();
     </script>
   </body>

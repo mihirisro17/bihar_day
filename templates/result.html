@@ -585,292 +585,287 @@
   </div>
 
     <script>
-    // ═══ CONFIG FROM FLASK ═══
-    const EVENTS     = {{ events | tojson }};
-    const BASE_TL_MS = {{ tl_interval }};
-    const DISTRICT   = "{{ district }}";
-    const BIRTH_YEAR = {{ birth_year }};
-    const RAW_BBOX   = {{ (bbox or {"minLng":83.3,"minLat":24.3,"maxLng":88.2,"maxLat":27.5}) | tojson }};
-    const NS  = 'http://www.w3.org/2000/svg';
-    const W_RES = 1600, H_RES = 900;
-  
-    // ═══ BBOX MATH (mirrors Python) ═══
-    function computePaddedBbox(raw) {
-      const KM30_LAT = 0.27, KM30_LNG = 0.30, AR = 16/9;
-      const exp = {
-        minLng: raw.minLng - KM30_LNG, maxLng: raw.maxLng + KM30_LNG,
-        minLat: raw.minLat - KM30_LAT, maxLat: raw.maxLat + KM30_LAT,
-      };
-      const lngSpan = exp.maxLng - exp.minLng;
-      const latSpan = exp.maxLat - exp.minLat;
-      const cx = (exp.maxLng + exp.minLng) / 2;
-      const cy = (exp.maxLat + exp.minLat) / 2;
-      let pW = lngSpan * 1.5, pH = latSpan * 1.5;
-      if (pW / pH > AR) pH = pW / AR; else pW = pH * AR;
-      return {
-        minLng: cx - pW/2, maxLng: cx + pW/2,
-        minLat: cy - pH/2, maxLat: cy + pH/2,
-      };
-    }
-  
-    const BBOX = computePaddedBbox(RAW_BBOX);
-  
-    // ═══ WMS URL BUILDERS ═══
-    const EOX_AVAIL = [2016,2017,2018,2019,2020,2021,2022,2023,2024];
-  
-    function bboxParam() {
-      return `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
-    }
-  
-    function baseQuery() {
-      return `&STYLES=&SRS=EPSG:4326&BBOX=${bboxParam()}&WIDTH=${W_RES}&HEIGHT=${H_RES}&FORMAT=image/jpeg`;
-    }
-  
-   function getSentinelUrl(year) {
-    // Always clamp to latest available EOX year (2024)
+  // ═══ CONFIG FROM FLASK ═══
+  const EVENTS     = {{ events | tojson }};
+  const BASE_TL_MS = {{ tl_interval }};
+  const DISTRICT   = "{{ district }}";
+  const BIRTH_YEAR = {{ birth_year }};
+  const RAW_BBOX   = {{ (bbox or {"minLng":83.3,"minLat":24.3,"maxLng":88.2,"maxLat":27.5}) | tojson }};
+  const NS    = 'http://www.w3.org/2000/svg';
+  const W_RES = 1600, H_RES = 900;
+
+  // ═══ BBOX MATH ═══
+  function computePaddedBbox(raw) {
+    const KM30_LAT = 0.27, KM30_LNG = 0.30, AR = 16/9;
+    const exp = {
+      minLng: raw.minLng - KM30_LNG, maxLng: raw.maxLng + KM30_LNG,
+      minLat: raw.minLat - KM30_LAT, maxLat: raw.maxLat + KM30_LAT,
+    };
+    const cx = (exp.maxLng + exp.minLng) / 2;
+    const cy = (exp.maxLat + exp.minLat) / 2;
+    let pW = (exp.maxLng - exp.minLng) * 1.5;
+    let pH = (exp.maxLat - exp.minLat) * 1.5;
+    if (pW / pH > AR) pH = pW / AR; else pW = pH * AR;
+    return {
+      minLng: cx - pW/2, maxLng: cx + pW/2,
+      minLat: cy - pH/2, maxLat: cy + pH/2,
+    };
+  }
+
+  const BBOX = computePaddedBbox(RAW_BBOX);
+
+  // ═══ WMS URL BUILDERS ═══
+  const EOX_AVAIL = [2016,2017,2018,2019,2020,2021,2022,2023,2024];
+
+  function bboxParam() {
+    return `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
+  }
+
+  function baseQuery() {
+    return `&STYLES=&SRS=EPSG:4326&BBOX=${bboxParam()}&WIDTH=${W_RES}&HEIGHT=${H_RES}&FORMAT=image/jpeg`;
+  }
+
+  function getSentinelUrl(year) {
     const LATEST = EOX_AVAIL[EOX_AVAIL.length - 1]; // 2024
-    const y = year <= LATEST
-      ? (EOX_AVAIL.includes(year) ? year : EOX_AVAIL.filter(v => v <= year).pop() || LATEST)
-      : LATEST; // 2025, 2026, etc → always use 2024
+    const y = year >= LATEST
+      ? LATEST
+      : (EOX_AVAIL.includes(year) ? year : (EOX_AVAIL.filter(v => v <= year).pop() || LATEST));
     return {
       url:   `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${baseQuery()}`,
       label: `📡 Sentinel-2 ${y}`
     };
   }
-  
-    function getModisUrl(year) {
-      const y = Math.min(Math.max(year, 2000), 2024);
-      return {
-        url: `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${y}-06-15${baseQuery()}`,
-        label: '📡 MODIS Terra'
-      };
-    }
-  
-   function getBirthSrc(year) {
-    // 2016+ → Sentinel-2, pre-2016 → MODIS Terra
+
+  function getModisUrl(year) {
+    const y = Math.min(Math.max(year, 2000), 2023); // MODIS safe range
+    return {
+      url:   `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${y}-03-15${baseQuery()}`,
+      label: '📡 MODIS Terra'
+    };
+  }
+
+  function getBirthSrc(year) {
     return year >= 2016 ? getSentinelUrl(year) : getModisUrl(year);
   }
 
-  
-    function getCurrentSrc() {
-    // Explicitly request s2cloudless-2024 for the "2026" present day card
-    return {
-      url:   `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-2024${baseQuery()}`,
-      label: '📡 Sentinel-2 2024'
-    };
+  function getCurrentSrc() {
+    return getSentinelUrl(2026); // clamps to s2cloudless-2024
   }
-  
-    // ═══ LOAD SATELLITE IMAGE ═══
-    // Browser fetches WMS directly — no Vercel timeout issue
-    function loadSatImage(type, year, skeletonEl, imgEl, svgEl, srcEl) {
-      const src      = type === 'current' ? getCurrentSrc() : getBirthSrc(year);
-      const fallback = getModisUrl(Math.max(year, 2000));
-  
-      srcEl.textContent = src.label;
-  
-      function tryLoad(urlObj, isFallback) {
-        const img  = new Image();
-        img.crossOrigin = 'anonymous';
-  
-        img.onload = () => {
-          imgEl.src = img.src;
-          imgEl.classList.add('loaded');
-          skeletonEl.classList.add('hidden');
-          srcEl.textContent = urlObj.label;
-          if (geoJsonData) drawOverlay(geoJsonData, svgEl, BBOX);
-        };
-  
-        img.onerror = () => {
-          if (!isFallback) {
-            // Primary failed → try MODIS
-            srcEl.textContent = '📡 Retrying...';
-            tryLoad(fallback, true);
-          } else {
-            // Both failed
-            skeletonEl.classList.add('hidden');
-            srcEl.textContent = '⚠️ Unavailable';
-          }
-        };
-  
-        img.src = urlObj.url;
-      }
-  
-      tryLoad(src, false);
-    }
-  
-    // ═══ MOUSE GLOW ═══
-    const mouseGlow = document.getElementById('mouseGlow');
-    document.addEventListener('mousemove', e => {
-      requestAnimationFrame(() => {
-        mouseGlow.style.left = e.clientX + 'px';
-        mouseGlow.style.top  = e.clientY + 'px';
-      });
-    });
-    document.querySelectorAll('.tl-card,.sat-card,.info-chip,.top-btn,.ctrl-btn,.tl-arrow').forEach(el => {
-      el.addEventListener('mouseenter', () => { mouseGlow.style.width='600px'; mouseGlow.style.height='600px'; mouseGlow.style.opacity='.8'; });
-      el.addEventListener('mouseleave', () => { mouseGlow.style.width='400px'; mouseGlow.style.height='400px'; mouseGlow.style.opacity='.6'; });
-    });
-  
-    // ═══ THEME ═══
-    function toggleTheme() {
-      const root = document.documentElement;
-      const isLight = root.getAttribute('data-theme') === 'light';
-      root.setAttribute('data-theme', isLight ? 'dark' : 'light');
-      document.getElementById('themeIcon').textContent = isLight ? '☀️' : '🌙';
-      document.getElementById('themeText').textContent = isLight ? 'Light' : 'Dark';
-    }
-  
-    // ═══ GEOJSON ═══
-    let geoJsonData = null;
-  
-    async function loadGeoJson() {
-      try {
-        const r = await fetch('/bihar_dist_ready.geojson');
-        if (!r.ok) return;
-        geoJsonData = await r.json();
-        // Draw on both cards (images may already be loaded by now)
-        const bSvg = document.getElementById('birthMapOverlay');
-        const cSvg = document.getElementById('currentMapOverlay');
-        if (document.getElementById('birthImg').src)   drawOverlay(geoJsonData, bSvg, BBOX);
-        if (document.getElementById('currentImg').src) drawOverlay(geoJsonData, cSvg, BBOX);
-      } catch(e) { console.warn('[GeoJSON]', e); }
-    }
-  
-    function drawOverlay(geoJson, svgEl, bbox) {
-      if (!geoJson || !svgEl || !bbox) return;
-      svgEl.innerHTML = '';
-      svgEl.setAttribute('viewBox', `0 0 ${W_RES} ${H_RES}`);
-  
-      const sx   = W_RES / (bbox.maxLng - bbox.minLng);
-      const sy   = H_RES / (bbox.maxLat - bbox.minLat);
-      const proj = (lng, lat) => [(lng - bbox.minLng)*sx, H_RES - (lat - bbox.minLat)*sy];
-      const rD   = ring => ring.map(([ln,lt],i) => {
-        const [px,py] = proj(ln,lt);
-        return (i?'L':'M') + px.toFixed(2) + ' ' + py.toFixed(2);
-      }).join('') + 'Z';
-      const gD = g =>
-        g.type==='Polygon'      ? g.coordinates.map(rD).join('') :
-        g.type==='MultiPolygon' ? g.coordinates.map(p=>p.map(rD).join('')).join('') : '';
-      const norm = s => String(s).toLowerCase().replace(/[\s\-()+]/g,'');
-      const grp  = document.createElementNS(NS,'g');
-  
-      geoJson.features.forEach(feat => {
-        const d = gD(feat.geometry); if (!d) return;
-        const path = document.createElementNS(NS,'path');
-        path.setAttribute('d', d);
-        if (norm(feat.properties.name) === norm(DISTRICT)) {
-          path.setAttribute('stroke','#ea580c');
-          path.setAttribute('stroke-width','5');
-          path.setAttribute('fill','none');
-          path.setAttribute('stroke-linecap','round');
-          path.setAttribute('stroke-linejoin','round');
-          path.setAttribute('filter','drop-shadow(0 0 10px rgba(234,88,12,1))');
-          path.classList.add('animated-boundary');
-          setTimeout(() => {
-            const len = path.getTotalLength();
-            path.style.strokeDasharray  = len;
-            path.style.strokeDashoffset = len;
-          }, 0);
-          grp.appendChild(path);
+
+  // ═══ LOAD SATELLITE IMAGE ═══
+  function loadSatImage(type, year, skeletonEl, imgEl, svgEl, srcEl) {
+    const primary  = type === 'current' ? getCurrentSrc() : getBirthSrc(year);
+    const fallback = getModisUrl(Math.min(Math.max(year, 2000), 2023));
+
+    srcEl.textContent = primary.label;
+
+    function tryLoad(urlObj, isFallback) {
+      // ─── KEY FIX: NO crossOrigin ───
+      // EOX + NASA GIBS don't send CORS headers.
+      // Setting crossOrigin='anonymous' causes onload to never fire.
+      const img = new Image();
+      // Do NOT set img.crossOrigin
+
+      img.onload = () => {
+        imgEl.src = img.src;
+        imgEl.classList.add('loaded');
+        skeletonEl.classList.add('hidden');
+        srcEl.textContent = urlObj.label;
+        if (geoJsonData) drawOverlay(geoJsonData, svgEl, BBOX);
+      };
+
+      img.onerror = () => {
+        console.warn(`[SAT] ${isFallback?'Fallback':'Primary'} failed for ${urlObj.url}`);
+        if (!isFallback) {
+          srcEl.textContent = '📡 Retrying...';
+          tryLoad(fallback, true);
         } else {
-          path.setAttribute('stroke','rgba(255,255,255,.2)');
-          path.setAttribute('stroke-width','1');
-          path.setAttribute('fill','none');
-          grp.insertBefore(path, grp.firstChild);
+          skeletonEl.classList.add('hidden');
+          srcEl.textContent = '⚠️ Unavailable';
         }
-      });
-      svgEl.appendChild(grp);
+      };
+
+      img.src = urlObj.url;
     }
-  
-    // ═══ KICK OFF ON PAGE LOAD ═══
-    document.addEventListener('DOMContentLoaded', () => {
-      // All three fire in parallel — no Flask API call needed
-      loadSatImage(
-        'birth', BIRTH_YEAR,
-        document.getElementById('birthSkeleton'),
-        document.getElementById('birthImg'),
-        document.getElementById('birthMapOverlay'),
-        document.getElementById('birthSrc')
-      );
-      loadSatImage(
-        'current', 2026,
-        document.getElementById('currentSkeleton'),
-        document.getElementById('currentImg'),
-        document.getElementById('currentMapOverlay'),
-        document.getElementById('currentSrc')
-      );
-      loadGeoJson();
+
+    tryLoad(primary, false);
+  }
+
+  // ═══ MOUSE GLOW ═══
+  const mouseGlow = document.getElementById('mouseGlow');
+  document.addEventListener('mousemove', e => {
+    requestAnimationFrame(() => {
+      mouseGlow.style.left = e.clientX + 'px';
+      mouseGlow.style.top  = e.clientY + 'px';
     });
-  
-    // ═══ TIMELINE ═══
-    let cur = 0, isPlaying = true, autoTimer = null, speedMult = 1;
-  
-    function renderDots() {
-      const el = document.getElementById('tlDots'); if (!el) return;
-      const max = Math.min(EVENTS.length, 14);
-      el.innerHTML = '';
-      for (let i = 0; i < max; i++) {
-        const d = document.createElement('div');
-        d.className = 'tl-dot' + (i===cur?' active':'');
-        el.appendChild(d);
+  });
+  document.querySelectorAll('.tl-card,.sat-card,.info-chip,.top-btn,.ctrl-btn,.tl-arrow').forEach(el => {
+    el.addEventListener('mouseenter', () => { mouseGlow.style.width='600px'; mouseGlow.style.height='600px'; mouseGlow.style.opacity='.8'; });
+    el.addEventListener('mouseleave', () => { mouseGlow.style.width='400px'; mouseGlow.style.height='400px'; mouseGlow.style.opacity='.6'; });
+  });
+
+  // ═══ THEME ═══
+  function toggleTheme() {
+    const root = document.documentElement;
+    const isLight = root.getAttribute('data-theme') === 'light';
+    root.setAttribute('data-theme', isLight ? 'dark' : 'light');
+    document.getElementById('themeIcon').textContent = isLight ? '☀️' : '🌙';
+    document.getElementById('themeText').textContent = isLight ? 'Light' : 'Dark';
+  }
+
+  // ═══ GEOJSON ═══
+  let geoJsonData = null;
+
+  async function loadGeoJson() {
+    try {
+      const r = await fetch('/bihar_dist_ready.geojson');
+      if (!r.ok) return;
+      geoJsonData = await r.json();
+      const bImg = document.getElementById('birthImg');
+      const cImg = document.getElementById('currentImg');
+      const bSvg = document.getElementById('birthMapOverlay');
+      const cSvg = document.getElementById('currentMapOverlay');
+      // ─── KEY FIX: check .loaded class, not .src ───
+      if (bImg.classList.contains('loaded')) drawOverlay(geoJsonData, bSvg, BBOX);
+      if (cImg.classList.contains('loaded')) drawOverlay(geoJsonData, cSvg, BBOX);
+    } catch(e) { console.warn('[GeoJSON]', e); }
+  }
+
+  function drawOverlay(geoJson, svgEl, bbox) {
+    if (!geoJson || !svgEl || !bbox) return;
+    svgEl.innerHTML = '';
+    svgEl.setAttribute('viewBox', `0 0 ${W_RES} ${H_RES}`);
+
+    const sx   = W_RES / (bbox.maxLng - bbox.minLng);
+    const sy   = H_RES / (bbox.maxLat - bbox.minLat);
+    const proj = (lng, lat) => [(lng - bbox.minLng)*sx, H_RES - (lat - bbox.minLat)*sy];
+    const rD   = ring => ring.map(([ln,lt],i) => {
+      const [px,py] = proj(ln,lt);
+      return (i?'L':'M') + px.toFixed(2) + ' ' + py.toFixed(2);
+    }).join('') + 'Z';
+    const gD = g =>
+      g.type==='Polygon'      ? g.coordinates.map(rD).join('') :
+      g.type==='MultiPolygon' ? g.coordinates.map(p=>p.map(rD).join('')).join('') : '';
+    const norm = s => String(s).toLowerCase().replace(/[\s\-()+]/g,'');
+    const grp  = document.createElementNS(NS,'g');
+
+    geoJson.features.forEach(feat => {
+      const d = gD(feat.geometry); if (!d) return;
+      const path = document.createElementNS(NS,'path');
+      path.setAttribute('d', d);
+      if (norm(feat.properties.name) === norm(DISTRICT)) {
+        path.setAttribute('stroke','#ea580c');
+        path.setAttribute('stroke-width','5');
+        path.setAttribute('fill','none');
+        path.setAttribute('stroke-linecap','round');
+        path.setAttribute('stroke-linejoin','round');
+        path.setAttribute('filter','drop-shadow(0 0 10px rgba(234,88,12,1))');
+        path.classList.add('animated-boundary');
+        setTimeout(() => {
+          const len = path.getTotalLength();
+          path.style.strokeDasharray  = len;
+          path.style.strokeDashoffset = len;
+        }, 0);
+        grp.appendChild(path);
+      } else {
+        path.setAttribute('stroke','rgba(255,255,255,.2)');
+        path.setAttribute('stroke-width','1');
+        path.setAttribute('fill','none');
+        grp.insertBefore(path, grp.firstChild);
       }
+    });
+    svgEl.appendChild(grp);
+  }
+
+  // ═══ KICK OFF ═══
+  document.addEventListener('DOMContentLoaded', () => {
+    loadSatImage(
+      'birth', BIRTH_YEAR,
+      document.getElementById('birthSkeleton'),
+      document.getElementById('birthImg'),
+      document.getElementById('birthMapOverlay'),
+      document.getElementById('birthSrc')
+    );
+    loadSatImage(
+      'current', 2026,
+      document.getElementById('currentSkeleton'),
+      document.getElementById('currentImg'),
+      document.getElementById('currentMapOverlay'),
+      document.getElementById('currentSrc')
+    );
+    loadGeoJson();
+  });
+
+  // ═══ TIMELINE ═══
+  let cur = 0, isPlaying = true, autoTimer = null, speedMult = 1;
+
+  function renderDots() {
+    const el = document.getElementById('tlDots'); if (!el) return;
+    const max = Math.min(EVENTS.length, 14);
+    el.innerHTML = '';
+    for (let i = 0; i < max; i++) {
+      const d = document.createElement('div');
+      d.className = 'tl-dot' + (i===cur?' active':'');
+      el.appendChild(d);
     }
-  
-    function updateCardContent(i) {
-      const e = EVENTS[i];
-      document.getElementById('tlEra').textContent   = e.era   || '';
-      document.getElementById('tlYear').textContent  = e.year  || '';
-      document.getElementById('tlIcon').textContent  = e.icon  || '📌';
-      document.getElementById('tlTitle').textContent = e.title || '';
-      document.getElementById('counterTxt').textContent = `${i+1} / ${EVENTS.length}`;
-      renderDots();
-    }
-  
-    function animateCardChange(i, dir) {
-      const card = document.getElementById('tlCard');
-      card.className = 'tl-card ' + (dir==='next' ? 'slide-out-left' : 'slide-out-right');
-      setTimeout(() => {
-        updateCardContent(i);
-        card.className = 'tl-card ' + (dir==='next' ? 'slide-in-right' : 'slide-in-left');
-      }, 360);
-    }
-  
-    function resetProgress() {
-      clearTimeout(autoTimer);
-      const fill = document.getElementById('progressFill');
-      fill.style.transition = 'none'; fill.style.width = '0%';
-      if (!isPlaying) return;
-      const ms = BASE_TL_MS / speedMult;
-      setTimeout(() => {
-        fill.style.transition = `width ${ms}ms linear`;
-        fill.style.width = '100%';
-      }, 50);
-      autoTimer = setTimeout(nextEvent, ms);
-    }
-  
-    function nextEvent() { const n=(cur<EVENTS.length-1)?cur+1:0; animateCardChange(n,'next'); cur=n; resetProgress(); }
-    function prevEvent() { const p=(cur>0)?cur-1:EVENTS.length-1; animateCardChange(p,'prev'); cur=p; resetProgress(); }
-  
-    if (EVENTS && EVENTS.length > 0) {
-      updateCardContent(0);
+  }
+
+  function updateCardContent(i) {
+    const e = EVENTS[i];
+    document.getElementById('tlEra').textContent   = e.era   || '';
+    document.getElementById('tlYear').textContent  = e.year  || '';
+    document.getElementById('tlIcon').textContent  = e.icon  || '📌';
+    document.getElementById('tlTitle').textContent = e.title || '';
+    document.getElementById('counterTxt').textContent = `${i+1} / ${EVENTS.length}`;
+    renderDots();
+  }
+
+  function animateCardChange(i, dir) {
+    const card = document.getElementById('tlCard');
+    card.className = 'tl-card ' + (dir==='next' ? 'slide-out-left' : 'slide-out-right');
+    setTimeout(() => {
+      updateCardContent(i);
+      card.className = 'tl-card ' + (dir==='next' ? 'slide-in-right' : 'slide-in-left');
+    }, 360);
+  }
+
+  function resetProgress() {
+    clearTimeout(autoTimer);
+    const fill = document.getElementById('progressFill');
+    fill.style.transition = 'none'; fill.style.width = '0%';
+    if (!isPlaying) return;
+    const ms = BASE_TL_MS / speedMult;
+    setTimeout(() => {
+      fill.style.transition = `width ${ms}ms linear`;
+      fill.style.width = '100%';
+    }, 50);
+    autoTimer = setTimeout(nextEvent, ms);
+  }
+
+  function nextEvent() { const n=(cur<EVENTS.length-1)?cur+1:0; animateCardChange(n,'next'); cur=n; resetProgress(); }
+  function prevEvent() { const p=(cur>0)?cur-1:EVENTS.length-1; animateCardChange(p,'prev'); cur=p; resetProgress(); }
+
+  if (EVENTS && EVENTS.length > 0) {
+    updateCardContent(0);
+    resetProgress();
+    document.getElementById('playBtn').addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      document.getElementById('playBtn').innerHTML = isPlaying ? '⏸' : '▶';
       resetProgress();
-      document.getElementById('playBtn').addEventListener('click', () => {
-        isPlaying = !isPlaying;
-        document.getElementById('playBtn').innerHTML = isPlaying ? '⏸' : '▶';
-        resetProgress();
-      });
-      document.getElementById('speedBtn').addEventListener('click', () => {
-        speedMult = speedMult===1 ? 1.5 : speedMult===1.5 ? 2 : 1;
-        document.getElementById('speedBtn').textContent = speedMult + 'x';
-        if (isPlaying) resetProgress();
-      });
-      document.addEventListener('keydown', e => {
-        if      (e.key===' ')          { e.preventDefault(); document.getElementById('playBtn').click(); }
-        else if (e.key==='ArrowRight') { nextEvent(); }
-        else if (e.key==='ArrowLeft')  { prevEvent(); }
-      });
-    }
-  </script>
+    });
+    document.getElementById('speedBtn').addEventListener('click', () => {
+      speedMult = speedMult===1 ? 1.5 : speedMult===1.5 ? 2 : 1;
+      document.getElementById('speedBtn').textContent = speedMult + 'x';
+      if (isPlaying) resetProgress();
+    });
+    document.addEventListener('keydown', e => {
+      if      (e.key===' ')          { e.preventDefault(); document.getElementById('playBtn').click(); }
+      else if (e.key==='ArrowRight') { nextEvent(); }
+      else if (e.key==='ArrowLeft')  { prevEvent(); }
+    });
+  }
+</script>
+
 
 </body>
 </html>

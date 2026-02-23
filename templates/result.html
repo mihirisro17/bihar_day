@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -19,26 +19,24 @@
       --text-secondary: rgba(255, 255, 255, 0.7);
       --text-tertiary: rgba(255, 255, 255, 0.4);
       --accent-glow: rgba(255, 153, 51, 0.3);
+      --shadow-color: rgba(0, 0, 0, 0.5);
     }
     
     html[data-theme="light"] {
       --gold:    #d97706;
       --saffron: #ea580c;
       --green:   #15803d;
-      --bg-deep: #fdfbf7;
-      --card-bg: rgba(255, 255, 255, 0.8);
-      --track-bg: #f0f4f9;
-      --text-primary: #1e1e1e;
-      --text-secondary: rgba(30, 30, 30, 0.7);
-      --text-tertiary: rgba(30, 30, 30, 0.5);
+      --bg-deep: #f8fafc;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --track-bg: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: rgba(15, 23, 42, 0.7);
+      --text-tertiary: rgba(15, 23, 42, 0.5);
       --accent-glow: rgba(234, 88, 12, 0.15);
+      --shadow-color: rgba(234, 88, 12, 0.08);
     }
     
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;
-    }
+    html, body { width: 100%; height: 100%; overflow-x: hidden; }
     
     body {
       background: var(--bg-deep);
@@ -46,41 +44,22 @@
       color: var(--text-primary);
       transition: all 0.5s ease;
       background-image: radial-gradient(circle at top right, var(--accent-glow) 0%, transparent 40%),
-                        radial-gradient(circle at bottom left, rgba(19, 136, 8, 0.15) 0%, transparent 40%);
+                        radial-gradient(circle at bottom left, rgba(19, 136, 8, 0.08) 0%, transparent 40%);
     }
 
     /* ── HINDI FONT ── */
-    .hindi-text {
-      font-family: 'Yatra One', cursive;
-      letter-spacing: 1px;
-    }
-
-    /* ── BACKGROUND EFFECTS ── */
-    #stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.6; }
-    html[data-theme="light"] #stars { opacity: 0; }
-
-    .mandala-bg {
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 120vw; height: 120vw;
-      background: repeating-conic-gradient(from 0deg, transparent 0deg, transparent 10deg, rgba(255, 153, 51, 0.02) 10deg, rgba(255, 153, 51, 0.02) 20deg);
-      border-radius: 50%;
-      z-index: 0;
-      animation: rotateSlow 120s linear infinite;
-      pointer-events: none;
-    }
-
-    @keyframes rotateSlow { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+    .hindi-text { font-family: 'Yatra One', cursive; letter-spacing: 1px; }
 
     /* ── THEME TOGGLE ── */
     .theme-toggle {
       position: fixed; top: 20px; right: 20px; z-index: 200;
       display: flex; align-items: center; gap: 8px; padding: 10px 16px;
       border-radius: 50px; background: var(--card-bg);
-      border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer;
+      border: 1px solid rgba(15, 23, 42, 0.1); cursor: pointer;
       backdrop-filter: blur(10px); transition: 0.3s;
+      box-shadow: 0 4px 15px var(--shadow-color);
     }
+    html[data-theme="dark"] .theme-toggle { border-color: rgba(255, 255, 255, 0.1); }
     .theme-toggle:hover { transform: scale(1.05); border-color: var(--saffron); }
 
     /* ── MAIN LAYOUT ── */
@@ -90,123 +69,130 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-template-rows: auto 1fr;
-      gap: 40px; padding: 40px 60px;
+      gap: 30px; padding: 30px 50px;
     }
 
-    /* ── HERO & INFO (FULL WIDTH TOP) ── */
+    /* ── HERO & INFO ── */
     .hero-section {
-      grid-column: 1 / -1;
-      display: flex; flex-direction: column; align-items: center;
-      text-align: center; gap: 20px;
-      animation: fadeInDown 1s ease-out;
+      grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 15px; animation: fadeInDown 1s ease-out;
     }
 
     .welcome-tag {
       display: inline-flex; align-items: center; gap: 10px;
       padding: 8px 24px; border-radius: 50px;
-      background: linear-gradient(90deg, rgba(255,153,51,0.2), rgba(19,136,8,0.2));
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      font-size: 1rem; color: var(--gold); text-transform: uppercase;
+      background: linear-gradient(90deg, rgba(234,88,12,0.1), rgba(21,128,61,0.1));
+      border: 1px solid rgba(234, 88, 12, 0.2);
+      font-size: 0.9rem; color: var(--saffron); text-transform: uppercase; font-weight: 700;
       backdrop-filter: blur(10px); animation: floatIcon 3s ease-in-out infinite;
     }
 
     .hero-section h1 {
-      font-family: 'Playfair Display', serif; font-size: 4rem; font-weight: 900;
-      background: linear-gradient(to right, var(--saffron), var(--gold), #ffffff);
+      font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 900;
+      background: linear-gradient(to right, var(--saffron), var(--gold));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       line-height: 1.1; margin-bottom: 5px;
     }
 
-    /* Elegant Info Chips */
-    .info-chips {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px;
-    }
+    .info-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 10px; }
     .info-chip {
       display: flex; align-items: center; gap: 10px;
-      background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 10px 24px; border-radius: 30px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      background: var(--card-bg); border: 1px solid rgba(15, 23, 42, 0.05);
+      padding: 10px 20px; border-radius: 30px;
+      box-shadow: 0 8px 25px var(--shadow-color);
       backdrop-filter: blur(12px); transition: all 0.3s ease;
     }
-    .info-chip:hover {
-      transform: translateY(-5px); border-color: var(--saffron);
-      box-shadow: 0 12px 40px var(--accent-glow);
-    }
-    .chip-icon { font-size: 1.5rem; }
+    html[data-theme="dark"] .info-chip { border-color: rgba(255, 255, 255, 0.1); }
+    .info-chip:hover { transform: translateY(-3px); border-color: var(--saffron); box-shadow: 0 12px 30px var(--accent-glow); }
+    .chip-icon { font-size: 1.4rem; }
     .chip-data { display: flex; flex-direction: column; text-align: left; }
     .chip-label { font-size: 0.65rem; color: var(--text-tertiary); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
-    .chip-val { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); }
+    .chip-val { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
 
-    /* ── LEFT: TIMELINE SECTION ── */
+    /* ── LEFT: TIMELINE ── */
     .tl-section {
-      display: flex; flex-direction: column; gap: 20px;
+      display: flex; flex-direction: column; gap: 15px;
       animation: slideInLeft 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
     }
 
-    .section-header h2 {
-      font-size: 1.8rem; font-weight: 800; color: var(--text-primary);
-      display: flex; align-items: center; gap: 10px;
-    }
-    .section-header p { font-size: 0.9rem; color: var(--text-secondary); margin-top: 5px; }
+    .section-header h2 { font-size: 1.6rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 10px; }
+    .section-header p { font-size: 0.9rem; color: var(--text-secondary); margin-top: 2px; }
 
-    .tl-card-outer { position: relative; width: 100%; perspective: 1200px; margin-top: 10px; }
+    .tl-card-outer { position: relative; width: 100%; perspective: 1200px; margin-top: 10px; flex: 1; display: flex; flex-direction: column; }
     
     .tl-card {
-      border-radius: 24px; padding: 40px; min-height: 250px;
-      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(10, 10, 10, 0.4) 100%);
-      border: 1px solid rgba(255, 153, 51, 0.3);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(255, 153, 51, 0.05);
+      border-radius: 24px; padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;
+      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(255,255,255,0.4) 100%);
+      border: 1px solid rgba(234, 88, 12, 0.2);
+      box-shadow: 0 20px 50px var(--shadow-color), inset 0 0 20px rgba(255, 153, 51, 0.05);
       backdrop-filter: blur(20px); position: relative; overflow: hidden;
-      display: flex; flex-direction: column; justify-content: space-between;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
+    html[data-theme="dark"] .tl-card { background: linear-gradient(135deg, var(--card-bg) 0%, rgba(10, 10, 10, 0.4) 100%); border-color: rgba(255, 153, 51, 0.3); }
 
-    html[data-theme="light"] .tl-card { border-color: rgba(234, 88, 12, 0.3); }
+    /* Animation Classes for Timeline Transition */
+    .slide-out-left { animation: slideOutLeft 0.4s forwards; }
+    .slide-out-right { animation: slideOutRight 0.4s forwards; }
+    .slide-in-left { animation: slideInLeftAnim 0.4s forwards; }
+    .slide-in-right { animation: slideInRightAnim 0.4s forwards; }
 
-    .tl-year { font-family: 'Playfair Display', serif; font-size: 4rem; font-weight: 900; color: var(--gold); line-height: 1; }
-    .tl-body { display: flex; align-items: center; gap: 20px; margin-top: 20px; }
-    .tl-icon-wrap { font-size: 3.5rem; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3)); }
-    .tl-title { font-size: 1.4rem; font-weight: 700; line-height: 1.4; }
+    @keyframes slideOutLeft { to { opacity: 0; transform: translateX(-50px) scale(0.95); } }
+    @keyframes slideOutRight { to { opacity: 0; transform: translateX(50px) scale(0.95); } }
+    @keyframes slideInLeftAnim { from { opacity: 0; transform: translateX(50px) scale(0.95); } to { opacity: 1; transform: translateX(0) scale(1); } }
+    @keyframes slideInRightAnim { from { opacity: 0; transform: translateX(-50px) scale(0.95); } to { opacity: 1; transform: translateX(0) scale(1); } }
+
+    .tl-year { font-family: 'Playfair Display', serif; font-size: 4.5rem; font-weight: 900; color: var(--gold); line-height: 1; text-shadow: 0 4px 15px rgba(234, 88, 12, 0.2); }
+    .tl-body { display: flex; align-items: center; gap: 20px; margin-top: 25px; }
+    .tl-icon-wrap { font-size: 4rem; filter: drop-shadow(0 4px 10px var(--shadow-color)); }
+    .tl-title { font-size: 1.5rem; font-weight: 700; line-height: 1.4; color: var(--text-primary); }
 
     /* Controls */
-    .tl-playbar { display: flex; align-items: center; gap: 15px; margin-top: 20px; background: var(--card-bg); padding: 15px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+    .tl-playbar { display: flex; align-items: center; gap: 15px; margin-top: 15px; background: var(--card-bg); padding: 15px 20px; border-radius: 20px; border: 1px solid rgba(15, 23, 42, 0.05); box-shadow: 0 8px 25px var(--shadow-color); }
+    html[data-theme="dark"] .tl-playbar { border-color: rgba(255,255,255,0.05); }
+    
     .ctrl-btn {
-      width: 45px; height: 45px; border-radius: 50%; border: none; background: rgba(255,153,51,0.2);
-      color: var(--saffron); font-size: 1.2rem; cursor: pointer; transition: 0.3s;
+      width: 45px; height: 45px; border-radius: 50%; border: none; background: rgba(234,88,12,0.15);
+      color: var(--saffron); font-size: 1.2rem; cursor: pointer; transition: 0.3s; font-weight: 700;
     }
-    .ctrl-btn:hover { background: var(--saffron); color: #fff; transform: scale(1.1); box-shadow: 0 0 15px var(--saffron); }
-    .tl-progress-track { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+    .ctrl-btn:hover { background: var(--saffron); color: #fff; transform: scale(1.1); box-shadow: 0 0 15px var(--accent-glow); }
+    .tl-progress-track { flex: 1; height: 6px; background: var(--track-bg); border-radius: 10px; overflow: hidden; }
     .tl-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), var(--saffron)); }
 
-    /* ── RIGHT: SATELLITE SECTION ── */
+    .keyboard-hints { text-align: center; margin-top: 10px; font-size: 0.75rem; color: var(--text-tertiary); font-weight: 600; letter-spacing: 0.5px; }
+    kbd { background: var(--track-bg); padding: 2px 6px; border-radius: 4px; font-family: monospace; border: 1px solid rgba(15,23,42,0.1); color: var(--text-secondary); }
+    html[data-theme="dark"] kbd { border-color: rgba(255,255,255,0.2); }
+
+    /* ── RIGHT: SATELLITES (BIGGER) ── */
     .sat-section {
-      display: flex; flex-direction: column; gap: 20px;
+      display: flex; flex-direction: column; gap: 15px;
       animation: slideInRight 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
     }
 
-    .sat-grid { display: grid; grid-template-rows: 1fr 1fr; gap: 20px; height: 100%; }
+    .sat-grid { display: grid; grid-template-rows: 1fr 1fr; gap: 20px; flex: 1; }
     
     .sat-card {
       position: relative; border-radius: 24px; overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-      display: flex; flex-direction: column; min-height: 250px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 15px 40px var(--shadow-color);
+      display: flex; flex-direction: column; min-height: 320px; /* Increased Size */
+      background: #000;
     }
+    html[data-theme="dark"] .sat-card { border-color: rgba(255, 255, 255, 0.1); }
+    .sat-card:hover { border-color: var(--gold); transform: translateY(-5px); transition: 0.4s; box-shadow: 0 20px 50px var(--accent-glow); }
     
-    .sat-card:hover { border-color: var(--gold); transform: translateY(-5px); transition: 0.4s; }
+    .sat-img-container { position: relative; flex: 1; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .sat-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: transform 2s ease-out, opacity 1s; }
+    .sat-card:hover .sat-img { opacity: 1; transform: scale(1.08); }
     
-    .sat-img-container { position: relative; flex: 1; overflow: hidden; background: #000; }
-    .sat-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: 1s; }
-    .sat-card:hover .sat-img { opacity: 1; transform: scale(1.05); }
-    
-    .sat-overlay-svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3; }
+    .sat-overlay-svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; }
     
     .sat-label {
-      position: absolute; bottom: 0; left: 0; right: 0; padding: 20px;
-      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); z-index: 4;
+      position: absolute; bottom: 0; left: 0; right: 0; padding: 25px 25px 20px 25px;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent); z-index: 4;
       display: flex; justify-content: space-between; align-items: flex-end;
     }
-    .sat-label-year { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; color: #fff; line-height: 1; }
-    .sat-src { font-size: 0.8rem; color: var(--gold); font-weight: 600; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--gold); }
+    .sat-label-year { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
+    .sat-src { font-size: 0.8rem; color: #fff; font-weight: 700; background: rgba(234, 88, 12, 0.8); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
 
     /* Animations */
     @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
@@ -217,21 +203,20 @@
     @media (max-width: 1200px) {
       #page { grid-template-columns: 1fr; }
       .sat-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+      .sat-card { min-height: 350px; }
     }
     @media (max-width: 768px) {
       .sat-grid { grid-template-columns: 1fr; }
       .hero-section h1 { font-size: 2.5rem; }
       #page { padding: 20px; }
+      .sat-card { min-height: 280px; }
     }
   </style>
 </head>
 <body>
 
-<div class="mandala-bg"></div>
-<canvas id="stars"></canvas>
-
 <div class="theme-toggle" onclick="toggleTheme()">
-  <span id="themeIcon">🌙</span> <span style="font-size: 0.8rem; font-weight:bold;">Theme</span>
+  <span id="themeIcon">🌙</span> <span style="font-size: 0.8rem; font-weight:bold; color: var(--text-primary);" id="themeText">Dark</span>
 </div>
 
 <div id="page">
@@ -270,7 +255,7 @@
     <div class="tl-card-outer">
       <div class="tl-card" id="tlCard">
         <div>
-          <span class="welcome-tag" id="tlEra" style="font-size:0.7rem; padding: 4px 12px; margin-bottom: 10px;"></span>
+          <span class="welcome-tag" id="tlEra" style="font-size:0.75rem; padding: 4px 14px; margin-bottom: 15px;"></span>
           <div class="tl-year" id="tlYear"></div>
         </div>
         <div class="tl-body">
@@ -282,8 +267,13 @@
 
     <div class="tl-playbar">
       <button class="ctrl-btn" id="playBtn">⏸</button>
+      <button class="ctrl-btn" id="speedBtn" style="font-size:0.9rem;">1x</button>
       <div class="tl-progress-track"><div class="tl-progress-fill" id="progressFill"></div></div>
-      <div style="font-size:0.8rem; font-weight:bold; color:var(--gold);" id="counterTxt">1 / {{ events|length }}</div>
+      <div style="font-size:0.85rem; font-weight:800; color:var(--saffron);" id="counterTxt">1 / {{ events|length }}</div>
+    </div>
+    
+    <div class="keyboard-hints">
+      <kbd>Space</kbd> Play/Pause &nbsp;&nbsp;|&nbsp;&nbsp; <kbd>←</kbd> <kbd>→</kbd> Navigate
     </div>
     {% else %}
     <div class="tl-card"><p style="text-align:center; opacity:0.6;">No events recorded.</p></div>
@@ -299,8 +289,8 @@
     <div class="sat-grid">
       <div class="sat-card">
         <div class="sat-img-container">
-          <img class="sat-img" id="birthImg" alt="Birth Year Image" />
-          <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg"></svg>
+          <img class="sat-img" id="birthImg" alt="Birth Year Image" crossorigin="anonymous" />
+          <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"></svg>
           <div class="sat-label">
             <div class="sat-label-year">{{ birth_year }}</div>
             <div class="sat-src" id="birthSrc">Loading...</div>
@@ -310,8 +300,8 @@
 
       <div class="sat-card">
         <div class="sat-img-container">
-          <img class="sat-img" id="currentImg" alt="2026 Image" />
-          <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg"></svg>
+          <img class="sat-img" id="currentImg" alt="2026 Image" crossorigin="anonymous" />
+          <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"></svg>
           <div class="sat-label">
             <div class="sat-label-year">2026</div>
             <div class="sat-src" id="currentSrc">Loading...</div>
@@ -324,81 +314,199 @@
 </div>
 
 <script>
-// ================= THEME & STARS =================
+// ================= THEME =================
 function toggleTheme() {
   const root = document.documentElement;
   const isLight = root.getAttribute("data-theme") === "light";
   root.setAttribute("data-theme", isLight ? "dark" : "light");
-  document.getElementById("themeIcon").textContent = isLight ? "🌙" : "☀️";
+  document.getElementById("themeIcon").textContent = isLight ? "☀️" : "🌙";
+  document.getElementById("themeText").textContent = isLight ? "Light" : "Dark";
 }
-
-const canvas = document.getElementById('stars'), ctx = canvas.getContext('2d');
-function resizeCanvas() { canvas.width = innerWidth; canvas.height = innerHeight; }
-window.addEventListener('resize', resizeCanvas); resizeCanvas();
-for(let i=0, stars=[]; i<150; i++) stars.push({x: Math.random()*innerWidth, y: Math.random()*innerHeight, r: Math.random()*1.5});
-setInterval(() => {
-  ctx.clearRect(0,0, canvas.width, canvas.height);
-  ctx.fillStyle = "rgba(255,255,255,0.8)";
-  stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill(); s.y -= 0.2; if(s.y < 0) s.y = canvas.height; });
-}, 50);
 
 // ================= DATA CONFIG =================
 const EVENTS = {{ events | tojson }};
-const BASE_TL_MS = {{ tl_interval }};
+let BASE_TL_MS = {{ tl_interval }};
 const BBOX = {{ (bbox or {"minLng": 83.3, "minLat": 24.3, "maxLng": 88.2, "maxLat": 27.5}) | tojson }};
 const DISTRICT = "{{ district }}";
 const BIRTH_YEAR = {{ birth_year }};
 const CURRENT_YEAR = 2026;
 const NS = 'http://www.w3.org/2000/svg';
 
+// ================= GEOJSON MAP OVERLAY LOGIC =================
+let geoJsonData = null;
+
+async function loadGeoJson() {
+  try {
+    const response = await fetch("/bihar_dist_ready.geojson");
+    if(response.ok) {
+      geoJsonData = await response.json();
+      drawSatelliteOverlay(document.getElementById("birthMapOverlay"));
+      drawSatelliteOverlay(document.getElementById("currentMapOverlay"));
+    }
+  } catch(e) { console.error("GeoJSON load failed:", e); }
+}
+
+function drawSatelliteOverlay(svgElement) {
+  if (!geoJsonData || !svgElement) return;
+
+  svgElement.innerHTML = "";
+  // Get natural dimensions of the container
+  const W = svgElement.clientWidth || 800;
+  const H = svgElement.clientHeight || 400;
+  svgElement.setAttribute("viewBox", `0 0 ${W} ${H}`);
+
+  const bMinLng = BBOX.minLng;
+  const bMaxLng = BBOX.maxLng;
+  const bMinLat = BBOX.minLat;
+  const bMaxLat = BBOX.maxLat;
+
+  const sx = W / (bMaxLng - bMinLng);
+  const sy = H / (bMaxLat - bMinLat);
+
+  function proj(lng, lat) { return [(lng - bMinLng) * sx, H - (lat - bMinLat) * sy]; }
+
+  function rD(ring) {
+    return ring.map(([ln, lt], i) => {
+      const [px, py] = proj(ln, lt);
+      return (i ? "L" : "M") + px.toFixed(2) + " " + py.toFixed(2);
+    }).join("") + "Z";
+  }
+
+  function gD(g) {
+    return g.type === "Polygon" ? g.coordinates.map(rD).join("") : 
+           g.type === "MultiPolygon" ? g.coordinates.map(p => p.map(rD).join("")).join("") : "";
+  }
+
+  function _norm(s) { return String(s).toLowerCase().replace(/[\s\-()+]/g, ""); }
+
+  const grp = document.createElementNS(NS, "g");
+  
+  geoJsonData.features.forEach((feat) => {
+    const name = feat.properties.name;
+    const d = gD(feat.geometry);
+    if (!d) return;
+    
+    const path = document.createElementNS(NS, "path");
+    path.setAttribute("d", d);
+    
+    if (_norm(name) === _norm(DISTRICT)) {
+      // Highlight the specific district
+      path.setAttribute("stroke", "#ea580c"); // Saffron color
+      path.setAttribute("stroke-width", "3");
+      path.setAttribute("fill", "rgba(234, 88, 12, 0.15)");
+      path.setAttribute("filter", "drop-shadow(0 0 8px rgba(255,153,51,1))");
+      grp.appendChild(path); // Ensure highlighted is on top
+    } else {
+      path.setAttribute("stroke", "rgba(255,255,255,0.4)");
+      path.setAttribute("stroke-width", "1");
+      path.setAttribute("fill", "none");
+      grp.insertBefore(path, grp.firstChild);
+    }
+  });
+  
+  svgElement.appendChild(grp);
+}
+
+// Redraw map on window resize to ensure correct projection
+window.addEventListener('resize', () => {
+  drawSatelliteOverlay(document.getElementById("birthMapOverlay"));
+  drawSatelliteOverlay(document.getElementById("currentMapOverlay"));
+});
+
 // ================= TIMELINE LOGIC =================
 let cur = 0, isPlaying = true, autoTimer = null;
+let speedMult = 1;
 
-function updateCard(i) {
-  if(!EVENTS || !EVENTS.length) return;
+function updateCardContent(i) {
   const e = EVENTS[i];
   document.getElementById('tlYear').textContent = e.year;
   document.getElementById('tlIcon').textContent = e.icon;
   document.getElementById('tlTitle').textContent = e.title;
   document.getElementById('tlEra').textContent = e.era;
   document.getElementById('counterTxt').textContent = `${i + 1} / ${EVENTS.length}`;
-  
-  // Animate Card Data
+}
+
+function animateCardChange(i, direction) {
   const card = document.getElementById('tlCard');
-  card.style.opacity = 0;
-  setTimeout(() => { card.style.opacity = 1; card.style.transition = 'opacity 0.5s'; }, 100);
+  const outClass = direction === 'next' ? 'slide-out-left' : 'slide-out-right';
+  const inClass = direction === 'next' ? 'slide-in-right' : 'slide-in-left';
+
+  // Animate out
+  card.className = `tl-card ${outClass}`;
+  
+  setTimeout(() => {
+    updateCardContent(i);
+    // Animate in
+    card.className = `tl-card ${inClass}`;
+  }, 400); // Wait for out animation to finish
 }
 
 function resetProgress() {
   clearTimeout(autoTimer);
   const fill = document.getElementById('progressFill');
   fill.style.transition = 'none'; fill.style.width = '0%';
+  
   if (!isPlaying) return;
   
+  const currentInterval = BASE_TL_MS / speedMult;
+  
   setTimeout(() => {
-    fill.style.transition = `width ${BASE_TL_MS}ms linear`;
+    fill.style.transition = `width ${currentInterval}ms linear`;
     fill.style.width = '100%';
   }, 50);
   
   autoTimer = setTimeout(() => {
-    cur = (cur < EVENTS.length - 1) ? cur + 1 : 0;
-    updateCard(cur);
+    const nextIdx = (cur < EVENTS.length - 1) ? cur + 1 : 0;
+    animateCardChange(nextIdx, 'next');
+    cur = nextIdx;
     resetProgress();
-  }, BASE_TL_MS);
+  }, currentInterval);
 }
 
 if(EVENTS && EVENTS.length > 0) {
-  updateCard(0); resetProgress();
+  updateCardContent(0);
+  resetProgress();
+  
+  // Play/Pause Button
   document.getElementById('playBtn').addEventListener('click', () => {
     isPlaying = !isPlaying;
     document.getElementById('playBtn').innerHTML = isPlaying ? '⏸' : '▶';
     resetProgress();
   });
+
+  // Speed Button
+  document.getElementById('speedBtn').addEventListener('click', () => {
+    if (speedMult === 1) speedMult = 1.5;
+    else if (speedMult === 1.5) speedMult = 2;
+    else speedMult = 1;
+    document.getElementById('speedBtn').textContent = speedMult + 'x';
+    if(isPlaying) resetProgress();
+  });
+
+  // Keyboard Navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === ' ') {
+      e.preventDefault();
+      document.getElementById('playBtn').click();
+    }
+    else if (e.key === 'ArrowRight') {
+      const nextIdx = (cur < EVENTS.length - 1) ? cur + 1 : 0;
+      animateCardChange(nextIdx, 'next');
+      cur = nextIdx;
+      resetProgress();
+    }
+    else if (e.key === 'ArrowLeft') {
+      const prevIdx = (cur > 0) ? cur - 1 : EVENTS.length - 1;
+      animateCardChange(prevIdx, 'prev');
+      cur = prevIdx;
+      resetProgress();
+    }
+  });
 }
 
 // ================= SATELLITE MOCK / LOGIC =================
 function getSatUrl(year) {
-  const w = 800, h = 400;
+  const w = 1200, h = 800; // Increased resolution requests
   const b = `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
   if(year >= 2016) return `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${year}&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${w}&HEIGHT=${h}&FORMAT=image/jpeg`;
   return `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${Math.max(year, 2000)}-03-15&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${w}&HEIGHT=${h}&FORMAT=image/jpeg`;
@@ -408,11 +516,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const bImg = document.getElementById("birthImg");
   const cImg = document.getElementById("currentImg");
   
+  // Assign sources
   bImg.src = getSatUrl(BIRTH_YEAR);
   cImg.src = getSatUrl(CURRENT_YEAR);
   
-  document.getElementById("birthSrc").textContent = BIRTH_YEAR >= 2016 ? "Sentinel-2" : "MODIS Terra";
-  document.getElementById("currentSrc").textContent = "Sentinel-2";
+  document.getElementById("birthSrc").textContent = BIRTH_YEAR >= 2016 ? "📡 Sentinel-2" : "📡 MODIS Terra";
+  document.getElementById("currentSrc").textContent = "📡 Sentinel-2";
+
+  // Trigger GeoJSON loading once DOM is ready
+  loadGeoJson();
 });
 </script>
 </body>

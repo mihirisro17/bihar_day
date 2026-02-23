@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, jsonify
 from datetime import date
-import csv, os, sys, json, hashlib, requests
+import csv, os, sys, json, hashlib, requests, threading, uuid
 from pathlib import Path
 
 BASE_DIR = os.getcwd()
@@ -9,20 +9,30 @@ import config as C
 
 app = Flask(
     __name__,
-    template_folder=os.path.join(BASE_DIR, "templates")
+    template_folder=os.path.join(BASE_DIR, "templates"),
+    static_folder=os.path.join(BASE_DIR, "static")
 )
 
-# ── Satellite cache directory ──
-SAT_CACHE_DIR = Path(BASE_DIR) / "static" / "sat_cache"
+app.secret_key = os.environ.get("SECRET_KEY", "bihar-diwas-2026")
+
+# ── Cache directory: /tmp on Vercel, static/sat_cache locally ──
+IS_VERCEL     = bool(os.environ.get("VERCEL", ""))
+SAT_CACHE_DIR = Path("/tmp/sat_cache") if IS_VERCEL else Path(BASE_DIR) / "static" / "sat_cache"
+SAT_CACHE_URL = "/sat_cache"          if IS_VERCEL else "/static/sat_cache"
 SAT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-EOX_AVAIL      = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
-LANDSAT_MIN    = 2000
-LANDSAT_MAX    = 2012
-SAT_W, SAT_H   = 1600, 900
-TARGET_AR      = 16 / 9
-KM30_LAT       = 0.27
-KM30_LNG       = 0.30
+# In-memory job store for async prefetch
+_sat_jobs = {}
+
+# ── Constants ──
+EOX_AVAIL    = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+LANDSAT_MIN  = 2000
+LANDSAT_MAX  = 2012
+SAT_W, SAT_H = 1600, 900
+TARGET_AR    = 16 / 9
+KM30_LAT     = 0.27
+KM30_LNG     = 0.30
+
 
 # ----------------------------
 # Utility
@@ -37,13 +47,7 @@ def _norm(s):
 # ----------------------------
 
 def compute_padded_bbox(raw_bbox):
-    """
-    Mirrors the JS BBOX math exactly.
-    Adds ~30 km buffer then pads to 16:9 aspect ratio.
-    Returns dict with minLng/maxLng/minLat/maxLat.
-    """
     if not raw_bbox:
-        # Bihar state fallback
         raw_bbox = {"minLng": 83.3, "minLat": 24.3, "maxLng": 88.2, "maxLat": 27.5}
 
     exp = {
@@ -82,40 +86,36 @@ def get_sentinel_url(year, bbox):
     y = year if year in EOX_AVAIL else max(
         (v for v in EOX_AVAIL if v <= year), default=EOX_AVAIL[-1]
     )
-    q = _base_query(bbox)
     return (
         f"https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1"
-        f"&REQUEST=GetMap&LAYERS=s2cloudless-{y}{q}",
+        f"&REQUEST=GetMap&LAYERS=s2cloudless-{y}{_base_query(bbox)}",
         "Sentinel-2"
     )
 
 
 def get_landsat_url(year, bbox):
     y = min(max(year, LANDSAT_MIN), LANDSAT_MAX)
-    q = _base_query(bbox)
     return (
         f"https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi"
         f"?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap"
         f"&LAYERS=Landsat_WELD_CorrectedReflectance_TrueColor_Global_Annual"
-        f"&TIME={y}-01-01{q}",
+        f"&TIME={y}-01-01{_base_query(bbox)}",
         "Landsat"
     )
 
 
 def get_modis_url(year, bbox):
     y = max(year, 2000)
-    q = _base_query(bbox)
     return (
         f"https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi"
         f"?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap"
         f"&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor"
-        f"&TIME={y}-03-15{q}",
+        f"&TIME={y}-03-15{_base_query(bbox)}",
         "MODIS Terra"
     )
 
 
 def get_birth_url(year, bbox):
-    """Pick best source for birth year."""
     if year >= 2016:
         return get_sentinel_url(year, bbox)
     if LANDSAT_MIN <= year <= LANDSAT_MAX:
@@ -124,23 +124,15 @@ def get_birth_url(year, bbox):
 
 
 def fetch_and_cache(url, cache_key):
-    """
-    Download image if not already cached.
-    Returns (static_url_path, success_bool).
-    """
-    filename  = hashlib.md5(cache_key.encode()).hexdigest() + ".jpg"
-    filepath  = SAT_CACHE_DIR / filename
-    static_url = f"/static/sat_cache/{filename}"
+    filename   = hashlib.md5(cache_key.encode()).hexdigest() + ".jpg"
+    filepath   = SAT_CACHE_DIR / filename
+    static_url = f"{SAT_CACHE_URL}/{filename}"
 
     if filepath.exists() and filepath.stat().st_size > 10_000:
-        # Already cached and looks valid (>10 KB)
         return static_url, True
 
     try:
-        resp = requests.get(
-            url, timeout=30,
-            headers={"User-Agent": "BiharDiwas/1.0"}
-        )
+        resp = requests.get(url, timeout=30, headers={"User-Agent": "BiharDiwas/1.0"})
         content_type = resp.headers.get("content-type", "")
         if resp.status_code == 200 and "image" in content_type:
             filepath.write_bytes(resp.content)
@@ -154,57 +146,67 @@ def fetch_and_cache(url, cache_key):
 
 
 def prefetch_satellite_images(birth_year, raw_bbox):
-    """
-    Called during /analyse route.
-    Fetches both satellite images server-side before rendering.
-    Returns dict with local static URLs + source labels.
-    """
     bbox = compute_padded_bbox(raw_bbox)
 
-    # ── Birth year image ──
+    # Birth year
     birth_url, birth_src = get_birth_url(birth_year, bbox)
-    birth_cache_key      = f"birth_{birth_year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
-    birth_local, ok      = fetch_and_cache(birth_url, birth_cache_key)
+    birth_key            = f"birth_{birth_year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
+    birth_local, ok      = fetch_and_cache(birth_url, birth_key)
 
-    # Landsat fallback → MODIS
+    # Landsat → MODIS fallback
     if not ok and LANDSAT_MIN <= birth_year <= LANDSAT_MAX:
-        print(f"[SAT] Landsat failed for {birth_year}, trying MODIS...")
         birth_url, birth_src = get_modis_url(birth_year, bbox)
-        birth_cache_key      = f"birth_modis_{birth_year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
-        birth_local, ok      = fetch_and_cache(birth_url, birth_cache_key)
+        birth_key            = f"birth_modis_{birth_year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
+        birth_local, ok      = fetch_and_cache(birth_url, birth_key)
 
-    # MODIS fallback → any available year
+    # Final fallback
     if not ok:
-        print(f"[SAT] All sources failed for birth {birth_year}, using 2000")
         birth_url, birth_src = get_modis_url(2000, bbox)
-        birth_cache_key      = f"birth_modis_2000_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
-        birth_local, _       = fetch_and_cache(birth_url, birth_cache_key)
+        birth_key            = f"birth_modis_2000_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
+        birth_local, _       = fetch_and_cache(birth_url, birth_key)
         birth_src            = "MODIS Terra"
 
-    # ── 2026 / current image ──
+    # Current (2026)
     current_url, current_src = get_sentinel_url(2026, bbox)
-    current_cache_key        = f"current_2026_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
-    current_local, ok        = fetch_and_cache(current_url, current_cache_key)
+    current_key              = f"current_2026_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
+    current_local, ok        = fetch_and_cache(current_url, current_key)
 
     if not ok:
-        print("[SAT] Sentinel-2 failed for 2026, trying MODIS...")
         current_url, current_src = get_modis_url(2024, bbox)
-        current_cache_key        = f"current_modis_2024_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
-        current_local, _         = fetch_and_cache(current_url, current_cache_key)
+        current_key              = f"current_modis_2024_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
+        current_local, _         = fetch_and_cache(current_url, current_key)
         current_src              = "MODIS Terra"
 
     return {
-        "birth_img_url":    birth_local   or "",
-        "birth_src_label":  f"📡 {birth_src}",
-        "current_img_url":  current_local or "",
+        "birth_img_url":     birth_local   or "",
+        "birth_src_label":   f"📡 {birth_src}",
+        "current_img_url":   current_local or "",
         "current_src_label": f"📡 {current_src}",
         "padded_bbox":       bbox,
     }
 
 
-# Serve cached satellite images
+def _run_prefetch(job_id, by, bbox):
+    try:
+        sat = prefetch_satellite_images(by, bbox)
+        _sat_jobs[job_id]["data"]   = sat
+        _sat_jobs[job_id]["status"] = "done"
+    except Exception as e:
+        print(f"[SAT JOB] Error: {e}")
+        _sat_jobs[job_id]["status"] = "error"
+
+
+# ----------------------------
+# Satellite cache routes
+# ----------------------------
+
+@app.route("/sat_cache/<filename>")
+def sat_cache_vercel(filename):
+    return send_from_directory(str(SAT_CACHE_DIR), filename)
+
+
 @app.route("/static/sat_cache/<filename>")
-def sat_cache(filename):
+def sat_cache_local(filename):
     return send_from_directory(str(SAT_CACHE_DIR), filename)
 
 
@@ -302,10 +304,10 @@ def analyse():
     if request.method == "GET":
         return redirect(url_for("index"))
 
-    name      = request.form.get("name", "").strip()
+    name       = request.form.get("name", "").strip()
     birth_year = request.form.get("birth_year", "").strip()
-    district  = request.form.get("district", "").strip()
-    bbox_raw  = request.form.get("bbox", "{}")
+    district   = request.form.get("district", "").strip()
+    bbox_raw   = request.form.get("bbox", "{}")
 
     if not name or not birth_year or not district:
         return redirect(url_for("index"))
@@ -326,22 +328,73 @@ def analyse():
 
     evs = [e for e in ALL_EVENTS if e["year"] >= by]
 
-    # ── Prefetch satellite images before rendering ──
-    sat = prefetch_satellite_images(by, bbox)
+    # Start background prefetch
+    job_id = uuid.uuid4().hex
+    _sat_jobs[job_id] = {"status": "pending", "data": None}
+    threading.Thread(
+        target=_run_prefetch,
+        args=(job_id, by, bbox),
+        daemon=True
+    ).start()
+
+    # Store everything in session for /result
+    session["result_data"] = {
+        "name":      name,
+        "birth_year": by,
+        "age":       age,
+        "district":  district,
+        "bbox":      bbox,
+        "evs":       evs,
+        "job_id":    job_id,
+    }
+
+    return render_template(
+        "loading.html",
+        job_id=job_id,
+        name=name,
+        birth_year=by,
+        district=district,
+        app_title=C.APP_TITLE
+    )
+
+
+@app.route("/api/sat_status/<job_id>")
+def sat_status(job_id):
+    job = _sat_jobs.get(job_id)
+    if not job:
+        return jsonify({"status": "not_found"}), 404
+    return jsonify({"status": job["status"]})
+
+
+@app.route("/result")
+def result():
+    data = session.get("result_data")
+    if not data:
+        return redirect(url_for("index"))
+
+    job_id = data.get("job_id")
+    job    = _sat_jobs.get(job_id, {})
+
+    # Use cached result if done, else run synchronously as fallback
+    if job.get("status") == "done" and job.get("data"):
+        sat = job["data"]
+    else:
+        sat = prefetch_satellite_images(data["birth_year"], data["bbox"])
+
+    today = date.today()
 
     return render_template(
         "result.html",
-        name=name,
-        birth_year=by,
-        age=age,
-        district=district,
-        bbox=bbox,
-        events=evs,
+        name=data["name"],
+        birth_year=data["birth_year"],
+        age=data["age"],
+        district=data["district"],
+        bbox=data["bbox"],
+        events=data["evs"],
         eras=C.ERAS,
         tl_interval=C.TIMELINE_INTERVAL_MS,
         current_year=today.year,
         app_title=C.APP_TITLE,
-        # Satellite preloaded data
         birth_img_url     = sat["birth_img_url"],
         birth_src_label   = sat["birth_src_label"],
         current_img_url   = sat["current_img_url"],

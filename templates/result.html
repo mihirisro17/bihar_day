@@ -1,1392 +1,750 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>{{ name }} — {{ app_title }}</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Playfair+Display:wght@700;800&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --bg-primary: #0d0d2b;
-        --bg-secondary: #1a0533;
-        --bg-tertiary: #04040e;
-        --text-primary: #ffffff;
-        --text-secondary: rgba(255, 255, 255, 0.6);
-        --text-tertiary: rgba(255, 255, 255, 0.3);
-        --accent-gold: #ffd700;
-        --accent-orange: #ff6b35;
-        --accent-purple: #7b2fbe;
-        --border-light: rgba(255, 215, 0, 0.14);
-        --border-subtle: rgba(255, 255, 255, 0.1);
-      }
-
-      html[data-theme="light"] {
-        --bg-primary: #f0f4f9;
-        --bg-secondary: #ffffff;
-        --bg-tertiary: #f8fafc;
-        --text-primary: #0f172a;
-        --text-secondary: rgba(15, 23, 42, 0.75);
-        --text-tertiary: rgba(15, 23, 42, 0.55);
-        --accent-gold: #d97706;
-        --accent-orange: #ea580c;
-        --accent-purple: #7c3aed;
-        --border-light: rgba(217, 119, 6, 0.2);
-        --border-subtle: rgba(15, 23, 42, 0.1);
-      }
-
-      *,
-      *::before,
-      *::after {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        min-height: 100vh;
-        background: var(--bg-primary);
-        font-family: "Poppins", sans-serif;
-        color: var(--text-primary);
-        overflow-x: hidden;
-        transition: background 0.4s ease, color 0.4s ease;
-      }
-
-      html[data-theme="dark"] body {
-        background: radial-gradient(
-          ellipse at 70% 10%,
-          #1a0533,
-          #0d0d2b 50%,
-          #001230
-        );
-      }
-
-      #stars {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.4s ease;
-      }
-
-      html[data-theme="dark"] #stars {
-        opacity: 1;
-      }
-
-      .orb {
-        position: fixed;
-        border-radius: 50%;
-        filter: blur(100px);
-        opacity: 0;
-        z-index: 0;
-        animation: drift 14s ease-in-out infinite alternate;
-        transition: opacity 0.4s ease;
-      }
-
-      html[data-theme="dark"] .orb {
-        opacity: 0.16;
-      }
-
-      .orb1 {
-        width: 600px;
-        height: 600px;
-        background: #7b2fbe;
-        top: -160px;
-        right: -140px;
-      }
-
-      .orb2 {
-        width: 420px;
-        height: 420px;
-        background: #ff6b35;
-        bottom: -100px;
-        left: -80px;
-        animation-delay: -6s;
-      }
-
-      @keyframes drift {
-        from {
-          transform: translate(0, 0);
-        }
-        to {
-          transform: translate(22px, 32px);
-        }
-      }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      @keyframes fadeUp {
-        from {
-          transform: translateY(28px);
-          opacity: 0;
-        }
-        to {
-          transform: none;
-          opacity: 1;
-        }
-      }
-
-      @keyframes pageIn {
-        0% {
-          opacity: 0;
-          transform: scale(1.04);
-          filter: blur(8px);
-        }
-        100% {
-          opacity: 1;
-          transform: none;
-          filter: none;
-        }
-      }
-
-      @keyframes slideInLeft {
-        from {
-          transform: translateX(-50px);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-
-      @keyframes slideInRight {
-        from {
-          transform: translateX(50px);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-
-      @keyframes slideInUp {
-        from {
-          transform: translateY(50px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-
-      @keyframes scaleIn {
-        from {
-          transform: scale(0.95);
-          opacity: 0;
-        }
-        to {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-
-      @keyframes glowPulse {
-        0%, 100% {
-          box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-        50% {
-          box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
-        }
-      }
-
-      @keyframes shimmer {
-        0% {
-          background-position: -1000px 0;
-        }
-        100% {
-          background-position: 1000px 0;
-        }
-      }
-
-      @keyframes fR {
-        from {
-          transform: translateX(35px);
-          opacity: 0;
-        }
-        to {
-          transform: none;
-          opacity: 1;
-        }
-      }
-
-      @keyframes fL {
-        from {
-          transform: translateX(-35px);
-          opacity: 0;
-        }
-        to {
-          transform: none;
-          opacity: 1;
-        }
-      }
-
-      .aFR {
-        animation: fR 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
-      }
-      .aFL {
-        animation: fL 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
-      }
-
-      #page {
-        position: relative;
-        z-index: 10;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 36px 0 80px;
-        animation: pageIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-        transition: background 0.4s ease;
-      }
-
-      .theme-toggle {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 100;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 16px;
-        border-radius: 50px;
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-subtle);
-        backdrop-filter: blur(20px);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      }
-
-      html[data-theme="light"] .theme-toggle {
-        border-color: rgba(217, 119, 6, 0.3);
-        box-shadow: 0 8px 32px rgba(217, 119, 6, 0.1);
-      }
-
-      .theme-toggle:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-      }
-
-      .toggle-icon {
-        font-size: 1.2rem;
-        transition: transform 0.3s ease;
-      }
-
-      .toggle-label {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-
-      .hero {
-        text-align: center;
-        margin-bottom: 26px;
-        animation: fadeUp 0.9s 0.1s both;
-        padding: 0 20px;
-      }
-
-      .hero-tag {
-        display: inline-block;
-        padding: 5px 18px;
-        border-radius: 20px;
-        background: rgba(255, 215, 0, 0.1);
-        border: 1px solid rgba(255, 215, 0, 0.28);
-        font-size: 0.67rem;
-        letter-spacing: 2.5px;
-        color: var(--accent-gold);
-        text-transform: uppercase;
-        margin-bottom: 12px;
-      }
-
-      html[data-theme="light"] .hero-tag {
-        background: rgba(217, 119, 6, 0.15);
-        border-color: rgba(217, 119, 6, 0.35);
-      }
-
-      .hero h1 {
-        font-family: "Playfair Display", serif;
-        font-size: clamp(2rem, 5.5vw, 3rem);
-        background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-orange) 45%, #fff 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        line-height: 1.15;
-        margin-bottom: 5px;
-        animation: fadeUp 0.9s 0.15s both;
-      }
-
-      .hero .sub {
-        color: var(--text-tertiary);
-        font-size: 0.81rem;
-        letter-spacing: 1.5px;
-        animation: fadeUp 0.9s 0.2s both;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 12px;
-        width: 100%;
-        max-width: 920px;
-        padding: 0 20px;
-        margin-bottom: 24px;
-        animation: fadeUp 0.9s 0.28s both;
-      }
-
-      .ic {
-        background: rgba(255, 255, 255, 0.055);
-        border: 1px solid var(--border-subtle);
-        border-radius: 14px;
-        padding: 12px 14px 10px;
-        backdrop-filter: blur(20px);
-        position: relative;
-        overflow: hidden;
-        cursor: default;
-        transition: box-shadow 0.3s, border-color 0.3s, transform 0.2s;
-      }
-
-      html[data-theme="light"] .ic {
-        background: linear-gradient(135deg, rgba(217, 119, 6, 0.08), rgba(124, 58, 237, 0.08), rgba(59, 130, 246, 0.08));
-        border-color: rgba(217, 119, 6, 0.15);
-      }
-
-      .ic::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--accent-orange), var(--accent-gold));
-        border-radius: 14px 14px 0 0;
-      }
-
-      .ic:hover {
-        border-color: rgba(255, 215, 0, 0.25);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.45);
-        transform: translateY(-3px);
-      }
-
-      html[data-theme="light"] .ic:hover {
-        box-shadow: 0 15px 40px rgba(217, 119, 6, 0.15);
-        border-color: rgba(217, 119, 6, 0.4);
-      }
-
-      .ic-ico {
-        font-size: 1.3rem;
-        margin-bottom: 4px;
-        display: block;
-      }
-
-      .ic-lbl {
-        font-size: 0.55rem;
-        font-weight: 700;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: var(--text-tertiary);
-        margin-bottom: 2px;
-      }
-
-      .ic-val {
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: var(--text-primary);
-      }
-
-      .ic-val.big {
-        font-size: 1.5rem;
-        background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .divrow {
-        width: 100%;
-        max-width: 920px;
-        padding: 0 20px;
-      }
-
-      .div {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--border-light), transparent);
-        margin-bottom: 26px;
-      }
-
-      .split-wrap {
-        width: 100%;
-        max-width: 90vw;
-        padding: 0 20px;
-        animation: fadeUp 0.9s 0.46s both;
-      }
-
-      .split-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .split-header h2 {
-        font-family: "Playfair Display", serif;
-        font-size: 1.8rem;
-        background: linear-gradient(90deg, var(--accent-gold), var(--accent-orange), #fff);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .split-header p {
-        font-size: 0.75rem;
-        color: var(--text-tertiary);
-        margin-top: 2px;
-        letter-spacing: 0.5px;
-      }
-
-      /* SATELLITE COMPARISON SECTION */
-      .satellite-section {
-        width: 100%;
-        margin-bottom: 40px;
-      }
-
-      .sat-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
-        margin-bottom: 0;
-      }
-
-      @media (max-width: 1200px) {
-        .sat-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .sat-card {
-        position: relative;
-        border-radius: 24px;
-        overflow: hidden;
-        border: 1px solid var(--border-light);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
-        background: var(--bg-tertiary);
-        display: flex;
-        flex-direction: column;
-        height: 500px;
-        animation: slideInLeft 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-        transition: all 0.3s ease;
-      }
-
-      .sat-card:nth-child(2) {
-        animation: slideInRight 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-      }
-
-      .sat-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 30px 80px rgba(255, 215, 0, 0.15);
-      }
-
-      html[data-theme="light"] .sat-card {
-        border-color: rgba(217, 119, 6, 0.2);
-        box-shadow: 0 20px 60px rgba(217, 119, 6, 0.1);
-      }
-
-      .sat-img-container {
-        position: relative;
-        flex: 1;
-        overflow: hidden;
-        background: var(--bg-tertiary);
-      }
-
-      html[data-theme="light"] .sat-img-container {
-        background: linear-gradient(135deg, rgba(217, 119, 6, 0.05), rgba(124, 58, 237, 0.05));
-      }
-
-      .sat-img {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0;
-        transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      .sat-img.active {
-        opacity: 1;
-      }
-
-      .sat-overlay-svg {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 3;
-      }
-
-      .sat-label {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        padding: 24px;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4), transparent);
-        z-index: 4;
-        pointer-events: none;
-      }
-
-      html[data-theme="light"] .sat-label {
-        background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.2), transparent);
-      }
-
-      .sat-label-title {
-        font-family: "Playfair Display", serif;
-        font-size: 3.5rem;
-        font-weight: 800;
-        color: #fff;
-        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
-        line-height: 1;
-      }
-
-      .sat-label-subtitle {
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.9);
-        margin-top: 8px;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        font-weight: 600;
-      }
-
-      .sat-bottom {
-        background: rgba(4, 4, 18, 0.95);
-        backdrop-filter: blur(20px);
-        border-top: 1px solid var(--border-subtle);
-        padding: 18px 20px;
-        z-index: 5;
-      }
-
-      html[data-theme="light"] .sat-bottom {
-        background: rgba(255, 255, 255, 0.95);
-        border-top: 1px solid rgba(217, 119, 6, 0.15);
-      }
-
-      .sat-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.85rem;
-        gap: 10px;
-      }
-
-      .sat-src {
-        color: var(--text-tertiary);
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-weight: 600;
-      }
-
-      .sat-year {
-        font-family: "Playfair Display", serif;
-        font-size: 1.4rem;
-        font-weight: 800;
-        color: var(--accent-gold);
-      }
-
-      .loader {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(3, 3, 14, 0.8);
-        z-index: 10;
-        transition: opacity 0.4s, visibility 0.4s;
-        opacity: 1;
-        visibility: visible;
-      }
-
-      html[data-theme="light"] .loader {
-        background: rgba(240, 244, 249, 0.8);
-      }
-
-      .loader.hidden {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-      }
-
-      .loader .spin {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        border: 4px solid rgba(255, 215, 0, 0.1);
-        border-top-color: rgba(255, 215, 0, 0.8);
-        animation: spin 1s linear infinite;
-      }
-
-      .error-state {
-        position: absolute;
-        inset: 0;
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        background: rgba(3, 3, 14, 0.95);
-        z-index: 10;
-        padding: 20px;
-        text-align: center;
-      }
-
-      html[data-theme="light"] .error-state {
-        background: rgba(240, 244, 249, 0.95);
-      }
-
-      .error-state.show {
-        display: flex;
-      }
-
-      .error-state p {
-        color: var(--text-tertiary);
-        font-size: 0.8rem;
-      }
-
-      .error-state button {
-        padding: 8px 20px;
-        border-radius: 20px;
-        background: rgba(255, 215, 0, 0.1);
-        border: 1px solid rgba(255, 215, 0, 0.3);
-        color: var(--accent-gold);
-        cursor: pointer;
-        font-size: 0.75rem;
-        font-weight: 700;
-        transition: all 0.3s;
-      }
-
-      .error-state button:hover {
-        background: rgba(255, 215, 0, 0.2);
-        transform: translateY(-2px);
-      }
-
-      /* EVENTS SECTION */
-      .events-section {
-        width: 100%;
-        padding: 40px 20px;
-        background: linear-gradient(135deg, rgba(255, 215, 0, 0.03), rgba(124, 58, 237, 0.03));
-        border-radius: 28px;
-        border: 1px solid var(--border-light);
-        animation: slideInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-      }
-
-      html[data-theme="light"] .events-section {
-        background: linear-gradient(135deg, rgba(217, 119, 6, 0.05), rgba(124, 58, 237, 0.05));
-        border-color: rgba(217, 119, 6, 0.2);
-      }
-
-      .events-header {
-        text-align: center;
-        margin-bottom: 36px;
-      }
-
-      .events-header h3 {
-        font-family: "Playfair Display", serif;
-        font-size: 2rem;
-        background: linear-gradient(90deg, var(--accent-gold), var(--accent-orange));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 10px;
-      }
-
-      .events-header p {
-        color: var(--text-tertiary);
-        font-size: 0.85rem;
-        letter-spacing: 1px;
-      }
-
-      .events-carousel {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 20px;
-        max-height: 600px;
-        overflow-y: auto;
-        padding-right: 10px;
-      }
-
-      .events-carousel::-webkit-scrollbar {
-        width: 8px;
-      }
-
-      .events-carousel::-webkit-scrollbar-track {
-        background: rgba(255, 215, 0, 0.05);
-        border-radius: 10px;
-      }
-
-      .events-carousel::-webkit-scrollbar-thumb {
-        background: rgba(255, 215, 0, 0.3);
-        border-radius: 10px;
-        transition: all 0.3s;
-      }
-
-      .events-carousel::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 215, 0, 0.6);
-      }
-
-      .event-card {
-        padding: 24px;
-        border-radius: 18px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(20px);
-        display: flex;
-        gap: 20px;
-        align-items: flex-start;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        animation: slideInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-      }
-
-      html[data-theme="light"] .event-card {
-        background: rgba(217, 119, 6, 0.08);
-        border-color: rgba(217, 119, 6, 0.2);
-      }
-
-      .event-card:hover {
-        transform: translateY(-4px);
-        border-color: var(--accent-gold);
-        box-shadow: 0 12px 40px rgba(255, 215, 0, 0.1);
-      }
-
-      .event-card.active {
-        border-color: var(--accent-gold);
-        background: rgba(255, 215, 0, 0.1);
-        box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
-        animation: glowPulse 2s ease-in-out infinite;
-      }
-
-      .event-icon {
-        font-size: 2.5rem;
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 60px;
-        height: 60px;
-        background: rgba(255, 215, 0, 0.1);
-        border-radius: 16px;
-        border: 1px solid rgba(255, 215, 0, 0.3);
-      }
-
-      html[data-theme="light"] .event-icon {
-        background: rgba(217, 119, 6, 0.15);
-        border-color: rgba(217, 119, 6, 0.3);
-      }
-
-      .event-content {
-        flex: 1;
-      }
-
-      .event-year {
-        font-family: "Playfair Display", serif;
-        font-size: 1.8rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 6px;
-      }
-
-      .event-era {
-        display: inline-block;
-        padding: 4px 10px;
-        border-radius: 16px;
-        font-size: 0.6rem;
-        font-weight: 700;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        margin-bottom: 10px;
-        border: 1px solid;
-      }
-
-      .event-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 6px;
-        line-height: 1.3;
-      }
-
-      .event-desc {
-        color: var(--text-tertiary);
-        font-size: 0.8rem;
-        line-height: 1.5;
-      }
-
-      .events-empty {
-        text-align: center;
-        color: var(--text-tertiary);
-        font-size: 0.9rem;
-        padding: 40px 20px;
-      }
-
-      .back-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 28px;
-        border-radius: 50px;
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid var(--border-subtle);
-        color: var(--text-secondary);
-        font-family: "Poppins", sans-serif;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-decoration: none;
-        letter-spacing: 0.5px;
-        transition: all 0.3s;
-        margin-top: 40px;
-      }
-
-      html[data-theme="light"] .back-btn {
-        background: rgba(217, 119, 6, 0.1);
-        border-color: rgba(217, 119, 6, 0.3);
-        color: var(--text-primary);
-      }
-
-      .back-btn:hover {
-        background: rgba(255, 215, 0, 0.1);
-        border-color: rgba(255, 215, 0, 0.4);
-        color: var(--text-primary);
-        transform: translateY(-2px);
-      }
-
-      @media (max-width: 768px) {
-        .split-header h2 {
-          font-size: 1.4rem;
-        }
-
-        .sat-label-title {
-          font-size: 2.5rem;
-        }
-
-        .sat-card {
-          height: 350px;
-        }
-
-        .events-section {
-          padding: 30px 20px;
-        }
-
-        .event-card {
-          flex-direction: column;
-          gap: 14px;
-        }
-
-        .event-icon {
-          width: 50px;
-          height: 50px;
-          font-size: 2rem;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <canvas id="stars"></canvas>
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-
-    <div class="theme-toggle" onclick="toggleTheme()">
-      <span class="toggle-icon" id="themeIcon">🌙</span>
-      <span class="toggle-label" id="themeLabel">Dark</span>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Analysis — {{ name }} | {{ app_title }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --gold:    {{ theme.gold | default('#eab308') }};
+      --saffron: {{ theme.saffron | default('#f97316') }};
+      --bg-deep: #0b0f19;
+      --card-bg: #121624;
+      --track-bg: #0d111c;
+    }
+    
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--bg-deep);
+      background: radial-gradient(ellipse at top center, #171c2e 0%, var(--bg-deep) 70%);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #fff;
+      perspective: 1000px;
+    }
+
+    /* ── BACKGROUND ── */
+    #stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.12; z-index: 0; animation: drift 14s ease-in-out infinite alternate; pointer-events: none; }
+    .orb1 { width: 500px; height: 500px; background: var(--gold); top: -150px; right: -150px; }
+    .orb2 { width: 400px; height: 400px; background: #6366f1; bottom: -100px; left: -100px; animation-delay: -7s; }
+    @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(40px, 50px); } }
+
+    #page {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px 20px 80px;
+      animation: pageIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    @keyframes pageIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+    @keyframes fadeUp { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+    /* ── HERO & INFO CARDS ── */
+    .hero { text-align: center; margin-bottom: 40px; animation: fadeUp 0.8s 0.2s both; }
+    .welcome-tag { display: inline-flex; align-items: center; gap: 8px; padding: 6px 20px; border-radius: 30px; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.15); font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(255,215,0,0.05); }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 6vw, 3.8rem); font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 8px; text-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .hero .sub { color: rgba(255, 255, 255, 0.4); font-size: 0.95rem; letter-spacing: 1px; font-weight: 300; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; width: 100%; max-width: 950px; }
+    .info-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 24px; backdrop-filter: blur(12px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); position: relative; overflow: hidden; animation: cardPop 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease, border-color 0.4s ease; cursor: default; }
+    .info-card:hover { transform: translateY(-8px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); border-color: rgba(255, 215, 0, 0.2); background: rgba(255, 255, 255, 0.04); }
+    .info-card:nth-child(1) { animation-delay: 0.3s; } .info-card:nth-child(2) { animation-delay: 0.4s; }
+    .info-card:nth-child(3) { animation-delay: 0.5s; } .info-card:nth-child(4) { animation-delay: 0.6s; }
+    @keyframes cardPop { from { transform: translateY(28px) scale(0.96); opacity: 0; } to { transform: none; opacity: 1; } }
+    .info-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent); transition: background 0.4s ease; }
+    .info-card:hover::before { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+    .card-icon { font-size: 1.8rem; margin-bottom: 10px; display: inline-block; opacity: 0.9; transition: transform 0.3s ease; }
+    .info-card:hover .card-icon { transform: scale(1.15) rotate(5deg); }
+    .card-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255, 255, 255, 0.4); margin-bottom: 6px; }
+    .card-value { font-size: 1.25rem; font-weight: 600; color: #fff; word-break: break-word; }
+    .card-value.big { font-size: 2.2rem; background: linear-gradient(135deg, var(--gold), #FF9A3C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    .divider { width: 100%; max-width: 950px; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent); margin: 40px 0; }
+
+    /* ── SATELLITE SECTION ── */
+    .sat-section { width: 100%; max-width: 1000px; margin-bottom: 60px; animation: fadeUp 0.8s 0.6s both; }
+    .sat-header { text-align: center; margin-bottom: 30px; }
+    .sat-tag { display: inline-flex; align-items: center; gap: 8px; padding: 6px 20px; border-radius: 30px; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.15); font-size: 0.7rem; font-weight: 600; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; margin-bottom: 16px; }
+    .sat-header h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
+    .sat-header p { color: rgba(255, 255, 255, 0.4); font-size: 0.9rem; letter-spacing: 0.5px; }
+
+    .sat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    @media (max-width: 1100px) { .sat-grid { grid-template-columns: 1fr; } }
+
+    .sat-card { position: relative; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); background: var(--card-bg); display: flex; flex-direction: column; height: 480px; animation: slideIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; transition: all 0.4s ease; }
+    .sat-card:first-child { animation-name: slideInLeft; }
+    .sat-card:last-child { animation-name: slideInRight; }
+    .sat-card:hover { transform: translateY(-12px); box-shadow: 0 30px 80px rgba(255,215,0,0.1); }
+    @keyframes slideInLeft { from { transform: translateX(-60px) scale(0.95); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes slideInRight { from { transform: translateX(60px) scale(0.95); opacity: 0; } to { transform: none; opacity: 1; } }
+
+    .sat-img-container { position: relative; flex: 1; overflow: hidden; background: var(--track-bg); }
+    .sat-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease; }
+    .sat-img.active { opacity: 1; }
+    .sat-overlay-svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3; }
+
+    .sat-label { position: absolute; top: 0; left: 0; right: 0; padding: 28px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.4), transparent); z-index: 4; pointer-events: none; }
+    .sat-label-year { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 900; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.7); line-height: 1; }
+    .sat-label-sub { font-size: 0.8rem; color: rgba(255, 255, 255, 0.8); margin-top: 8px; letter-spacing: 1.5px; text-transform: uppercase; }
+
+    .sat-bottom { background: rgba(13, 17, 28, 0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.05); padding: 18px 20px; z-index: 5; display: flex; justify-content: space-between; align-items: center; }
+    .sat-src { color: rgba(255, 255, 255, 0.5); display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; }
+    .sat-year-footer { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 800; color: var(--gold); }
+
+    .loader { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(13, 17, 28, 0.8); z-index: 10; }
+    .loader.hidden { display: none; }
+    .loader .spin { width: 50px; height: 50px; border-radius: 50%; border: 4px solid rgba(255, 215, 0, 0.1); border-top-color: var(--gold); animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-state { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: rgba(13, 17, 28, 0.95); z-index: 10; padding: 20px; text-align: center; }
+    .error-state.show { display: flex; }
+    .error-state p { color: rgba(255, 255, 255, 0.4); font-size: 0.8rem; }
+    .error-state button { padding: 8px 20px; border-radius: 20px; background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3); color: var(--gold); cursor: pointer; font-size: 0.75rem; font-weight: 700; transition: all 0.3s; }
+    .error-state button:hover { background: rgba(255, 215, 0, 0.2); transform: translateY(-2px); }
+
+    /* ── TIMELINE SECTION ── */
+    .tl-section { width: 100%; max-width: 950px; animation: fadeUp 0.8s 0.7s both; display: flex; flex-direction: column; align-items: center; }
+    .tl-header { text-align: center; margin-bottom: 40px; }
+    .tl-tag { display: inline-flex; align-items: center; gap: 8px; padding: 6px 20px; border-radius: 30px; background: rgba(165, 180, 252, 0.08); border: 1px solid rgba(165, 180, 252, 0.2); font-size: 0.7rem; font-weight: 600; letter-spacing: 2px; color: #a5b4fc; text-transform: uppercase; margin-bottom: 16px; }
+    .tl-header h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
+    .tl-header p { color: rgba(255, 255, 255, 0.4); font-size: 0.9rem; letter-spacing: 0.5px; }
+
+    /* ── TIMELINE CARD (WITH 3D TILT) ── */
+    .tl-card-outer { position: relative; width: 100%; margin-bottom: 30px; perspective: 1200px; }
+    .tl-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.6); font-size: 1.2rem; cursor: pointer; z-index: 10; transition: all 0.3s ease; backdrop-filter: blur(10px); opacity: 0; pointer-events: none; }
+    .tl-card-outer:hover .tl-arrow { opacity: 1; pointer-events: all; }
+    .tl-arrow:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.3); color: #fff; transform: translateY(-50%) scale(1.1); box-shadow: 0 0 20px rgba(255,255,255,0.1); }
+    .tl-arrow.left { left: -22px; }
+    .tl-arrow.right { right: -22px; }
+    .tl-arrow.disabled { opacity: 0 !important; pointer-events: none !important; }
+    
+    .tl-card { border-radius: 24px; padding: 40px 50px; border: 1px solid rgba(255, 255, 255, 0.06); background: var(--card-bg); backdrop-filter: blur(20px); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; min-height: 260px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4); transform-style: preserve-3d; transition: border-color 0.5s, transform 0.1s ease-out; will-change: transform; }
+    .tl-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 100%); pointer-events: none; z-index: 1; }
+    
+    @keyframes fromRight { from { transform: translateX(50px) scale(0.95); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes fromLeft { from { transform: translateX(-50px) scale(0.95); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes toLeft { from { transform: none; opacity: 1; } to { transform: translateX(-50px) scale(0.95); opacity: 0; } }
+    @keyframes toRight { from { transform: none; opacity: 1; } to { transform: translateX(50px) scale(0.95); opacity: 0; } }
+    .slide-from-right { animation: fromRight 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .slide-from-left { animation: fromLeft 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .slide-to-left { animation: toLeft 0.3s ease-in both; }
+    .slide-to-right { animation: toRight 0.3s ease-in both; }
+
+    @keyframes contentReveal { from { opacity: 0; transform: translateY(15px) translateZ(20px); } to { opacity: 1; transform: translateZ(20px); } }
+    .animate-content .tl-icon-wrap, .animate-content .tl-title { animation: contentReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .animate-content .tl-icon-wrap { animation-delay: 0.1s; }
+    .animate-content .tl-title { animation-delay: 0.2s; }
+
+    .tl-top { display: flex; align-items: flex-start; justify-content: space-between; width: 100%; position: relative; z-index: 2; transform: translateZ(30px); }
+    .tl-era-badge { padding: 6px 20px; border-radius: 30px; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid; background: transparent; transition: all 0.4s; }
+    .tl-year-wrap { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
+    .tl-year { font-family: 'Playfair Display', serif; font-size: 4.5rem; font-weight: 900; line-height: 0.8; color: var(--gold); text-shadow: 0 4px 20px rgba(234, 179, 8, 0.2); }
+    .tl-year-label { font-size: 0.65rem; color: rgba(255, 255, 255, 0.3); letter-spacing: 4px; text-transform: uppercase; margin-top: 12px; font-weight: 700; }
+    
+    .tl-body { display: flex; align-items: center; justify-content: center; gap: 24px; flex: 1; margin-top: 20px; text-align: center; position: relative; z-index: 2; transform: translateZ(40px); }
+    .tl-icon-wrap { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3)); }
+    .tl-title { font-size: 1.55rem; font-weight: 600; color: #fff; line-height: 1.4; letter-spacing: 0.3px; max-width: 80%; }
+
+    /* ── DOTS NAV & LEGEND ── */
+    .tl-dots-section { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 24px; }
+    
+    .tl-legend { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; justify-content: center; }
+    .legend-item { display: flex; align-items: center; gap: 10px; font-size: 0.7rem; font-weight: 600; color: rgba(255, 255, 255, 0.3); letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; padding: 6px 14px; border-radius: 20px; }
+    .legend-item:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.05); transform: translateY(-2px); }
+    .legend-item.active { color: #fff; background: rgba(255,255,255,0.08); box-shadow: inset 0 0 10px rgba(255,255,255,0.05); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; opacity: 0.4; transition: opacity 0.3s; }
+    .legend-item.active .legend-dot { opacity: 1; box-shadow: 0 0 12px currentColor; }
+    
+    .tl-dots-strip { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; padding: 18px 36px; background: var(--track-bg); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 50px; box-shadow: inset 0 4px 20px rgba(0,0,0,0.4), 0 10px 30px rgba(0,0,0,0.2); width: fit-content; max-width: 100%; min-width: 300px; min-height: 52px; transition: all 0.4s ease; }
+    
+    .tl-dot { width: 8px; height: 8px; border-radius: 50%; cursor: pointer; flex-shrink: 0; position: relative; opacity: 0.2; transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+    .tl-dot.hidden-dot { display: none !important; }
+    .tl-dot.past { opacity: 0.4; }
+    .tl-dot:hover { opacity: 0.9; transform: scale(1.5); }
+    
+    .tl-dot.active { opacity: 1; transform: scale(1.4); }
+    .tl-dot.active::after { content: ''; position: absolute; inset: -7px; border-radius: 50%; border: 1.5px solid currentColor; animation: popRing 0.5s ease-out forwards; }
+    @keyframes popRing { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    
+    .tl-dot::before { content: attr(data-year); position: absolute; bottom: 200%; left: 50%; transform: translateX(-50%) translateY(10px); background: #fff; color: #000; font-size: 0.65rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; white-space: nowrap; letter-spacing: 0.5px; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1); z-index: 10; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+    .tl-dot::after { content: ''; position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%) translateY(10px); border-width: 5px; border-style: solid; border-color: #fff transparent transparent transparent; opacity: 0; transition: all 0.3s; z-index: 10; pointer-events: none; }
+    .tl-dot:hover::before, .tl-dot:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── PLAYBAR & CONTROLS ── */
+    .tl-playbar { display: flex; align-items: center; gap: 16px; width: 100%; max-width: 600px; margin-top: 10px; }
+    
+    .ctrl-btn { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; font-family: 'Poppins', sans-serif; }
+    .ctrl-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); color: #fff; transform: scale(1.05); box-shadow: 0 0 15px rgba(255,255,255,0.05); }
+    .ctrl-btn.speed { font-size: 0.75rem; letter-spacing: 0.5px; }
+    
+    .tl-progress-track { flex: 1; height: 4px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; overflow: hidden; position: relative; }
+    .tl-progress-fill { height: 100%; width: 0%; border-radius: 4px; background: linear-gradient(90deg, #38bdf8, #818cf8); box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
+    
+    .tl-counter-txt { font-size: 0.75rem; font-weight: 500; color: rgba(255, 255, 255, 0.4); letter-spacing: 1.5px; white-space: nowrap; min-width: 55px; text-align: right; }
+
+    /* Keyboard Hints */
+    .keyboard-hints { margin-top: 16px; display: flex; gap: 12px; align-items: center; opacity: 0.5; font-size: 0.65rem; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+    .kbd { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px 6px; font-family: monospace; font-size: 0.7rem; color: #fff; }
+
+    /* Bottom Actions */
+    .actions-row { display: flex; gap: 16px; margin-top: 40px; animation: fadeUp 0.8s 1.1s both; }
+    .action-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 30px; border-radius: 50px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.7); font-family: 'Poppins', sans-serif; font-size: 0.85rem; font-weight: 600; text-decoration: none; letter-spacing: 1px; transition: all 0.3s; cursor: pointer; }
+    .action-btn:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); color: #fff; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+    .action-btn.primary { background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(249, 115, 22, 0.1)); border-color: rgba(234, 179, 8, 0.3); color: var(--gold); }
+    .action-btn.primary:hover { background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(249, 115, 22, 0.2)); border-color: var(--gold); color: #fff; box-shadow: 0 10px 20px rgba(234, 179, 8, 0.15); }
+  </style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="orb orb1"></div><div class="orb orb2"></div>
+
+<div id="page">
+  
+  <div class="hero">
+    <div class="welcome-tag">✦ Analysis Complete ✦</div>
+    <h1>Namaste, {{ name }}!</h1>
+    <p class="sub">Born in {{ birth_year }} &nbsp;·&nbsp; {{ district }}, Bihar</p>
+  </div>
+
+  <div class="grid">
+    <div class="info-card">
+      <span class="card-icon">👤</span>
+      <div class="card-label">Full Name</div>
+      <div class="card-value">{{ name }}</div>
+    </div>
+    <div class="info-card">
+      <span class="card-icon">🗓️</span>
+      <div class="card-label">Date of Birth</div>
+      <div class="card-value" style="font-size:1.15rem;">{{ dob }}</div>
+    </div>
+    <div class="info-card">
+      <span class="card-icon">⏳</span>
+      <div class="card-label">Age</div>
+      {% if age %}
+      <div class="card-value big">{{ age }}</div>
+      <div style="color:rgba(255,255,255,0.4);font-size:0.75rem;margin-top:2px;">years old{% if zodiac %} · {{ zodiac }}{% endif %}</div>
+      {% else %}<div class="card-value">—</div>{% endif %}
+    </div>
+    <div class="info-card">
+      <span class="card-icon">📍</span>
+      <div class="card-label">District — Bihar</div>
+      <div class="card-value">{{ district }}</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SATELLITE SECTION -->
+  <div class="sat-section">
+    <div class="sat-header">
+      <div class="sat-tag">🛰️ Satellite Imagery</div>
+      <h2>Your Life Through Satellite</h2>
+      <p>Compare {{ birth_year }} with 2026 • {{ district }}, Bihar</p>
     </div>
 
-    <div id="page">
-      <div class="hero">
-        <div class="hero-tag">✦ Analysis Complete ✦</div>
-        <h1>Namaste, {{ name }}!</h1>
-        <p class="sub">
-          Born {{ birth_year }} &nbsp;•&nbsp; {{ district }}, Bihar
-        </p>
+    <div class="sat-grid">
+      <div class="sat-card">
+        <div class="sat-img-container">
+          <img class="sat-img active" id="birthImg" alt="Birth Year" />
+          <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="loader" id="birthLoader">
+            <div class="spin"></div>
+          </div>
+          <div class="error-state" id="birthError">
+            <p>Could not load imagery</p>
+            <button onclick="retryBirth()">↻ Retry</button>
+          </div>
+          <div class="sat-label">
+            <div class="sat-label-year">{{ birth_year }}</div>
+            <div class="sat-label-sub">Your Birth Year</div>
+          </div>
+        </div>
+        <div class="sat-bottom">
+          <span class="sat-src" id="birthSrc">📡 Loading...</span>
+          <span class="sat-year-footer">{{ birth_year }}</span>
+        </div>
       </div>
 
-      <div class="grid">
-        <div class="ic">
-          <span class="ic-ico">👤</span>
-          <div class="ic-lbl">Name</div>
-          <div class="ic-val">{{ name }}</div>
+      <div class="sat-card">
+        <div class="sat-img-container">
+          <img class="sat-img active" id="currentImg" alt="2026" />
+          <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="loader" id="currentLoader">
+            <div class="spin"></div>
+          </div>
+          <div class="error-state" id="currentError">
+            <p>Could not load imagery</p>
+            <button onclick="retryCurrent()">↻ Retry</button>
+          </div>
+          <div class="sat-label">
+            <div class="sat-label-year">2026</div>
+            <div class="sat-label-sub">Today</div>
+          </div>
         </div>
-        <div class="ic">
-          <span class="ic-ico">📅</span>
-          <div class="ic-lbl">Birth Year</div>
-          <div class="ic-val big">{{ birth_year }}</div>
-        </div>
-        <div class="ic">
-          <span class="ic-ico">⏳</span>
-          <div class="ic-lbl">Age (approx.)</div>
-          {% if age %}
-          <div class="ic-val big">{{ age }}</div>
-          {% else %}
-          <div class="ic-val">—</div>
-          {% endif %}
-        </div>
-        <div class="ic">
-          <span class="ic-ico">📍</span>
-          <div class="ic-lbl">District — Bihar</div>
-          <div class="ic-val">{{ district }}</div>
+        <div class="sat-bottom">
+          <span class="sat-src" id="currentSrc">📡 Sentinel-2</span>
+          <span class="sat-year-footer">2026</span>
         </div>
       </div>
-      <div class="divrow"><div class="div"></div></div>
+    </div>
+  </div>
 
-      <div class="split-wrap">
-        <div class="split-header">
-          <div>
-            <h2>🛰️ Your Life Through Satellite Imagery</h2>
-            <p>Compare {{ birth_year }} with 2026 • {{ district }}, Bihar</p>
-          </div>
-        </div>
+  <div class="divider"></div>
 
-        <!-- SATELLITE SECTION -->
-        <div class="satellite-section">
-          <div class="sat-grid">
-            <div class="sat-card">
-              <div class="sat-img-container">
-                <img class="sat-img active" id="birthImg" alt="Birth Year Satellite" />
-                <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg"></svg>
-                <div class="loader" id="birthLoader">
-                  <div class="spin"></div>
-                </div>
-                <div class="error-state" id="birthError">
-                  <p>Could not load imagery</p>
-                  <button onclick="retryBirth()">↻ Retry</button>
-                </div>
-                <div class="sat-label">
-                  <div class="sat-label-title">{{ birth_year }}</div>
-                  <div class="sat-label-subtitle">Your Birth Year</div>
-                </div>
-              </div>
-              <div class="sat-bottom">
-                <div class="sat-meta">
-                  <span class="sat-src" id="birthSrc">📡 Loading...</span>
-                  <span class="sat-year">{{ birth_year }}</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="sat-card">
-              <div class="sat-img-container">
-                <img class="sat-img active" id="currentImg" alt="2026 Satellite" />
-                <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg"></svg>
-                <div class="loader" id="currentLoader">
-                  <div class="spin"></div>
-                </div>
-                <div class="error-state" id="currentError">
-                  <p>Could not load imagery</p>
-                  <button onclick="retryCurrent()">↻ Retry</button>
-                </div>
-                <div class="sat-label">
-                  <div class="sat-label-title">2026</div>
-                  <div class="sat-label-subtitle">Today</div>
-                </div>
-              </div>
-              <div class="sat-bottom">
-                <div class="sat-meta">
-                  <span class="sat-src" id="currentSrc">📡 Sentinel-2</span>
-                  <span class="sat-year">2026</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- EVENTS SECTION -->
-        {% if events %}
-        <div class="events-section">
-          <div class="events-header">
-            <h3>📰 Historical Timeline</h3>
-            <p>Significant events since {{ birth_year }}</p>
-          </div>
-          <div class="events-carousel" id="eventsCarousel">
-            <!-- Events will be inserted here -->
-          </div>
-        </div>
-        {% endif %}
-      </div>
-
-      <a href="/" class="back-btn">← Start Over</a>
+  <!-- TIMELINE SECTION -->
+  <div class="tl-section">
+    <div class="tl-header">
+      <div class="tl-tag">📜 Bihar Through Your Years</div>
+      <h2>History Since {{ birth_year }}</h2>
+      <p>{{ events|length }} milestones that shaped Bihar during your lifetime</p>
     </div>
 
-    <script>
-      // ============================================
-      // THEME MANAGEMENT
-      // ============================================
-      function initTheme() {
-        const theme = localStorage.getItem("theme") || "light";
-        document.documentElement.setAttribute("data-theme", theme);
-        updateThemeToggle();
-      }
+    {% if events %}
+    <div class="tl-card-outer" id="cardOuter">
+      <div class="tl-arrow left" id="arrowLeft" onclick="prevEvent()">‹</div>
+      <div class="tl-card animate-content" id="tlCard">
+        <div class="tl-top">
+          <div><span class="tl-era-badge" id="tlEra"></span></div>
+          <div class="tl-year-wrap">
+            <div class="tl-year" id="tlYear"></div>
+            <div class="tl-year-label">Year</div>
+          </div>
+        </div>
+        <div class="tl-body">
+          <div class="tl-icon-wrap" id="tlIcon"></div>
+          <div class="tl-title" id="tlTitle"></div>
+        </div>
+      </div>
+      <div class="tl-arrow right" id="arrowRight" onclick="nextEvent()">›</div>
+    </div>
 
-      function toggleTheme() {
-        const current = document.documentElement.getAttribute("data-theme");
-        const newTheme = current === "light" ? "dark" : "light";
-        document.documentElement.setAttribute("data-theme", newTheme);
-        localStorage.setItem("theme", newTheme);
-        updateThemeToggle();
-      }
-
-      function updateThemeToggle() {
-        const icon = document.getElementById("themeIcon");
-        const label = document.getElementById("themeLabel");
-        const theme = document.documentElement.getAttribute("data-theme");
-        if (theme === "light") {
-          icon.textContent = "☀️";
-          label.textContent = "Light";
-        } else {
-          icon.textContent = "🌙";
-          label.textContent = "Dark";
-        }
-      }
-
-      // ============================================
-      // STARS ANIMATION
-      // ============================================
-      (function () {
-        const c = document.getElementById("stars"),
-          x = c.getContext("2d");
-        let s = [];
-
-        function r() {
-          c.width = innerWidth;
-          c.height = innerHeight;
-          s = Array.from({ length: 180 }, () => ({
-            x: Math.random() * c.width,
-            y: Math.random() * c.height,
-            r: Math.random() * 1.5 + 0.2,
-            a: Math.random(),
-            da: (Math.random() - 0.5) * 0.008,
-          }));
-        }
-
-        function d() {
-          x.clearRect(0, 0, c.width, c.height);
-          s.forEach((p) => {
-            p.a = Math.max(0.05, Math.min(1, p.a + p.da));
-            if (p.a <= 0.05 || p.a >= 1) p.da *= -1;
-            x.beginPath();
-            x.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
-            x.fillStyle = `rgba(255,215,0,${p.a})`;
-            x.fill();
-          });
-          requestAnimationFrame(d);
-        }
-
-        window.addEventListener("resize", r);
-        r();
-        d();
-      })();
-
-      // ============================================
-      // 3D TILT EFFECT
-      // ============================================
-      document.querySelectorAll(".ic").forEach((c) => {
-        c.addEventListener("mousemove", (e) => {
-          const r = c.getBoundingClientRect();
-          const rx = ((e.clientY - r.top) / r.height - 0.5) * -13;
-          const ry = ((e.clientX - r.left) / r.width - 0.5) * 13;
-          c.style.transform = `perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-3px)`;
-        });
-        c.addEventListener("mouseleave", () => {
-          c.style.transform = "";
-        });
-      });
-
-      // ============================================
-      // CONFIG
-      // ============================================
-      const BBOX = {{ (bbox or {
-          "minLng": 83.3,
-          "minLat": 24.3,
-          "maxLng": 88.2,
-          "maxLat": 27.5
-      }) | tojson }};
-
-      const DISTRICT = "{{ district }}";
-      const BIRTH_YEAR = {{ birth_year }};
-      const CURRENT_YEAR = 2026;
-      const NS = 'http://www.w3.org/2000/svg';
-      const EOX_BASE = 'https://tiles.maps.eox.at/wms';
-      const GIBS_BASE = 'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi';
-      const EOX_AVAIL = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
+    <div class="tl-dots-section">
+      <div class="tl-legend" id="tlLegend"></div>
+      <div class="tl-dots-strip" id="tlDots"></div>
       
-      let geoJsonData = null;
-      const imageCache = {};
-
-      // ============================================
-      // LOAD GEOJSON
-      // ============================================
-      (async function () {
-        try {
-          const r = await fetch("/bihar_dist_ready.geojson");
-          geoJsonData = await r.json();
-        } catch (e) {
-          console.error("GeoJSON load error:", e);
-        }
-      })();
-
-      // ============================================
-      // DRAW BOUNDARY ON SATELLITE IMAGE
-      // ============================================
-      function drawSatelliteOverlay(svgElement) {
-        if (!geoJsonData || !svgElement) return;
-
-        svgElement.innerHTML = "";
-
-        const W = svgElement.clientWidth;
-        const H = svgElement.clientHeight;
-        svgElement.setAttribute("viewBox", `0 0 ${W} ${H}`);
-
-        const bMinLng = BBOX.minLng;
-        const bMaxLng = BBOX.maxLng;
-        const bMinLat = BBOX.minLat;
-        const bMaxLat = BBOX.maxLat;
-
-        const sx = W / (bMaxLng - bMinLng);
-        const sy = H / (bMaxLat - bMinLat);
-
-        function proj(lng, lat) {
-          return [(lng - bMinLng) * sx, H - (lat - bMinLat) * sy];
-        }
-
-        function rD(ring) {
-          return (
-            ring
-              .map(([ln, lt], i) => {
-                const [px, py] = proj(ln, lt);
-                return (i ? "L" : "M") + px.toFixed(2) + " " + py.toFixed(2);
-              })
-              .join("") + "Z"
-          );
-        }
-
-        function gD(g) {
-          return g.type === "Polygon"
-            ? g.coordinates.map(rD).join("")
-            : g.type === "MultiPolygon"
-            ? g.coordinates.map((p) => p.map(rD).join("")).join("")
-            : "";
-        }
-
-        function _norm(s) {
-          return String(s).toLowerCase().replace(/[\s\-()+]/g, "");
-        }
-
-        const grp = document.createElementNS(NS, "g");
-        
-        geoJsonData.features.forEach((feat) => {
-          const name = feat.properties.name;
-          const d = gD(feat.geometry);
-          if (!d) return;
-          
-          const path = document.createElementNS(NS, "path");
-          path.setAttribute("d", d);
-          
-          if (_norm(name) === _norm(DISTRICT)) {
-            path.setAttribute("stroke", "#ffd700");
-            path.setAttribute("stroke-width", "3");
-            path.setAttribute("fill", "none");
-            path.setAttribute("filter", "drop-shadow(0 0 8px rgba(255,215,0,0.8))");
-          } else {
-            path.setAttribute("stroke", "rgba(255,255,255,0.15)");
-            path.setAttribute("stroke-width", "1");
-            path.setAttribute("fill", "none");
-          }
-          
-          grp.appendChild(path);
-        });
-        
-        svgElement.appendChild(grp);
-      }
-
-      // ============================================
-      // SATELLITE FUNCTIONS
-      // ============================================
-      function satInfo(year) {
-        const srcYear = year < 2013 ? 2013 : year;
-        const isAlt = srcYear !== year;
-
-        const lngSpan = BBOX.maxLng - BBOX.minLng;
-        const latSpan = BBOX.maxLat - BBOX.minLat;
-        const W = 1100;
-        const H = Math.min(700, Math.max(200, Math.round((W * latSpan) / lngSpan)));
-        const b = `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
-        const q = `&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${W}&HEIGHT=${H}&FORMAT=image/jpeg`;
-
-        if (srcYear >= 2016) {
-          const y = EOX_AVAIL.includes(srcYear) ? srcYear : (EOX_AVAIL.filter(v => v <= srcYear).pop() || EOX_AVAIL[EOX_AVAIL.length - 1]);
-          return {
-            url: `${EOX_BASE}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${q}`,
-            label: `Sentinel-2 Cloudless ${y}`,
-            badge: 'Sentinel-2',
-            isAlt,
-            srcYear,
-            year
-          };
-        } else {
-          const y = Math.max(srcYear, 2000);
-          return {
-            url: `${GIBS_BASE}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${y}-03-15${q}`,
-            label: `MODIS Terra ${y}`,
-            badge: 'MODIS',
-            isAlt,
-            srcYear,
-            year
-          };
-        }
-      }
-
-      // Preload images
-      function preloadImage(url) {
-        return new Promise((resolve, reject) => {
-          if (imageCache[url]) {
-            resolve(imageCache[url]);
-            return;
-          }
-          
-          const img = new Image();
-          img.onload = () => {
-            imageCache[url] = url;
-            resolve(url);
-          };
-          img.onerror = reject;
-          img.src = url;
-        });
-      }
-
-      function loadBirthYearSat() {
-        const img = document.getElementById("birthImg");
-        const loader = document.getElementById("birthLoader");
-        const error = document.getElementById("birthError");
-        const srcSpan = document.getElementById("birthSrc");
-        const overlayEl = document.getElementById("birthMapOverlay");
-
-        loader.classList.remove("hidden");
-        error.classList.remove("show");
-
-        const info = satInfo(BIRTH_YEAR);
-
-        preloadImage(info.url)
-          .then(() => {
-            img.src = info.url;
-            img.onload = () => {
-              loader.classList.add("hidden");
-              error.classList.remove("show");
-              srcSpan.textContent = `📡 ${info.label}`;
-              drawSatelliteOverlay(overlayEl);
-            };
-          })
-          .catch(() => {
-            loader.classList.add("hidden");
-            error.classList.add("show");
-          });
-      }
-
-      function loadCurrentYearSat() {
-        const img = document.getElementById("currentImg");
-        const loader = document.getElementById("currentLoader");
-        const error = document.getElementById("currentError");
-        const srcSpan = document.getElementById("currentSrc");
-        const overlayEl = document.getElementById("currentMapOverlay");
-
-        loader.classList.remove("hidden");
-        error.classList.remove("show");
-
-        const info = satInfo(CURRENT_YEAR);
-
-        preloadImage(info.url)
-          .then(() => {
-            img.src = info.url;
-            img.onload = () => {
-              loader.classList.add("hidden");
-              error.classList.remove("show");
-              srcSpan.textContent = `📡 ${info.label}`;
-              drawSatelliteOverlay(overlayEl);
-            };
-          })
-          .catch(() => {
-            loader.classList.add("hidden");
-            error.classList.add("show");
-          });
-      }
-
-      function retryBirth() {
-        loadBirthYearSat();
-      }
-
-      function retryCurrent() {
-        loadCurrentYearSat();
-      }
-
-      // ============================================
-      // EVENTS CAROUSEL
-      // ============================================
-      {% if events %}
-      const EVS = {{ events | tojson }};
+      <div class="tl-playbar">
+        <button class="ctrl-btn" id="playBtn" title="Play/Pause">⏸</button>
+        <button class="ctrl-btn speed" id="speedBtn" title="Playback Speed">1x</button>
+        <div class="tl-progress-track"><div class="tl-progress-fill" id="progressFill"></div></div>
+        <div class="tl-counter-txt" id="counterTxt">1 / {{ events|length }}</div>
+      </div>
       
-      if (EVS && EVS.length > 0) {
-        const carousel = document.getElementById("eventsCarousel");
-        
-        EVS.forEach((ev, i) => {
-          const card = document.createElement("div");
-          card.className = "event-card" + (i === 0 ? " active" : "");
-          card.style.animationDelay = `${i * 0.1}s`;
-          
-          card.innerHTML = `
-            <div class="event-icon">${ev.icon}</div>
-            <div class="event-content">
-              <div class="event-year">${ev.year}</div>
-              <div class="event-era" style="background: ${ev.color}22; color: ${ev.color}; border-color: ${ev.color}55;">
-                ${ev.era}
-              </div>
-              <div class="event-title">${ev.title}</div>
-              <div class="event-desc">${ev.description || ""}</div>
-            </div>
-          `;
-          
-          carousel.appendChild(card);
-        });
+      <div class="keyboard-hints">
+        <span><span class="kbd">Space</span> Play/Pause</span>
+        <span><span class="kbd">←</span> <span class="kbd">→</span> Navigate</span>
+      </div>
+    </div>
+
+    {% else %}
+    <p style="text-align:center;color:rgba(255,255,255,0.3);padding:40px 0;">No events found for your birth year onward.</p>
+    {% endif %}
+  </div>
+
+  <div class="divider"></div>
+  
+  <div class="actions-row">
+    <a href="/" class="action-btn">← Start Over</a>
+    <button class="action-btn primary" onclick="alert('Timeline ready to share!')">🔗 Share Timeline</button>
+  </div>
+</div>
+
+<script>
+const EVENTS = {{ events | tojson }};
+const BASE_TL_MS = {{ tl_interval }};
+const BBOX = {{ (bbox or {"minLng": 83.3, "minLat": 24.3, "maxLng": 88.2, "maxLat": 27.5}) | tojson }};
+const DISTRICT = "{{ district }}";
+const BIRTH_YEAR = {{ birth_year }};
+const CURRENT_YEAR = 2026;
+const NS = 'http://www.w3.org/2000/svg';
+const EOX_BASE = 'https://tiles.maps.eox.at/wms';
+const GIBS_BASE = 'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi';
+const EOX_AVAIL = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
+let geoJsonData = null;
+const imageCache = {};
+
+/* Stars Background */
+const canvas = document.getElementById('stars'), ctx = canvas.getContext('2d'); let stars = [];
+function resizeCanvas() { canvas.width = innerWidth; canvas.height = innerHeight; initStars(); }
+function initStars() { stars = Array.from({length:120}, () => ({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*1.2+0.3, a:Math.random(), da:(Math.random()-0.5)*0.01})); }
+function drawStars() { ctx.clearRect(0,0,canvas.width,canvas.height); stars.forEach(s => { s.a = Math.max(0.05, Math.min(1, s.a+s.da)); if(s.a<=0.05 || s.a>=1) s.da*=-1; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,2*Math.PI); ctx.fillStyle=`rgba(255,255,255,${s.a * 0.6})`; ctx.fill(); }); requestAnimationFrame(drawStars); }
+window.addEventListener('resize', resizeCanvas); resizeCanvas(); drawStars();
+
+/* 3D Glass Tilt Effect */
+const cardOuter = document.getElementById('cardOuter');
+const tlCard = document.getElementById('tlCard');
+if (cardOuter && tlCard) {
+  cardOuter.addEventListener('mousemove', (e) => {
+    const rect = cardOuter.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -5;
+    const rotateY = ((x - centerX) / centerX) * 5;
+    tlCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  });
+  cardOuter.addEventListener('mouseleave', () => {
+    tlCard.style.transform = `rotateX(0deg) rotateY(0deg)`;
+  });
+}
+
+/* LOAD GEOJSON */
+(async function () {
+  try {
+    const r = await fetch("/bihar_dist_ready.geojson");
+    geoJsonData = await r.json();
+  } catch (e) {
+    console.error("GeoJSON load error:", e);
+  }
+})();
+
+/* DRAW BOUNDARY ON SATELLITE */
+function drawSatelliteOverlay(svgElement) {
+  if (!geoJsonData || !svgElement) return;
+
+  svgElement.innerHTML = "";
+
+  const W = svgElement.clientWidth;
+  const H = svgElement.clientHeight;
+  svgElement.setAttribute("viewBox", `0 0 ${W} ${H}`);
+
+  const bMinLng = BBOX.minLng;
+  const bMaxLng = BBOX.maxLng;
+  const bMinLat = BBOX.minLat;
+  const bMaxLat = BBOX.maxLat;
+
+  const sx = W / (bMaxLng - bMinLng);
+  const sy = H / (bMaxLat - bMinLat);
+
+  function proj(lng, lat) {
+    return [(lng - bMinLng) * sx, H - (lat - bMinLat) * sy];
+  }
+
+  function rD(ring) {
+    return (
+      ring
+        .map(([ln, lt], i) => {
+          const [px, py] = proj(ln, lt);
+          return (i ? "L" : "M") + px.toFixed(2) + " " + py.toFixed(2);
+        })
+        .join("") + "Z"
+    );
+  }
+
+  function gD(g) {
+    return g.type === "Polygon"
+      ? g.coordinates.map(rD).join("")
+      : g.type === "MultiPolygon"
+      ? g.coordinates.map((p) => p.map(rD).join("")).join("")
+      : "";
+  }
+
+  function _norm(s) {
+    return String(s).toLowerCase().replace(/[\s\-()+]/g, "");
+  }
+
+  const grp = document.createElementNS(NS, "g");
+  
+  geoJsonData.features.forEach((feat) => {
+    const name = feat.properties.name;
+    const d = gD(feat.geometry);
+    if (!d) return;
+    
+    const path = document.createElementNS(NS, "path");
+    path.setAttribute("d", d);
+    
+    if (_norm(name) === _norm(DISTRICT)) {
+      path.setAttribute("stroke", "#eab308");
+      path.setAttribute("stroke-width", "3");
+      path.setAttribute("fill", "none");
+      path.setAttribute("filter", "drop-shadow(0 0 8px rgba(234,179,8,0.8))");
+    } else {
+      path.setAttribute("stroke", "rgba(255,255,255,0.15)");
+      path.setAttribute("stroke-width", "1");
+      path.setAttribute("fill", "none");
+    }
+    
+    grp.appendChild(path);
+  });
+  
+  svgElement.appendChild(grp);
+}
+
+/* SATELLITE FUNCTIONS */
+function satInfo(year) {
+  const srcYear = year < 2013 ? 2013 : year;
+  const isAlt = srcYear !== year;
+
+  const lngSpan = BBOX.maxLng - BBOX.minLng;
+  const latSpan = BBOX.maxLat - BBOX.minLat;
+  const W = 1100;
+  const H = Math.min(700, Math.max(200, Math.round((W * latSpan) / lngSpan)));
+  const b = `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
+  const q = `&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${W}&HEIGHT=${H}&FORMAT=image/jpeg`;
+
+  if (srcYear >= 2016) {
+    const y = EOX_AVAIL.includes(srcYear) ? srcYear : (EOX_AVAIL.filter(v => v <= srcYear).pop() || EOX_AVAIL[EOX_AVAIL.length - 1]);
+    return {
+      url: `${EOX_BASE}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${q}`,
+      label: `Sentinel-2 Cloudless ${y}`,
+      isAlt,
+      srcYear,
+      year
+    };
+  } else {
+    const y = Math.max(srcYear, 2000);
+    return {
+      url: `${GIBS_BASE}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${y}-03-15${q}`,
+      label: `MODIS Terra ${y}`,
+      isAlt,
+      srcYear,
+      year
+    };
+  }
+}
+
+function preloadImage(url) {
+  return new Promise((resolve, reject) => {
+    if (imageCache[url]) {
+      resolve(imageCache[url]);
+      return;
+    }
+    
+    const img = new Image();
+    img.onload = () => {
+      imageCache[url] = url;
+      resolve(url);
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+function loadBirthYearSat() {
+  const img = document.getElementById("birthImg");
+  const loader = document.getElementById("birthLoader");
+  const error = document.getElementById("birthError");
+  const srcSpan = document.getElementById("birthSrc");
+  const overlayEl = document.getElementById("birthMapOverlay");
+
+  loader.classList.remove("hidden");
+  error.classList.remove("show");
+
+  const info = satInfo(BIRTH_YEAR);
+
+  preloadImage(info.url)
+    .then(() => {
+      img.src = info.url;
+      img.onload = () => {
+        loader.classList.add("hidden");
+        error.classList.remove("show");
+        srcSpan.textContent = `📡 ${info.label}`;
+        drawSatelliteOverlay(overlayEl);
+      };
+    })
+    .catch(() => {
+      loader.classList.add("hidden");
+      error.classList.add("show");
+    });
+}
+
+function loadCurrentYearSat() {
+  const img = document.getElementById("currentImg");
+  const loader = document.getElementById("currentLoader");
+  const error = document.getElementById("currentError");
+  const srcSpan = document.getElementById("currentSrc");
+  const overlayEl = document.getElementById("currentMapOverlay");
+
+  loader.classList.remove("hidden");
+  error.classList.remove("show");
+
+  const info = satInfo(CURRENT_YEAR);
+
+  preloadImage(info.url)
+    .then(() => {
+      img.src = info.url;
+      img.onload = () => {
+        loader.classList.add("hidden");
+        error.classList.remove("show");
+        srcSpan.textContent = `📡 ${info.label}`;
+        drawSatelliteOverlay(overlayEl);
+      };
+    })
+    .catch(() => {
+      loader.classList.add("hidden");
+      error.classList.add("show");
+    });
+}
+
+function retryBirth() {
+  loadBirthYearSat();
+}
+
+function retryCurrent() {
+  loadCurrentYearSat();
+}
+
+/* Timeline Logic */
+let cur = 0, autoTimer = null, isPlaying = true;
+let speedMult = 1;
+const dotsContainer = document.getElementById('tlDots');
+const legendContainer = document.getElementById('tlLegend');
+
+if (EVENTS && EVENTS.length > 0) {
+  // Build Interactive Legend
+  const uniqueEras = [...new Set(EVENTS.map(e => e.era))];
+  const eraColors = {};
+  EVENTS.forEach(e => { if(!eraColors[e.era]) eraColors[e.era] = e.color; });
+
+  uniqueEras.forEach(era => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.dataset.era = era;
+    item.innerHTML = `<div class="legend-dot" style="background:${eraColors[era]}; box-shadow: 0 0 8px ${eraColors[era]}"></div>${era}`;
+    
+    item.addEventListener('click', () => {
+      const firstEventIdx = EVENTS.findIndex(e => e.era === era);
+      if (firstEventIdx !== -1 && firstEventIdx !== cur) {
+        goTo(firstEventIdx, firstEventIdx > cur ? 'next' : 'prev');
       }
-      {% endif %}
+    });
+    legendContainer.appendChild(item);
+  });
 
-      // ============================================
-      // INITIALIZE
-      // ============================================
-      document.addEventListener("DOMContentLoaded", () => {
-        initTheme();
-        loadBirthYearSat();
-        loadCurrentYearSat();
-      });
+  // Build Dots with animation delays
+  EVENTS.forEach((e, i) => {
+    const d = document.createElement('div');
+    d.className = 'tl-dot';
+    d.dataset.idx = i;
+    d.dataset.year = e.year;
+    d.dataset.era = e.era;
+    d.style.backgroundColor = e.color;
+    d.style.color = e.color;
+    d.style.animationDelay = `${i * 0.05}s`;
+    d.addEventListener('click', () => goTo(i, i >= cur ? 'next' : 'prev'));
+    dotsContainer.appendChild(d);
+  });
+}
 
-      // ============================================
-      // KEYBOARD SHORTCUTS
-      // ============================================
-      document.addEventListener("keydown", (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-          e.preventDefault();
-          toggleTheme();
-        }
-      });
-    </script>
-  </body>
+function updateDots() {
+  const currentEra = EVENTS[cur].era;
+  document.querySelectorAll('.legend-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.era === currentEra);
+  });
+  dotsContainer.querySelectorAll('.tl-dot').forEach((d, i) => {
+    const isCurrentEra = d.dataset.era === currentEra;
+    d.classList.toggle('hidden-dot', !isCurrentEra);
+    d.classList.remove('active', 'past');
+    if (isCurrentEra) {
+      if (i === cur) d.classList.add('active');
+      else if (i < cur) d.classList.add('past');
+    }
+  });
+}
+
+function updateCard(i) {
+  const e = EVENTS[i];
+  document.getElementById('tlYear').textContent = e.year;
+  document.getElementById('tlIcon').textContent = e.icon;
+  document.getElementById('tlTitle').textContent = e.title;
+  
+  const era = document.getElementById('tlEra');
+  era.textContent = e.era;
+  era.style.color = e.color;
+  era.style.borderColor = e.color;
+  era.style.background = e.color + '15'; 
+
+  document.getElementById('arrowLeft').classList.toggle('disabled', i === 0);
+  document.getElementById('arrowRight').classList.toggle('disabled', i === EVENTS.length - 1);
+  document.getElementById('counterTxt').textContent = `${i + 1} / ${EVENTS.length}`;
+}
+
+function resetProgress() {
+  clearTimeout(autoTimer);
+  const fill = document.getElementById('progressFill');
+  fill.style.transition = 'none'; fill.style.width = '0%';
+  if (!isPlaying) return;
+  
+  const currentInterval = BASE_TL_MS / speedMult;
+  
+  setTimeout(() => { 
+    fill.style.transition = `width ${currentInterval}ms linear`; 
+    fill.style.width = '100%'; 
+  }, 50);
+  
+  autoTimer = setTimeout(() => {
+    const next = cur < EVENTS.length - 1 ? cur + 1 : 0;
+    goTo(next, next > cur ? 'next' : 'prev');
+  }, currentInterval);
+}
+
+function goTo(i, dir) {
+  const card = document.getElementById('tlCard');
+  const outClass = dir === 'next' ? 'slide-to-left' : 'slide-to-right';
+  const inClass  = dir === 'next' ? 'slide-from-right' : 'slide-from-left';
+  
+  card.classList.remove('animate-content');
+  card.classList.add(outClass);
+  
+  setTimeout(() => {
+    cur = i;
+    updateCard(i);
+    updateDots();
+    card.classList.remove(outClass);
+    card.classList.add(inClass);
+    void card.offsetWidth;
+    card.classList.add('animate-content');
+    
+    setTimeout(() => card.classList.remove(inClass), 400);
+  }, 250);
+  resetProgress();
+}
+
+function nextEvent() { if(cur < EVENTS.length - 1) goTo(cur + 1, 'next'); }
+function prevEvent() { if(cur > 0) goTo(cur - 1, 'prev'); }
+
+/* Controls */
+document.getElementById('playBtn').addEventListener('click', () => {
+  isPlaying = !isPlaying;
+  document.getElementById('playBtn').innerHTML = isPlaying ? '⏸' : '▶';
+  resetProgress();
+});
+
+document.getElementById('speedBtn').addEventListener('click', () => {
+  if (speedMult === 1) speedMult = 1.5;
+  else if (speedMult === 1.5) speedMult = 2;
+  else speedMult = 1;
+  document.getElementById('speedBtn').textContent = speedMult + 'x';
+  if (isPlaying) resetProgress();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === ' ' && e.target === document.body) { e.preventDefault(); document.getElementById('playBtn').click(); }
+  if (e.key === 'ArrowRight') nextEvent();
+  if (e.key === 'ArrowLeft') prevEvent();
+});
+
+if (EVENTS && EVENTS.length) { 
+  updateCard(0); 
+  updateDots(); 
+  resetProgress(); 
+}
+
+/* INITIALIZE SATELLITES */
+document.addEventListener('DOMContentLoaded', () => {
+  loadBirthYearSat();
+  loadCurrentYearSat();
+});
+</script>
+</body>
 </html>

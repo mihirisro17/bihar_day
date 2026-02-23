@@ -130,7 +130,7 @@
     }
     html[data-theme="dark"] .tl-card { background: linear-gradient(135deg, var(--card-bg) 0%, rgba(10, 10, 10, 0.4) 100%); border-color: rgba(255, 153, 51, 0.3); }
 
-    /* Animation Classes for Timeline Transition */
+    /* Animation Classes */
     .slide-out-left { animation: slideOutLeft 0.4s forwards; }
     .slide-out-right { animation: slideOutRight 0.4s forwards; }
     .slide-in-left { animation: slideInLeftAnim 0.4s forwards; }
@@ -174,7 +174,7 @@
       position: relative; border-radius: 24px; overflow: hidden;
       border: 1px solid rgba(15, 23, 42, 0.08);
       box-shadow: 0 15px 40px var(--shadow-color);
-      display: flex; flex-direction: column; min-height: 320px; /* Increased Size */
+      display: flex; flex-direction: column; min-height: 320px;
       background: #000;
     }
     html[data-theme="dark"] .sat-card { border-color: rgba(255, 255, 255, 0.1); }
@@ -331,6 +331,7 @@ const DISTRICT = "{{ district }}";
 const BIRTH_YEAR = {{ birth_year }};
 const CURRENT_YEAR = 2026;
 const NS = 'http://www.w3.org/2000/svg';
+const EOX_AVAIL = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
 
 // ================= GEOJSON MAP OVERLAY LOGIC =================
 let geoJsonData = null;
@@ -390,12 +391,12 @@ function drawSatelliteOverlay(svgElement) {
     path.setAttribute("d", d);
     
     if (_norm(name) === _norm(DISTRICT)) {
-      // Highlight the specific district
-      path.setAttribute("stroke", "#ea580c"); // Saffron color
+      // Highlight the specific district outline (NO FILL COLOR)
+      path.setAttribute("stroke", "#ea580c"); 
       path.setAttribute("stroke-width", "3");
-      path.setAttribute("fill", "rgba(234, 88, 12, 0.15)");
+      path.setAttribute("fill", "none"); // Removed the fill
       path.setAttribute("filter", "drop-shadow(0 0 8px rgba(255,153,51,1))");
-      grp.appendChild(path); // Ensure highlighted is on top
+      grp.appendChild(path); 
     } else {
       path.setAttribute("stroke", "rgba(255,255,255,0.4)");
       path.setAttribute("stroke-width", "1");
@@ -438,7 +439,7 @@ function animateCardChange(i, direction) {
     updateCardContent(i);
     // Animate in
     card.className = `tl-card ${inClass}`;
-  }, 400); // Wait for out animation to finish
+  }, 400); 
 }
 
 function resetProgress() {
@@ -506,10 +507,18 @@ if(EVENTS && EVENTS.length > 0) {
 
 // ================= SATELLITE MOCK / LOGIC =================
 function getSatUrl(year) {
-  const w = 1200, h = 800; // Increased resolution requests
+  const w = 1200, h = 800;
   const b = `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
-  if(year >= 2016) return `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${year}&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${w}&HEIGHT=${h}&FORMAT=image/jpeg`;
-  return `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${Math.max(year, 2000)}-03-15&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${w}&HEIGHT=${h}&FORMAT=image/jpeg`;
+  const q = `&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${w}&HEIGHT=${h}&FORMAT=image/jpeg`;
+
+  if(year >= 2016) {
+    // Restored fallback logic for future years like 2026
+    const y = EOX_AVAIL.includes(year) ? year : (EOX_AVAIL.filter(v=>v<=year).pop() || EOX_AVAIL[EOX_AVAIL.length-1]);
+    return `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${q}`;
+  } else {
+    const y = Math.max(year, 2000);
+    return `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${y}-03-15${q}`;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

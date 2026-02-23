@@ -9,6 +9,34 @@
       rel="stylesheet"
     />
     <style>
+      :root {
+        --bg-primary: #0d0d2b;
+        --bg-secondary: #1a0533;
+        --bg-tertiary: #04040e;
+        --text-primary: #ffffff;
+        --text-secondary: rgba(255, 255, 255, 0.6);
+        --text-tertiary: rgba(255, 255, 255, 0.3);
+        --accent-gold: #ffd700;
+        --accent-orange: #ff6b35;
+        --accent-purple: #7b2fbe;
+        --border-light: rgba(255, 215, 0, 0.14);
+        --border-subtle: rgba(255, 255, 255, 0.1);
+      }
+
+      html[data-theme="light"] {
+        --bg-primary: #f5f7fa;
+        --bg-secondary: #ffffff;
+        --bg-tertiary: #f0f2f5;
+        --text-primary: #1a1a1a;
+        --text-secondary: rgba(26, 26, 26, 0.7);
+        --text-tertiary: rgba(26, 26, 26, 0.5);
+        --accent-gold: #d4a80a;
+        --accent-orange: #e85a1f;
+        --accent-purple: #6b1fb8;
+        --border-light: rgba(212, 168, 10, 0.2);
+        --border-subtle: rgba(26, 26, 26, 0.1);
+      }
+
       *,
       *::before,
       *::after {
@@ -16,32 +44,52 @@
         padding: 0;
         box-sizing: border-box;
       }
+
       body {
         min-height: 100vh;
+        background: var(--bg-primary);
+        font-family: "Poppins", sans-serif;
+        color: var(--text-primary);
+        overflow-x: hidden;
+        transition: background 0.4s ease, color 0.4s ease;
+      }
+
+      html[data-theme="dark"] body {
         background: radial-gradient(
           ellipse at 70% 10%,
           #1a0533,
           #0d0d2b 50%,
           #001230
         );
-        font-family: "Poppins", sans-serif;
-        color: #fff;
-        overflow-x: hidden;
       }
+
       #stars {
         position: fixed;
         inset: 0;
         z-index: 0;
         pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.4s ease;
       }
+
+      html[data-theme="dark"] #stars {
+        opacity: 1;
+      }
+
       .orb {
         position: fixed;
         border-radius: 50%;
         filter: blur(100px);
-        opacity: 0.16;
+        opacity: 0;
         z-index: 0;
         animation: drift 14s ease-in-out infinite alternate;
+        transition: opacity 0.4s ease;
       }
+
+      html[data-theme="dark"] .orb {
+        opacity: 0.16;
+      }
+
       .orb1 {
         width: 600px;
         height: 600px;
@@ -49,6 +97,7 @@
         top: -160px;
         right: -140px;
       }
+
       .orb2 {
         width: 420px;
         height: 420px;
@@ -57,6 +106,7 @@
         left: -80px;
         animation-delay: -6s;
       }
+
       @keyframes drift {
         from {
           transform: translate(0, 0);
@@ -65,11 +115,13 @@
           transform: translate(22px, 32px);
         }
       }
+
       @keyframes spin {
         to {
           transform: rotate(360deg);
         }
       }
+
       @keyframes fadeUp {
         from {
           transform: translateY(28px);
@@ -80,6 +132,7 @@
           opacity: 1;
         }
       }
+
       @keyframes pageIn {
         0% {
           opacity: 0;
@@ -92,6 +145,47 @@
           filter: none;
         }
       }
+
+      @keyframes slideInLeft {
+        from {
+          transform: translateX(-40px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideInRight {
+        from {
+          transform: translateX(40px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: -1000px 0;
+        }
+        100% {
+          background-position: 1000px 0;
+        }
+      }
+
+      @keyframes pulseGlow {
+        0%, 100% {
+          box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+        }
+      }
+
       #page {
         position: relative;
         z-index: 10;
@@ -101,13 +195,54 @@
         align-items: center;
         padding: 36px 0 80px;
         animation: pageIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+        transition: background 0.4s ease;
       }
+
+      .theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 16px;
+        border-radius: 50px;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-subtle);
+        backdrop-filter: blur(20px);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      html[data-theme="light"] .theme-toggle {
+        border-color: rgba(212, 168, 10, 0.3);
+      }
+
+      .theme-toggle:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      .toggle-icon {
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+
+      .toggle-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
       .hero {
         text-align: center;
         margin-bottom: 26px;
         animation: fadeUp 0.9s 0.1s both;
         padding: 0 20px;
       }
+
       .hero-tag {
         display: inline-block;
         padding: 5px 18px;
@@ -116,25 +251,36 @@
         border: 1px solid rgba(255, 215, 0, 0.28);
         font-size: 0.67rem;
         letter-spacing: 2.5px;
-        color: #ffd700;
+        color: var(--accent-gold);
         text-transform: uppercase;
         margin-bottom: 12px;
+        transition: all 0.3s ease;
       }
+
+      html[data-theme="light"] .hero-tag {
+        background: rgba(212, 168, 10, 0.15);
+        border-color: rgba(212, 168, 10, 0.35);
+      }
+
       .hero h1 {
         font-family: "Playfair Display", serif;
         font-size: clamp(2rem, 5.5vw, 3rem);
-        background: linear-gradient(135deg, #ffd700 0%, #ff9a3c 45%, #fff 100%);
+        background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-orange) 45%, #fff 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         line-height: 1.15;
         margin-bottom: 5px;
+        animation: fadeUp 0.9s 0.15s both;
       }
+
       .hero .sub {
-        color: rgba(255, 255, 255, 0.34);
+        color: var(--text-tertiary);
         font-size: 0.81rem;
         letter-spacing: 1.5px;
+        animation: fadeUp 0.9s 0.2s both;
       }
+
       .grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -145,18 +291,25 @@
         margin-bottom: 24px;
         animation: fadeUp 0.9s 0.28s both;
       }
+
       .ic {
         background: rgba(255, 255, 255, 0.055);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--border-subtle);
         border-radius: 14px;
         padding: 12px 14px 10px;
         backdrop-filter: blur(20px);
         position: relative;
         overflow: hidden;
         cursor: default;
-        transition: box-shadow 0.3s, border-color 0.3s, transform 0.2s;
+        transition: box-shadow 0.3s, border-color 0.3s, transform 0.2s, background 0.3s;
         will-change: transform;
       }
+
+      html[data-theme="light"] .ic {
+        background: rgba(212, 168, 10, 0.05);
+        border-color: rgba(212, 168, 10, 0.15);
+      }
+
       .ic::before {
         content: "";
         position: absolute;
@@ -164,61 +317,73 @@
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, #ff6b35, #ffd700);
+        background: linear-gradient(90deg, var(--accent-orange), var(--accent-gold));
         border-radius: 14px 14px 0 0;
       }
+
       .ic:hover {
         border-color: rgba(255, 215, 0, 0.25);
         box-shadow: 0 15px 40px rgba(0, 0, 0, 0.45);
         transform: translateY(-3px);
       }
+
+      html[data-theme="light"] .ic:hover {
+        box-shadow: 0 15px 40px rgba(212, 168, 10, 0.15);
+      }
+
       .ic-ico {
         font-size: 1.3rem;
         margin-bottom: 4px;
         display: block;
       }
+
       .ic-lbl {
         font-size: 0.55rem;
         font-weight: 700;
         letter-spacing: 2px;
         text-transform: uppercase;
-        color: rgba(255, 215, 0, 0.55);
+        color: var(--text-tertiary);
         margin-bottom: 2px;
       }
+
       .ic-val {
         font-size: 0.95rem;
         font-weight: 700;
-        color: #fff;
+        color: var(--text-primary);
       }
+
       .ic-val.big {
         font-size: 1.5rem;
-        background: linear-gradient(135deg, #ffd700, #ff9a3c);
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
+
       .divrow {
         width: 100%;
         max-width: 920px;
         padding: 0 20px;
       }
+
       .div {
         height: 1px;
         background: linear-gradient(
           90deg,
           transparent,
-          rgba(255, 215, 0, 0.2),
+          var(--border-light),
           transparent
         );
         margin-bottom: 26px;
       }
+
       .split-wrap {
-        height:64vh;
         width: 100%;
         max-width: 75vw;
         padding: 0 20px;
         animation: fadeUp 0.9s 0.46s both;
       }
+
       .split-header {
         display: flex;
         align-items: center;
@@ -227,20 +392,23 @@
         flex-wrap: wrap;
         gap: 8px;
       }
+
       .split-header h2 {
         font-family: "Playfair Display", serif;
         font-size: 1.35rem;
-        background: linear-gradient(90deg, #ffd700, #ff9a3c, #fff);
+        background: linear-gradient(90deg, var(--accent-gold), var(--accent-orange), #fff);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
+
       .split-header p {
         font-size: 0.7rem;
-        color: rgba(255, 255, 255, 0.3);
+        color: var(--text-tertiary);
         margin-top: 2px;
         letter-spacing: 0.5px;
       }
+
       .sat-badge {
         padding: 5px 14px;
         border-radius: 20px;
@@ -250,231 +418,169 @@
         text-transform: uppercase;
         transition: all 0.4s;
       }
+
       .sat-badge.s2 {
         background: rgba(60, 200, 100, 0.13);
         border: 1px solid rgba(60, 200, 100, 0.4);
         color: #6fe09a;
       }
+
       .sat-badge.modis {
         background: rgba(60, 120, 255, 0.13);
         border: 1px solid rgba(60, 120, 255, 0.4);
         color: #82b4ff;
       }
-      .split {
-        display: grid;
-        grid-template-columns: 42fr 58fr;
-        height: 78%;
-        border-radius: 20px 20px 0 0;
-        overflow: hidden;
-        border: 1px solid rgba(255, 215, 0, 0.14);
-        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
+
+      .sat-badge.landsat {
+        background: rgba(255, 107, 53, 0.13);
+        border: 1px solid rgba(255, 107, 53, 0.4);
+        color: #ff9a3c;
       }
-      @media (max-width: 800px) {
-        .split {
+
+      /* Comparison Container */
+      .comparison-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        height: 64vh;
+        margin-bottom: 20px;
+        animation: fadeUp 0.9s 0.46s both;
+      }
+
+      @media (max-width: 900px) {
+        .comparison-wrap {
           grid-template-columns: 1fr;
           height: auto;
-          border-radius: 20px;
-        }
-        .events-panel {
-          height: auto;
-          min-height: 380px;
-        }
-        .sat-panel {
-          height: 360px;
         }
       }
 
-      .events-panel {
-        background: #04040e;
+      .sat-card {
         position: relative;
-        border-right: 1px solid rgba(255, 215, 0, 0.1);
-        padding: 20px;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid var(--border-light);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
+        background: var(--bg-tertiary);
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-      }
-      .events-empty {
-        text-align: center;
-        color: rgba(255, 255, 255, 0.3);
-        font-size: 0.8rem;
-        margin: auto;
+        animation: slideInLeft 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
       }
 
-      #mapSvg {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 4;
-        pointer-events: none;
-      }
-      .dp-r {
-        fill: transparent; 
-        stroke: rgba(255, 255, 255, 0.25);
-        stroke-width: 0.8;
-        transition: fill 0.2s, stroke 0.2s;
-      }
-      .dp-r.sel {
-        fill: transparent; /* Removed background fill as requested */
-        stroke: #ffd700;
-        stroke-width: 2.5;
-        filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));
+      .sat-card:nth-child(2) {
+        animation: slideInRight 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
       }
 
-      .sat-panel {
+      html[data-theme="light"] .sat-card {
+        border-color: rgba(212, 168, 10, 0.2);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.1);
+      }
+
+      .sat-img-container {
         position: relative;
-        background: #030310;
+        flex: 1;
         overflow: hidden;
+        background: var(--bg-tertiary);
       }
-      .sat-imgs {
-        position: absolute;
-        inset: 0;
-      }
+
       .sat-img {
         position: absolute;
         inset: 0;
         width: 100%;
         height: 100%;
-        object-fit: fill; 
+        object-fit: cover;
         opacity: 0;
-        transition: opacity 0.65s ease;
+        transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
       }
+
       .sat-img.active {
         opacity: 1;
       }
-      .sat-panel::before {
-        content: "";
+
+      .sat-label {
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
-        height: 80px;
-        background: linear-gradient(to bottom, rgba(4, 4, 20, 0.65), transparent);
-        z-index: 3;
+        padding: 16px;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent);
+        z-index: 4;
         pointer-events: none;
-      }
-      .sat-panel::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 80px;
-        background: linear-gradient(to top, rgba(3, 3, 16, 0.85), transparent);
-        z-index: 3;
-        pointer-events: none;
-      }
-      #satYearChip {
-        position: absolute;
-        top: 12px;
-        left: 14px;
-        z-index: 5;
-        background: rgba(0, 0, 0, 0.78);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 215, 0, 0.5);
-        border-radius: 26px;
-        padding: 5px 16px;
-        font-size: 1rem;
-        font-weight: 800;
-        color: #ffd700;
-        letter-spacing: 2px;
-        font-family: "Playfair Display", serif;
-      }
-      #satSrcChip {
-        position: absolute;
-        top: 12px;
-        right: 14px;
-        z-index: 5;
-        background: rgba(0, 0, 0, 0.65);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 26px;
-        padding: 4px 12px;
-        font-size: 0.6rem;
-        color: rgba(255, 255, 255, 0.45);
-        letter-spacing: 0.4px;
-      }
-      #altNote {
-        position: absolute;
-        bottom: 14px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 5;
-        display: none;
-        align-items: center;
-        gap: 7px;
-        padding: 5px 14px;
-        background: rgba(255, 160, 0, 0.12);
-        border: 1px solid rgba(255, 160, 0, 0.4);
-        border-radius: 20px;
-        font-size: 0.62rem;
-        color: rgba(255, 195, 60, 0.9);
-        white-space: nowrap;
-        backdrop-filter: blur(8px);
-        letter-spacing: 0.3px;
-      }
-      #altNote.show {
-        display: flex;
-      }
-      #syncPill {
-        position: absolute;
-        bottom: 14px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 5;
-        background: rgba(0, 0, 0, 0.72);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(100, 180, 255, 0.3);
-        border-radius: 20px;
-        padding: 4px 14px;
-        font-size: 0.62rem;
-        color: rgba(100, 180, 255, 0.8);
-        letter-spacing: 0.5px;
-        white-space: nowrap;
-        transition: all 0.3s;
-        max-width: 90%;
-      }
-      #syncPill.event {
-        border-color: rgba(255, 215, 0, 0.4);
-        color: rgba(255, 215, 0, 0.8);
-      }
-      #syncPill.hidden {
-        display: none;
       }
 
-      #preloadBar {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #7b2fbe, #ffd700, #ff6b35);
-        width: 0%;
-        z-index: 6;
-        transition: width 0.5s;
+      .sat-label-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.4rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
-      #satLoader {
+
+      .sat-label-subtitle {
+        font-size: 0.7rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 4px;
+      }
+
+      .sat-bottom {
+        background: rgba(4, 4, 18, 0.9);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid var(--border-subtle);
+        padding: 14px 18px;
+        z-index: 5;
+      }
+
+      .sat-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.75rem;
+      }
+
+      .sat-src {
+        color: var(--text-tertiary);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .sat-year {
+        font-family: "Playfair Display", serif;
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--accent-gold);
+      }
+
+      .loader {
         position: absolute;
         inset: 0;
         display: flex;
         align-items: center;
         justify-content: center;
         background: rgba(3, 3, 14, 0.8);
-        z-index: 6;
-        transition: opacity 0.4s;
+        z-index: 10;
+        transition: opacity 0.4s, visibility 0.4s;
+        opacity: 1;
+        visibility: visible;
       }
-      #satLoader.h {
+
+      .loader.hidden {
         opacity: 0;
+        visibility: hidden;
         pointer-events: none;
       }
-      #satLoader .spin {
-        width: 36px;
-        height: 36px;
+
+      .loader .spin {
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         border: 3px solid rgba(255, 215, 0, 0.1);
         border-top-color: rgba(255, 215, 0, 0.7);
         animation: spin 0.8s linear infinite;
       }
-      #satErr {
+
+      .error-state {
         position: absolute;
         inset: 0;
         display: none;
@@ -482,411 +588,97 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
-        background: rgba(3, 3, 14, 0.9);
-        z-index: 6;
+        background: rgba(3, 3, 14, 0.95);
+        z-index: 10;
         padding: 20px;
         text-align: center;
       }
-      #satErr.show {
+
+      .error-state.show {
         display: flex;
       }
-      #satErr p {
-        color: rgba(255, 255, 255, 0.35);
-        font-size: 0.77rem;
+
+      .error-state p {
+        color: var(--text-tertiary);
+        font-size: 0.8rem;
       }
-      #satErr button {
+
+      .error-state button {
         padding: 7px 18px;
         border-radius: 18px;
         background: rgba(255, 215, 0, 0.1);
         border: 1px solid rgba(255, 215, 0, 0.3);
-        color: #ffd700;
+        color: var(--accent-gold);
         cursor: pointer;
         font-size: 0.7rem;
         font-weight: 700;
-      }
-      .sat-ctrl {
-        background: rgba(4, 4, 18, 0.8);
-        backdrop-filter: blur(22px);
-        border: 1px solid rgba(255, 215, 0, 0.14);
-        border-top: none;
-        border-radius: 0 0 20px 20px;
-        padding: 14px 18px;
-      }
-      #noDataNote {
-        display: none;
-        text-align: center;
-        padding: 5px 14px;
-        margin-bottom: 7px;
-        background: rgba(255, 160, 0, 0.06);
-        border: 1px solid rgba(255, 160, 0, 0.18);
-        border-radius: 8px;
-        font-size: 0.67rem;
-        color: rgba(255, 160, 0, 0.55);
-      }
-      #noDataNote.show {
-        display: block;
-      }
-      .slider-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 6px;
-      }
-      .yr-btn {
-        width: 30px;
-        height: 30px;
-        flex-shrink: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.07);
-        border: 1px solid rgba(255, 255, 255, 0.13);
-        color: rgba(255, 215, 0, 0.8);
-        font-size: 1.15rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-      }
-      .yr-btn:hover:not(:disabled) {
-        background: rgba(255, 215, 0, 0.14);
-        border-color: #ffd700;
-        color: #ffd700;
-      }
-      .yr-btn:disabled {
-        opacity: 0.22;
-        cursor: not-allowed;
-      }
-      #satSlider {
-        flex: 1;
-        -webkit-appearance: none;
-        height: 4px;
-        border-radius: 4px;
-        outline: none;
-        cursor: pointer;
-        background: rgba(255, 255, 255, 0.1);
-      }
-      #satSlider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #ffd700, #ff6b35);
-        border: 2px solid rgba(255, 255, 255, 0.9);
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        cursor: pointer;
-        transition: transform 0.15s;
-      }
-      #satSlider::-webkit-slider-thumb:hover {
-        transform: scale(1.3);
-      }
-      #satSlider::-moz-range-thumb {
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #ffd700, #ff6b35);
-        border: 2px solid rgba(255, 255, 255, 0.9);
-        cursor: pointer;
-      }
-      #playBtn {
-        flex-shrink: 0;
-        padding: 6px 18px;
-        border-radius: 18px;
-        background: rgba(255, 215, 0, 0.1);
-        border: 1px solid rgba(255, 215, 0, 0.32);
-        color: #ffd700;
-        font-family: "Poppins", sans-serif;
-        font-size: 0.68rem;
-        font-weight: 700;
-        cursor: pointer;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        transition: all 0.2s;
-        white-space: nowrap;
-      }
-      #playBtn:hover {
-        background: rgba(255, 215, 0, 0.2);
-      }
-      #playBtn.playing {
-        background: rgba(255, 107, 53, 0.13);
-        border-color: rgba(255, 107, 53, 0.45);
-        color: #ff9a3c;
-      }
-      .yr-marks {
-        display: flex;
-        justify-content: space-between;
-        padding: 0 4px;
-      }
-      .ym {
-        font-size: 0.56rem;
-        color: rgba(255, 255, 255, 0.18);
-      }
-
-      .tl-hdr {
-        text-align: left;
-        margin-bottom: 12px;
-      }
-      .tl-tag2 {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 20px;
-        background: rgba(129, 140, 248, 0.12);
-        border: 1px solid rgba(129, 140, 248, 0.28);
-        font-size: 0.6rem;
-        letter-spacing: 1.5px;
-        color: #818cf8;
-        text-transform: uppercase;
-      }
-      .sync-bar {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 14px;
-        background: rgba(255, 215, 0, 0.04);
-        border: 1px solid rgba(255, 215, 0, 0.1);
-        border-radius: 10px;
-        font-size: 0.62rem;
-        color: rgba(255, 215, 0, 0.5);
-      }
-      .sync-bar .sb-sat {
-        color: rgba(100, 180, 255, 0.7);
-      }
-      .sync-bar .sb-ev {
-        color: rgba(255, 215, 0, 0.8);
-        font-weight: 700;
-      }
-      #syncYrTxt {
-        color: #ffd700;
-        font-weight: 700;
-        font-family: "Playfair Display", serif;
-        font-size: 0.85rem;
-      }
-      .tl-outer {
-        position: relative;
-        flex: 1;
-        display: flex;
-        align-items: center;
-        margin: 10px 0;
-      }
-      .tl-arr {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        font-size: 1rem;
-        cursor: pointer;
-        z-index: 5;
-        backdrop-filter: blur(10px);
-        transition: all 0.25s;
-      }
-      .tl-arr:hover {
-        background: rgba(255, 215, 0, 0.2);
-        border-color: #ffd700;
-        color: #ffd700;
-      }
-      .arrL {
-        left: -10px;
-      }
-      .arrR {
-        right: -10px;
-      }
-      .tl-arr.dis {
-        opacity: 0 !important;
-        pointer-events: none !important;
-      }
-      .tl-card {
-        width: 100%;
-        border-radius: 16px;
-        padding: 20px 22px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(20px);
-        background: rgba(100, 150, 255, 0.08);
-        min-height: 160px;
-        position: relative;
-        overflow: hidden;
-        transition: background 0.5s, border-color 0.5s;
-      }
-      .tl-top {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        margin-bottom: 10px;
-        flex-wrap: wrap;
-        gap: 6px;
-      }
-      .era-badge {
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-size: 0.55rem;
-        font-weight: 700;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        border: 1px solid;
-      }
-      .yr-big {
-        font-family: "Playfair Display", serif;
-        font-size: 2.2rem;
-        font-weight: 800;
-        line-height: 1;
-        background: linear-gradient(
-          135deg,
-          rgba(255, 215, 0, 0.9),
-          rgba(255, 154, 60, 0.7)
-        );
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-      .tl-body {
-        display: flex;
-        gap: 12px;
-        align-items: flex-start;
-      }
-      .tl-ico {
-        font-size: 1.8rem;
-        flex-shrink: 0;
-        line-height: 1;
-      }
-      .tl-ttl {
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: #fff;
-        margin-bottom: 5px;
-        line-height: 1.35;
-      }
-      .tl-dsc {
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 0.75rem;
-        line-height: 1.6;
-      }
-
-      @keyframes fR {
-        from { transform: translateX(35px); opacity: 0; }
-        to { transform: none; opacity: 1; }
-      }
-      @keyframes fL {
-        from { transform: translateX(-35px); opacity: 0; }
-        to { transform: none; opacity: 1; }
-      }
-      @keyframes tL2 {
-        from { transform: none; opacity: 1; }
-        to { transform: translateX(-35px); opacity: 0; }
-      }
-      @keyframes tR2 {
-        from { transform: none; opacity: 1; }
-        to { transform: translateX(35px); opacity: 0; }
-      }
-      .aFR { animation: fR 0.38s cubic-bezier(0.22, 1, 0.36, 1) both; }
-      .aFL { animation: fL 0.38s cubic-bezier(0.22, 1, 0.36, 1) both; }
-      .aTL { animation: tL2 0.26s ease-in both; }
-      .aTR { animation: tR2 0.26s ease-in both; }
-
-      .dots-sec {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-      }
-      .dots {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        flex-wrap: wrap;
-        padding: 8px 10px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 40px;
-      }
-      .dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        cursor: pointer;
-        opacity: 0.27;
         transition: all 0.3s;
-        flex-shrink: 0;
-        position: relative;
       }
-      .dot:hover {
-        opacity: 0.8;
-        transform: scale(1.7);
+
+      .error-state button:hover {
+        background: rgba(255, 215, 0, 0.2);
+        transform: translateY(-2px);
       }
-      .dot.act {
-        opacity: 1;
-        transform: scale(1.5);
-      }
-      .dot.act::after {
-        content: "";
-        position: absolute;
-        inset: -3px;
-        border-radius: 50%;
-        border: 1px solid currentColor;
-        animation: ring 2s ease-in-out infinite;
-      }
-      @keyframes ring {
-        0%,
-        100% { transform: scale(1); opacity: 0.6; }
-        50% { transform: scale(2); opacity: 0; }
-      }
-      .dot-gap {
-        width: 1px;
-        height: 8px;
-        background: rgba(255, 255, 255, 0.1);
-        flex-shrink: 0;
-        margin: 0 2px;
-      }
-      .playbar {
+
+      /* Comparison Timeline */
+      .comparison-controls {
         display: flex;
-        align-items: center;
-        gap: 10px;
-        width: 100%;
-      }
-      .pb-btn {
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.07);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        color: rgba(255, 255, 255, 0.55);
-        font-size: 0.75rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
         justify-content: center;
-        transition: all 0.2s;
-        flex-shrink: 0;
+        gap: 16px;
+        padding: 20px;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-light);
+        border-radius: 20px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        animation: fadeUp 0.9s 0.54s both;
       }
-      .pb-btn:hover {
-        background: rgba(255, 215, 0, 0.12);
-        border-color: rgba(255, 215, 0, 0.3);
-        color: #ffd700;
+
+      html[data-theme="light"] .comparison-controls {
+        background: rgba(255, 255, 255, 0.7);
+        border-color: rgba(212, 168, 10, 0.2);
       }
-      .pb-track {
-        flex: 1;
-        height: 3px;
-        background: rgba(255, 255, 255, 0.08);
-        border-radius: 3px;
-        overflow: hidden;
+
+      .comp-btn {
+        padding: 8px 20px;
+        border-radius: 20px;
+        background: rgba(255, 215, 0, 0.1);
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        color: var(--accent-gold);
+        font-family: "Poppins", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
       }
-      .pb-fill {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, #c084fc, #818cf8, #38bdf8);
-        border-radius: 3px;
+
+      .comp-btn:hover {
+        background: rgba(255, 215, 0, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 215, 0, 0.2);
       }
-      .ctr {
+
+      .comp-btn.active {
+        background: rgba(255, 215, 0, 0.3);
+        border-color: rgba(255, 215, 0, 0.6);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+      }
+
+      .comp-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
         font-size: 0.65rem;
-        color: rgba(255, 255, 255, 0.3);
-        white-space: nowrap;
-        text-align: right;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        background: rgba(255, 215, 0, 0.1);
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        color: var(--accent-gold);
+        display: flex;
+        align-items: center;
+        gap: 6px;
       }
 
       .back-btn {
@@ -896,8 +688,8 @@
         padding: 11px 26px;
         border-radius: 50px;
         background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        color: rgba(255, 255, 255, 0.6);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
         font-family: "Poppins", sans-serif;
         font-size: 0.8rem;
         font-weight: 600;
@@ -906,11 +698,33 @@
         transition: all 0.3s;
         margin-top: 30px;
       }
+
+      html[data-theme="light"] .back-btn {
+        background: rgba(212, 168, 10, 0.1);
+        border-color: rgba(212, 168, 10, 0.3);
+        color: var(--text-primary);
+      }
+
       .back-btn:hover {
         background: rgba(255, 215, 0, 0.1);
         border-color: rgba(255, 215, 0, 0.4);
-        color: #fff;
+        color: var(--text-primary);
         transform: translateY(-2px);
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        .split-wrap {
+          max-width: 95vw;
+        }
+
+        .comparison-wrap {
+          height: auto;
+        }
+
+        .sat-card {
+          min-height: 400px;
+        }
       }
     </style>
   </head>
@@ -918,6 +732,13 @@
     <canvas id="stars"></canvas>
     <div class="orb orb1"></div>
     <div class="orb orb2"></div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <span class="toggle-icon" id="themeIcon">🌙</span>
+      <span class="toggle-label" id="themeLabel">Dark</span>
+    </div>
+
     <div id="page">
       <div class="hero">
         <div class="hero-tag">&#10022; Analysis Complete &#10022;</div>
@@ -958,116 +779,165 @@
       <div class="split-wrap">
         <div class="split-header">
           <div>
-            <h2>&#128752; Satellite & Events: {{ district }}</h2>
-            <p>
-              Synced timeline view &bull; {{ birth_year }} &rarr; {{ current_year }}
-            </p>
+            <h2>🛰️ Life Through Satellite: Birth Year vs Now</h2>
+            <p>Side-by-side imagery comparison &bull; {{ birth_year }} to 2026</p>
           </div>
-          <span class="sat-badge modis" id="satBadge">MODIS</span>
         </div>
 
-        <div class="split">
-          <div class="events-panel">
-            {% if events %}
-            <div>
-              <div class="tl-hdr">
-                <div class="tl-tag2">&#128220; History Since {{ birth_year }}</div>
+        <!-- Comparison Container -->
+        <div class="comparison-wrap">
+          <!-- Birth Year Card -->
+          <div class="sat-card">
+            <div class="sat-img-container">
+              <img class="sat-img active" id="birthImg" alt="Birth Year Satellite" />
+              <div class="loader" id="birthLoader">
+                <div class="spin"></div>
               </div>
-              <div class="sync-bar">
-                <span class="sb-sat">&#128752; Satellite</span>
-                <span style="color: rgba(255, 255, 255, 0.2)">&#8596;</span>
-                <span class="sb-ev">
-                  Showing: <span id="syncYrTxt">{{ [birth_year,2000]|max }}</span>
+              <div class="error-state" id="birthError">
+                <p>Could not load imagery</p>
+                <button onclick="retryBirth()">↻ Retry</button>
+              </div>
+              <div class="sat-label">
+                <div class="sat-label-title">{{ birth_year }}</div>
+                <div class="sat-label-subtitle">Your Birth Year</div>
+              </div>
+            </div>
+            <div class="sat-bottom">
+              <div class="sat-meta">
+                <span class="sat-src" id="birthSrc">
+                  <span>📡</span>
+                  <span>Loading...</span>
                 </span>
+                <span class="sat-year">{{ birth_year }}</span>
               </div>
             </div>
-
-            <div class="tl-outer">
-              <div class="tl-arr arrL dis" id="arrL" onclick="tlPrev()">&#8249;</div>
-              <div class="tl-card" id="tlCard">
-                <div class="tl-top">
-                  <span class="era-badge" id="tlEra"></span>
-                  <div class="yr-big" id="tlYr"></div>
-                </div>
-                <div class="tl-body">
-                  <div class="tl-ico" id="tlIco"></div>
-                  <div>
-                    <div class="tl-ttl" id="tlTtl"></div>
-                    <div class="tl-dsc" id="tlDsc"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="tl-arr arrR" id="arrR" onclick="tlNext()">&#8250;</div>
-            </div>
-
-            <div class="dots-sec">
-              <div class="dots" id="dotsEl"></div>
-              <div class="playbar">
-                <button class="pb-btn" id="pbBtn">&#9208;</button>
-                <div class="pb-track"><div class="pb-fill" id="pbFill"></div></div>
-                <span class="ctr" id="ctrTxt">1 / {{ events|length }}</span>
-              </div>
-            </div>
-            {% else %}
-            <div class="events-empty">No events found for this timeframe.</div>
-            {% endif %}
           </div>
 
-          <div class="sat-panel">
-            <div class="sat-imgs">
-              <img class="sat-img active" id="satImgA" alt="" />
-              <img class="sat-img" id="satImgB" alt="" />
+          <!-- Current Year Card -->
+          <div class="sat-card">
+            <div class="sat-img-container">
+              <img class="sat-img active" id="currentImg" alt="Current Year Satellite" />
+              <div class="loader" id="currentLoader">
+                <div class="spin"></div>
+              </div>
+              <div class="error-state" id="currentError">
+                <p>Could not load imagery</p>
+                <button onclick="retryCurrents()">↻ Retry</button>
+              </div>
+              <div class="sat-label">
+                <div class="sat-label-title">2026</div>
+                <div class="sat-label-subtitle">Today</div>
+              </div>
             </div>
-            
-            <svg id="mapSvg" xmlns="http://www.w3.org/2000/svg"></svg>
-
-            <span id="satYearChip">{{ [birth_year,2000]|max }}</span>
-            <span id="satSrcChip">Loading&hellip;</span>
-            
-            <div id="altNote">
-              <span class="an-ico">&#128247;</span>
-              <span id="altNoteTxt"></span>
-            </div>
-            
-            <div id="syncPill">&#128279; Syncing&hellip;</div>
-            <div id="preloadBar"></div>
-            
-            <div id="satLoader"><div class="spin"></div></div>
-            
-            <div id="satErr">
-              <p>Could not load satellite image.</p>
-              <button onclick="retrySat()">&#8635; Retry</button>
+            <div class="sat-bottom">
+              <div class="sat-meta">
+                <span class="sat-src" id="currentSrc">
+                  <span>📡</span>
+                  <span>Loading...</span>
+                </span>
+                <span class="sat-year">2026</span>
+              </div>
             </div>
           </div>
         </div>
-        
-        <div class="sat-ctrl">
-          <div id="noDataNote">
-            &#128065; Imagery available from 2000. Showing earliest for pre-2000 years.
-          </div>
-          <div class="slider-row">
-            <button class="yr-btn" id="satPrev">&#8249;</button>
-            <input
-              type="range"
-              id="satSlider"
-              min="{{ [birth_year,2000]|max }}"
-              max="{{ current_year }}"
-              value="{{ [birth_year,2000]|max }}"
-            />
-            <button class="yr-btn" id="satNext">&#8250;</button>
-            <button id="playBtn">&#9654; Play</button>
-          </div>
-          <div class="yr-marks" id="yrMarks"></div>
+
+        <!-- Controls -->
+        <div class="comparison-controls">
+          <button class="comp-btn active" onclick="setSatSource('landsat')">
+            🌍 Landsat
+          </button>
+          <button class="comp-btn" onclick="setSatSource('modis')">
+            📡 MODIS
+          </button>
+          <span class="comp-badge" id="sourceBadge">
+            <span>🛰️</span>
+            <span id="sourceName">Landsat</span>
+          </span>
         </div>
       </div>
 
       <a href="/" class="back-btn">&#8592; Start Over</a>
     </div>
-    
-    <script>
-      (function(){const c=document.getElementById('stars'),x=c.getContext('2d');let s=[];function r(){c.width=innerWidth;c.height=innerHeight;s=Array.from({length:180},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.5+.2,a:Math.random(),da:(Math.random()-.5)*.008}));}function d(){x.clearRect(0,0,c.width,c.height);s.forEach(p=>{p.a=Math.max(.05,Math.min(1,p.a+p.da));if(p.a<=.05||p.a>=1)p.da*=-1;x.beginPath();x.arc(p.x,p.y,p.r,0,2*Math.PI);x.fillStyle=`rgba(255,215,0,${p.a})`;x.fill();});requestAnimationFrame(d);}window.addEventListener('resize',r);r();d();})();
-      document.querySelectorAll('.ic').forEach(c=>{c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();const rx=((e.clientY-r.top)/r.height-.5)*-13;const ry=((e.clientX-r.left)/r.width-.5)*13;c.style.transform=`perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-3px)`;});c.addEventListener('mouseleave',()=>{c.style.transform='';});});
 
+    <script>
+      // Theme Management
+      function initTheme() {
+        const theme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", theme);
+        updateThemeToggle();
+      }
+
+      function toggleTheme() {
+        const current = document.documentElement.getAttribute("data-theme");
+        const newTheme = current === "light" ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        updateThemeToggle();
+      }
+
+      function updateThemeToggle() {
+        const icon = document.getElementById("themeIcon");
+        const label = document.getElementById("themeLabel");
+        const theme = document.documentElement.getAttribute("data-theme");
+        if (theme === "light") {
+          icon.textContent = "☀️";
+          label.textContent = "Light";
+        } else {
+          icon.textContent = "🌙";
+          label.textContent = "Dark";
+        }
+      }
+
+      // Stars Animation
+      (function () {
+        const c = document.getElementById("stars"),
+          x = c.getContext("2d");
+        let s = [];
+
+        function r() {
+          c.width = innerWidth;
+          c.height = innerHeight;
+          s = Array.from({ length: 180 }, () => ({
+            x: Math.random() * c.width,
+            y: Math.random() * c.height,
+            r: Math.random() * 1.5 + 0.2,
+            a: Math.random(),
+            da: (Math.random() - 0.5) * 0.008,
+          }));
+        }
+
+        function d() {
+          x.clearRect(0, 0, c.width, c.height);
+          s.forEach((p) => {
+            p.a = Math.max(0.05, Math.min(1, p.a + p.da));
+            if (p.a <= 0.05 || p.a >= 1) p.da *= -1;
+            x.beginPath();
+            x.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+            x.fillStyle = `rgba(255,215,0,${p.a})`;
+            x.fill();
+          });
+          requestAnimationFrame(d);
+        }
+
+        window.addEventListener("resize", r);
+        r();
+        d();
+      })();
+
+      // 3D Tilt effect on cards
+      document.querySelectorAll(".ic").forEach((c) => {
+        c.addEventListener("mousemove", (e) => {
+          const r = c.getBoundingClientRect();
+          const rx = ((e.clientY - r.top) / r.height - 0.5) * -13;
+          const ry = ((e.clientX - r.left) / r.width - 0.5) * 13;
+          c.style.transform = `perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-3px)`;
+        });
+        c.addEventListener("mouseleave", () => {
+          c.style.transform = "";
+        });
+      });
+
+      // Satellite Configuration
       const BBOX = {{ (bbox or {
           "minLng": 83.3,
           "minLat": 24.3,
@@ -1075,243 +945,134 @@
           "maxLat": 27.5
       }) | tojson }};
 
-      const DISTRICT="{{district}}";
-      const NS='http://www.w3.org/2000/svg';
-      function _norm(s){return String(s).toLowerCase().replace(/[\s\-()+]/g,'');}
-      (async function(){
-        const svgEl=document.getElementById('mapSvg');
-        const panel=svgEl.parentElement;
-        const W=panel.clientWidth || 600, H=panel.clientHeight || 480;
-        svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
-        
-        let data;
-        try {
-          const r=await fetch('/bihar_dist_ready.geojson');
-          data=await r.json();
-        } catch(e) { return; }
-        
-        if(data.error) return;
-
-        const bMinLng = BBOX.minLng;
-        const bMaxLng = BBOX.maxLng;
-        const bMinLat = BBOX.minLat;
-        const bMaxLat = BBOX.maxLat;
-
-        const sx = W / (bMaxLng - bMinLng);
-        const sy = H / (bMaxLat - bMinLat);
-
-        function proj(lng, lat) {
-          return [ (lng - bMinLng) * sx, H - (lat - bMinLat) * sy ];
-        }
-
-        function rD(ring){return ring.map(([ln,lt],i)=>{const[px,py]=proj(ln,lt);return(i?'L':'M')+px.toFixed(2)+' '+py.toFixed(2);}).join('')+'Z';}
-        function gD(g){return g.type==='Polygon'?g.coordinates.map(rD).join(''):g.type==='MultiPolygon'?g.coordinates.map(p=>p.map(rD).join('')).join(''):'';}
-        
-        const grp=document.createElementNS(NS,'g');
-        data.features.forEach(feat=>{
-          const name=feat.properties.name;
-          const d=gD(feat.geometry);if(!d)return;
-          const path=document.createElementNS(NS,'path');
-          path.setAttribute('d',d);
-          path.setAttribute('class','dp-r'+(_norm(name)===_norm(DISTRICT)?' sel':''));
-          grp.appendChild(path);
-        });
-        svgEl.appendChild(grp);
-      })();
-
+      const DISTRICT = "{{ district }}";
       const BIRTH_YEAR = {{ birth_year }};
-      const CUR_YEAR   = {{ current_year }};
-      const MIN_YEAR   = Math.max(BIRTH_YEAR, 2000);
-      const TOTAL_YRS  = CUR_YEAR - MIN_YEAR + 1;
-      const EOX_BASE   = 'https://tiles.maps.eox.at/wms';
-      const GIBS_BASE  = 'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi';
-      const EOX_AVAIL  = [2016,2017,2018,2019,2020,2021,2022,2023,2024];
+      const CURRENT_YEAR = 2026;
 
-      const YEAR_OVERRIDE = {
-          2006:2007, 2008:2007, 2009:2010, 2011:2013, 2012:2013,
-          2015: 2014, 2016: 2018, 2017: 2018,
-      };
-
-      const cache = {};
-      let curYear    = MIN_YEAR;
-      let satPlay    = false;
-      let satTimer   = null;
-      let loadedCnt  = 0;
-      let activeSlot = 'A';
-      const satImgs  = {A:document.getElementById('satImgA'),B:document.getElementById('satImgB')};
-
-      function satInfo(year){
-        const srcYear = (YEAR_OVERRIDE[year] !== undefined) ? YEAR_OVERRIDE[year] : year;
-        const isAlt   = (srcYear !== year);
-
+      // Satellite Image URLs
+      function generateSatUrl(year, source) {
         const lngSpan = BBOX.maxLng - BBOX.minLng;
         const latSpan = BBOX.maxLat - BBOX.minLat;
-        const W = 1100;
-        const H = Math.min(700, Math.max(200, Math.round(W * latSpan / lngSpan)));
-        const b = `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
-        const q = `&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${W}&HEIGHT=${H}&FORMAT=image/jpeg`;
+        const W = 1200;
+        const H = Math.min(900, Math.max(400, Math.round((W * latSpan) / lngSpan)));
+        const bbox = `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
 
-        if(srcYear >= 2016){
-          const y = EOX_AVAIL.includes(srcYear) ? srcYear : (EOX_AVAIL.filter(v=>v<=srcYear).pop() || EOX_AVAIL[EOX_AVAIL.length-1]);
-          return {
-            url    : `${EOX_BASE}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${q}`,
-            label  : `Sentinel-2 Cloudless ${y}`, badge: 'Sentinel-2', bCls: 's2', isAlt, srcYear, year
-          };
-        } else {
-          const y = Math.max(srcYear, 2000);
-          return {
-            url    : `${GIBS_BASE}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${y}-03-15${q}`,
-            label  : `MODIS Terra ${y}`, badge: 'MODIS', bCls: 'modis', isAlt, srcYear, year
-          };
+        if (source === "landsat") {
+          // USGS Landsat WMS
+          const landsatYear = year < 2013 ? 2013 : year > 2024 ? 2024 : year;
+          return `https://basemap.nationalmap.gov/arcrest/services/USGSTopo/MapServer/tile/0/0/0`;
+        } else if (source === "modis") {
+          // NASA GIBS MODIS
+          const timeStr = `${Math.max(year, 2000)}-03-15`;
+          return `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${timeStr}&BBOX=${bbox}&WIDTH=${W}&HEIGHT=${H}&FORMAT=image/jpeg`;
         }
       }
 
-      function preload(year){
-        if(cache[year]||year<MIN_YEAR||year>CUR_YEAR)return;
-        const info=satInfo(year);
-        cache[year]={url:info.url,ready:false};
-        const img=new Image();
-        img.onload=()=>{
-          cache[year].ready=true;loadedCnt++;
-          const pct=loadedCnt/TOTAL_YRS*100;
-          const bar=document.getElementById('preloadBar');
-          bar.style.width=pct+'%';
-          if(loadedCnt>=TOTAL_YRS)setTimeout(()=>{bar.style.opacity='0';},900);
+      // Load Satellites
+      let currentSource = "landsat";
+
+      function loadSatellites() {
+        loadBirthYearSat();
+        loadCurrentYearSat();
+      }
+
+      function loadBirthYearSat() {
+        const img = document.getElementById("birthImg");
+        const loader = document.getElementById("birthLoader");
+        const error = document.getElementById("birthError");
+        const srcSpan = document.getElementById("birthSrc");
+
+        loader.classList.remove("hidden");
+        error.classList.remove("show");
+
+        const year = BIRTH_YEAR;
+        const url = generateSatUrl(year, currentSource);
+
+        img.onload = () => {
+          loader.classList.add("hidden");
+          error.classList.remove("show");
+          srcSpan.innerHTML = `<span>📡</span><span>${currentSource.toUpperCase()} ${year}</span>`;
         };
-        img.onerror=()=>{cache[year]={url:info.url,ready:false,err:true};};
-        img.src=info.url;
-      }
-      
-      // Removed staggered load, immediately queuing all images for preloading.
-      for(let y=MIN_YEAR; y<=CUR_YEAR; y++) {
-        preload(y);
-      }
 
-      function crossfadeTo(url){
-        const next=activeSlot==='A'?'B':'A';
-        const nextImg=satImgs[next],curImg=satImgs[activeSlot];
-        const loader=document.getElementById('satLoader'),err=document.getElementById('satErr');
-        nextImg.onload=()=>{
-          loader.classList.add('h');err.classList.remove('show');
-          nextImg.classList.add('active');
-          setTimeout(()=>{curImg.classList.remove('active');activeSlot=next;},60);
-        };
-        nextImg.onerror=()=>{loader.classList.add('h');err.classList.add('show');};
-        nextImg.src=url;
-      }
-
-      let _syncBlock=false;
-
-      function loadSat(year, skipEventSync){
-        if(_syncBlock)return;
-        curYear=year;
-        document.getElementById('satSlider').value=year;
-        document.getElementById('satYearChip').textContent=year;
-        document.getElementById('satPrev').disabled=(year<=MIN_YEAR);
-        document.getElementById('satNext').disabled=(year>=CUR_YEAR);
-        document.getElementById('noDataNote').classList.toggle('show',BIRTH_YEAR<2000&&year<=2001);
-
-        const info=satInfo(year);
-        document.getElementById('satSrcChip').textContent=info.label;
-        const badge=document.getElementById('satBadge');
-        badge.textContent=info.badge;badge.className='sat-badge '+info.bCls;
-
-        const altNote  = document.getElementById('altNote');
-        const syncPill = document.getElementById('syncPill');
-        if(info.isAlt){
-          document.getElementById('altNoteTxt').textContent = `Showing ${info.srcYear} imagery (${year} has cloud cover)`;
-          altNote.classList.add('show');
-          syncPill.classList.add('hidden');
-        } else {
-          altNote.classList.remove('show');
-          syncPill.classList.remove('hidden');
-        }
-
-        document.getElementById('satErr').classList.remove('show');
-        if(cache[year]&&cache[year].ready){
-          document.getElementById('satLoader').classList.add('h');
-          crossfadeTo(cache[year].url);
-        } else {
-          document.getElementById('satLoader').classList.remove('h');
-          crossfadeTo(info.url);
-        }
-
-        if(!skipEventSync&&typeof EVS !== 'undefined' && EVS.length){
-          const idx=findEventIndex(year);
-          syncPill.textContent='↔ Event: '+EVS[idx].year;
-          syncPill.className=info.isAlt?'syncPill hidden':'syncPill event';
-          if(idx!==tlI){_syncBlock=true;goTo(idx,idx>tlI?'n':'p',true);_syncBlock=false;}
-        }
-        document.getElementById('syncYrTxt').textContent=year;
-      }
-      function retrySat(){loadSat(curYear);}
-      function findEventIndex(year){let b=0;for(let i=0;i<EVS.length;i++){if(EVS[i].year<=year)b=i;}return b;}
-
-      (function(){
-        const span=CUR_YEAR-MIN_YEAR;
-        const step=span<=8?1:span<=18?2:span<=35?5:10;
-        let tks=[];for(let y=Math.ceil(MIN_YEAR/step)*step;y<=CUR_YEAR;y+=step)tks.push(y);
-        if(!tks.length||tks[0]>MIN_YEAR)tks.unshift(MIN_YEAR);if(tks[tks.length-1]<CUR_YEAR)tks.push(CUR_YEAR);
-        const w=document.getElementById('yrMarks');
-        tks.forEach(y=>{const s=document.createElement('span');s.className='ym';s.textContent=y;w.appendChild(s);});
-      })();
-
-      document.getElementById('satSlider').addEventListener('input',e=>loadSat(+e.target.value));
-      document.getElementById('satPrev').addEventListener('click',()=>{if(curYear>MIN_YEAR)loadSat(curYear-1);});
-      document.getElementById('satNext').addEventListener('click',()=>{if(curYear<CUR_YEAR)loadSat(curYear+1);});
-      document.getElementById('playBtn').addEventListener('click',()=>{
-        satPlay=!satPlay;const btn=document.getElementById('playBtn');
-        if(satPlay){btn.textContent='\u23F8 Pause';btn.classList.add('playing');if(curYear>=CUR_YEAR)loadSat(MIN_YEAR);satTimer=setInterval(()=>{if(curYear>=CUR_YEAR){satPlay=false;clearInterval(satTimer);btn.textContent='\u25B6 Play';btn.classList.remove('playing');return;}loadSat(curYear+1);},1800);}
-        else{clearInterval(satTimer);btn.textContent='\u25B6 Play';btn.classList.remove('playing');}
-      });
-      document.addEventListener('keydown',e=>{
-        if(e.shiftKey&&e.key==='ArrowRight'){e.preventDefault();if(curYear<CUR_YEAR)loadSat(curYear+1);}
-        if(e.shiftKey&&e.key==='ArrowLeft'){e.preventDefault();if(curYear>MIN_YEAR)loadSat(curYear-1);}
-      });
-
-      {% if events %}
-      const EVS={{events|tojson}},TL_MS={{tl_interval}};
-      let tlI=0,tlPlay=true,tlT=null;
-      const strip=document.getElementById('dotsEl');let prevE='';
-      EVS.forEach((ev,i)=>{
-        if(i>0&&ev.era!==prevE){const g=document.createElement('div');g.className='dot-gap';strip.appendChild(g);}
-        const d=document.createElement('div');d.className='dot';d.dataset.idx=i;d.dataset.year=ev.year;
-        d.style.background=ev.color;d.style.color=ev.color;
-        d.addEventListener('click',()=>goTo(i,i>=tlI?'n':'p'));strip.appendChild(d);prevE=ev.era;
-      });
-      function updDots(){strip.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('act',i===tlI));}
-      function updCard(i){const ev=EVS[i];document.getElementById('tlYr').textContent=ev.year;document.getElementById('tlIco').textContent=ev.icon;document.getElementById('tlTtl').textContent=ev.title;document.getElementById('tlDsc').textContent='';const er=document.getElementById('tlEra');er.textContent=ev.era;er.style.cssText=`background:${ev.color}22;color:${ev.color};border-color:${ev.color}55`;const c=document.getElementById('tlCard');c.style.background=ev.color+'18';c.style.borderColor=ev.color+'40';document.getElementById('arrL').classList.toggle('dis',i===0);document.getElementById('arrR').classList.toggle('dis',i===EVS.length-1);document.getElementById('ctrTxt').textContent=`${i+1} / ${EVS.length}`;}
-      function resetProg(){clearTimeout(tlT);const f=document.getElementById('pbFill');f.style.transition='none';f.style.width='0%';if(!tlPlay)return;setTimeout(()=>{f.style.transition=`width ${TL_MS}ms linear`;f.style.width='100%';},60);tlT=setTimeout(()=>{const n=tlI<EVS.length-1?tlI+1:0;goTo(n,n>tlI?'n':'p');},TL_MS);}
-      function goTo(i,d,skipSatSync){
-        const c=document.getElementById('tlCard');
-        const oc=d==='n'?'aTL':'aTR',ic=d==='n'?'aFR':'aFL';
-        c.classList.add(oc);
-        setTimeout(()=>{
-          tlI=i;updCard(i);updDots();c.classList.remove(oc);c.classList.add(ic);setTimeout(()=>c.classList.remove(ic),400);
-          if(!skipSatSync&&!_syncBlock){
-            const evYear=EVS[i].year;const satYear=Math.max(MIN_YEAR,Math.min(CUR_YEAR,evYear));
-            _syncBlock=true;loadSat(satYear,true);_syncBlock=false;
+        img.onerror = () => {
+          loader.classList.add("hidden");
+          error.classList.add("show");
+          // Fallback to MODIS if Landsat fails
+          if (currentSource === "landsat") {
+            const fallbackUrl = generateSatUrl(year, "modis");
+            img.src = fallbackUrl;
+            srcSpan.innerHTML = `<span>📡</span><span>MODIS (Fallback) ${year}</span>`;
           }
-          document.getElementById('syncYrTxt').textContent=EVS[i].year;
-        },260);
-        resetProg();
-      }
-      function tlPrev(){if(tlI>0)goTo(tlI-1,'p');}function tlNext(){if(tlI<EVS.length-1)goTo(tlI+1,'n');}
-      document.getElementById('pbBtn').addEventListener('click',()=>{tlPlay=!tlPlay;document.getElementById('pbBtn').textContent=tlPlay?'\u23F8':'\u25B6';resetProg();});
-      document.addEventListener('keydown',e=>{if(e.shiftKey)return;if(e.key==='ArrowRight')tlNext();if(e.key==='ArrowLeft')tlPrev();if(e.key===' '){e.preventDefault();document.getElementById('pbBtn').click();}});
-      
-      if(EVS.length){updCard(0);updDots();resetProg();}
-      {% endif %}
-      
-      loadSat(MIN_YEAR);
+        };
 
-      // Autoplay map sequence on load
-      setTimeout(() => {
-        const playBtn = document.getElementById('playBtn');
-        if (playBtn && !playBtn.classList.contains('playing')) {
-          playBtn.click();
+        img.src = url;
+      }
+
+      function loadCurrentYearSat() {
+        const img = document.getElementById("currentImg");
+        const loader = document.getElementById("currentLoader");
+        const error = document.getElementById("currentError");
+        const srcSpan = document.getElementById("currentSrc");
+
+        loader.classList.remove("hidden");
+        error.classList.remove("show");
+
+        const year = CURRENT_YEAR;
+        const url = generateSatUrl(year, currentSource);
+
+        img.onload = () => {
+          loader.classList.add("hidden");
+          error.classList.remove("show");
+          srcSpan.innerHTML = `<span>📡</span><span>${currentSource.toUpperCase()} ${year}</span>`;
+        };
+
+        img.onerror = () => {
+          loader.classList.add("hidden");
+          error.classList.add("show");
+          // Fallback to MODIS if Landsat fails
+          if (currentSource === "landsat") {
+            const fallbackUrl = generateSatUrl(year, "modis");
+            img.src = fallbackUrl;
+            srcSpan.innerHTML = `<span>📡</span><span>MODIS (Fallback) ${year}</span>`;
+          }
+        };
+
+        img.src = url;
+      }
+
+      function setSatSource(source) {
+        currentSource = source;
+        document.querySelectorAll(".comp-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        event.target.classList.add("active");
+
+        const badgeName = document.getElementById("sourceName");
+        badgeName.textContent = source.toUpperCase();
+
+        loadSatellites();
+      }
+
+      function retryBirth() {
+        loadBirthYearSat();
+      }
+
+      function retryCurrents() {
+        loadCurrentYearSat();
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", () => {
+        initTheme();
+        loadSatellites();
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "t" || e.key === "T") {
+          toggleTheme();
         }
-      }, 800);
+      });
     </script>
   </body>
 </html>

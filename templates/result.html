@@ -16,6 +16,7 @@
       --track-bg: #0d111c;
       --text-primary: #ffffff;
       --text-secondary: rgba(255, 255, 255, 0.6);
+      --text-tertiary: rgba(255, 255, 255, 0.3);
     }
     
     html[data-theme="light"] {
@@ -26,6 +27,7 @@
       --track-bg: #f0f4f9;
       --text-primary: #0f172a;
       --text-secondary: rgba(15, 23, 42, 0.7);
+      --text-tertiary: rgba(15, 23, 42, 0.5);
     }
     
     html, body {
@@ -33,45 +35,77 @@
       height: 100%;
       margin: 0;
       padding: 0;
+      overflow: hidden;
     }
     
     body {
-      min-height: 100vh;
-      overflow: hidden;
       background: var(--bg-deep);
       font-family: 'Poppins', sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       color: var(--text-primary);
+      transition: all 0.4s ease;
       perspective: 1000px;
-      transition: background 0.4s ease, color 0.4s ease;
     }
 
     html[data-theme="dark"] body {
-      background: radial-gradient(ellipse at top center, #171c2e 0%, #0b0f19 70%);
+      background: radial-gradient(ellipse at 50% 0%, #1a1f35 0%, #0b0f19 100%);
     }
 
     html[data-theme="light"] body {
-      background: linear-gradient(135deg, #f5f7fa 0%, #eef2f7 100%);
+      background: linear-gradient(135deg, #f5f7fa 0%, #e8eef8 100%);
     }
 
-    /* ── BACKGROUND ELEMENTS ── */
-    #stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity 0.4s ease; }
+    /* ── BACKGROUND EFFECTS ── */
+    #stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
     html[data-theme="dark"] #stars { opacity: 1; }
-    
-    .orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0; z-index: 0; animation: drift 14s ease-in-out infinite alternate; pointer-events: none; transition: opacity 0.4s ease; }
-    html[data-theme="dark"] .orb { opacity: 0.12; }
-    
-    .orb1 { width: 600px; height: 600px; background: var(--gold); top: -200px; right: -200px; }
-    .orb2 { width: 500px; height: 500px; background: #6366f1; bottom: -150px; left: -150px; animation-delay: -7s; }
-    @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(40px, 50px); } }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0;
+      z-index: 0;
+      animation: drift 16s ease-in-out infinite alternate;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    html[data-theme="dark"] .orb { opacity: 0.15; }
+
+    .orb1 {
+      width: 700px;
+      height: 700px;
+      background: var(--gold);
+      top: -250px;
+      right: -250px;
+    }
+
+    .orb2 {
+      width: 600px;
+      height: 600px;
+      background: #6366f1;
+      bottom: -200px;
+      left: -200px;
+      animation-delay: -8s;
+    }
+
+    @keyframes drift {
+      from { transform: translate(0, 0); }
+      to { transform: translate(50px, 60px); }
+    }
 
     /* ── THEME TOGGLE ── */
     .theme-toggle {
       position: fixed;
-      top: 30px;
-      right: 30px;
+      top: 25px;
+      right: 25px;
       z-index: 200;
       display: flex;
       align-items: center;
@@ -79,141 +113,133 @@
       padding: 10px 18px;
       border-radius: 50px;
       background: var(--card-bg);
-      border: 1px solid rgba(0, 0, 0, 0.1);
+      border: 1.5px solid rgba(0, 0, 0, 0.08);
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
       backdrop-filter: blur(20px);
-      animation: fadeInDown 0.8s ease-out;
+      animation: slideDown 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-30px); }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-40px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .theme-toggle:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2); }
-    .toggle-icon { font-size: 1.3rem; }
-    .toggle-label { font-size: 0.85rem; font-weight: 600; }
+    .theme-toggle:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.3);
+    }
 
-    /* ── MAIN PAGE CONTAINER ── */
+    .toggle-icon { font-size: 1.3rem; transition: transform 0.3s ease; }
+    .theme-toggle:hover .toggle-icon { transform: scale(1.2) rotate(15deg); }
+    .toggle-label { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; }
+
+    /* ── MAIN PAGE ── */
     #page {
       position: relative;
       z-index: 10;
       width: 100%;
       height: 100%;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      overflow-x: hidden;
-      scroll-behavior: smooth;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto 1fr;
+      gap: 30px;
+      padding: 40px;
+      overflow: hidden;
     }
 
-    /* ── HERO SECTION (FULL SCREEN) ── */
+    @media (max-width: 1600px) {
+      #page { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto; padding: 30px; gap: 25px; }
+    }
+
+    /* ── HERO & INFO (TOP FULL WIDTH) ── */
     .hero-section {
-      position: relative;
-      min-height: 100vh;
-      width: 100%;
+      grid-column: 1 / -1;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 60px 40px;
+      justify-content: space-between;
       gap: 40px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @media (max-width: 1600px) {
+      .hero-section { flex-direction: column; text-align: center; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .hero-content {
-      text-align: center;
-      animation: fadeInUp 1s ease-out 0.2s both;
+      flex: 1;
+      animation: slideInLeft 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
     }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeOutDown {
-      from { opacity: 1; transform: translateY(0); }
-      to { opacity: 0; transform: translateY(40px); }
-    }
-
-    .welcome-tag { 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 8px; 
-      padding: 8px 24px; 
-      border-radius: 50px; 
-      background: rgba(234, 179, 8, 0.1); 
-      border: 1px solid rgba(234, 179, 8, 0.3); 
-      font-size: 0.8rem; 
-      font-weight: 700; 
-      letter-spacing: 2px; 
-      color: var(--gold); 
-      text-transform: uppercase; 
-      margin-bottom: 20px; 
-      animation: fadeInUp 1s ease-out 0.4s both;
-    }
-
-    .hero h1 { 
-      font-family: 'Playfair Display', serif; 
-      font-size: clamp(3rem, 8vw, 5rem); 
-      font-weight: 900; 
-      color: var(--text-primary); 
-      letter-spacing: -1px; 
-      margin-bottom: 12px;
-      animation: fadeInUp 1s ease-out 0.5s both;
-      line-height: 1.1;
-    }
-
-    .hero .sub { 
-      color: var(--text-secondary); 
-      font-size: 1.1rem; 
-      letter-spacing: 1px; 
-      font-weight: 300;
-      animation: fadeInUp 1s ease-out 0.6s both;
-    }
-
-    /* ── INFO GRID (HORIZONTAL) ── */
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      width: 100%;
-      max-width: 1200px;
-    }
-
-    .info-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 24px;
-      padding: 32px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-      position: relative;
-      overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-      cursor: default;
-    }
-
-    html[data-theme="light"] .info-card {
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid rgba(217, 119, 6, 0.15);
-      box-shadow: 0 8px 32px rgba(217, 119, 6, 0.1);
-    }
-
-    .info-card:nth-child(1) { animation: slideInLeft 0.8s ease-out 0.3s both; }
-    .info-card:nth-child(2) { animation: slideInUp 0.8s ease-out 0.4s both; }
-    .info-card:nth-child(3) { animation: slideInUp 0.8s ease-out 0.5s both; }
-    .info-card:nth-child(4) { animation: slideInRight 0.8s ease-out 0.6s both; }
 
     @keyframes slideInLeft {
       from { opacity: 0; transform: translateX(-50px); }
       to { opacity: 1; transform: translateX(0); }
     }
 
-    @keyframes slideInUp {
-      from { opacity: 0; transform: translateY(50px); }
-      to { opacity: 1; transform: translateY(0); }
+    .welcome-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 24px;
+      border-radius: 50px;
+      background: rgba(234, 179, 8, 0.12);
+      border: 1.5px solid rgba(234, 179, 8, 0.35);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 2.5px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      backdrop-filter: blur(10px);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      letter-spacing: -1px;
+      margin-bottom: 10px;
+      line-height: 1.1;
+      background: linear-gradient(135deg, var(--text-primary) 0%, rgba(255, 255, 255, 0.7) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: scaleUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+    }
+
+    @keyframes scaleUp {
+      from { opacity: 0; transform: scale(0.95) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .hero .sub {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      font-weight: 300;
+      animation: slideInLeft 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+    }
+
+    /* ── INFO CARDS GRID ── */
+    .info-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      animation: slideInRight 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
     }
 
     @keyframes slideInRight {
@@ -221,78 +247,144 @@
       to { opacity: 1; transform: translateX(0); }
     }
 
-    .info-card:hover {
-      transform: translateY(-12px);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-      border-color: rgba(234, 179, 8, 0.3);
+    @media (max-width: 1600px) {
+      .info-grid { grid-template-columns: repeat(4, 1fr); flex: unset; width: 100%; }
+    }
+
+    .info-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 24px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      cursor: pointer;
+      animation: popIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.85) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .info-card:nth-child(1) { animation-delay: 0.3s; }
+    .info-card:nth-child(2) { animation-delay: 0.35s; }
+    .info-card:nth-child(3) { animation-delay: 0.4s; }
+    .info-card:nth-child(4) { animation-delay: 0.45s; }
+
+    html[data-theme="light"] .info-card {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1.5px solid rgba(217, 119, 6, 0.15);
+      box-shadow: 0 8px 32px rgba(217, 119, 6, 0.12);
     }
 
     .info-card::before {
       content: '';
       position: absolute;
-      top: 0;
+      top: -2px;
       left: 0;
       right: 0;
-      height: 3px;
+      height: 2px;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
       opacity: 0;
-      transition: opacity 0.4s ease;
+      transition: opacity 0.3s ease;
+    }
+
+    .info-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(234, 179, 8, 0.4);
+      box-shadow: 0 20px 60px rgba(234, 179, 8, 0.15);
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .info-card:hover::before { opacity: 1; }
 
-    .card-icon { font-size: 2.5rem; margin-bottom: 16px; display: inline-block; transition: transform 0.4s ease; }
-    .info-card:hover .card-icon { transform: scale(1.2) rotate(8deg); }
-    .card-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 10px; }
-    .card-value { font-size: 1.4rem; font-weight: 700; color: var(--text-primary); }
-    .card-value.big { font-size: 2.8rem; background: linear-gradient(135deg, var(--gold), #FF9A3C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .card-icon {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+      display: inline-block;
+      transition: all 0.3s ease;
+      animation: floatIcon 3s ease-in-out infinite;
+    }
 
-    /* ── SATELLITE SECTION (FULL SCREEN) ── */
+    @keyframes floatIcon {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .info-card:hover .card-icon { transform: scale(1.3) rotate(15deg); animation: none; }
+
+    .card-label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+    }
+
+    .card-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .card-value.big {
+      font-size: 2.4rem;
+      background: linear-gradient(135deg, var(--gold), #FF9A3C);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── SATELLITES SECTION ── */
     .sat-section {
-      position: relative;
-      min-height: 100vh;
-      width: 100%;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 80px 40px;
-      gap: 60px;
+      gap: 16px;
+      animation: slideInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+    }
+
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .sat-header {
       text-align: center;
-      animation: fadeInUp 1s ease-out both;
-      max-width: 600px;
     }
 
     .sat-tag {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 24px;
+      gap: 6px;
+      padding: 6px 18px;
       border-radius: 50px;
-      background: rgba(234, 179, 8, 0.1);
-      border: 1px solid rgba(234, 179, 8, 0.3);
-      font-size: 0.75rem;
-      font-weight: 700;
+      background: rgba(234, 179, 8, 0.12);
+      border: 1.5px solid rgba(234, 179, 8, 0.3);
+      font-size: 0.65rem;
+      font-weight: 800;
       letter-spacing: 2px;
       color: var(--gold);
       text-transform: uppercase;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
+      backdrop-filter: blur(10px);
     }
 
     .sat-header h2 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2.5rem, 6vw, 3.8rem);
+      font-size: 1.6rem;
       font-weight: 900;
       color: var(--text-primary);
-      margin-bottom: 12px;
+      margin-bottom: 4px;
     }
 
     .sat-header p {
       color: var(--text-secondary);
-      font-size: 1rem;
+      font-size: 0.85rem;
       letter-spacing: 0.5px;
     }
 
@@ -300,40 +392,41 @@
     .sat-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 40px;
-      width: 100%;
-      max-width: 1400px;
-    }
-
-    @media (max-width: 1200px) {
-      .sat-grid { grid-template-columns: 1fr; gap: 50px; }
+      gap: 20px;
+      height: 100%;
     }
 
     .sat-card {
       position: relative;
-      border-radius: 32px;
+      border-radius: 28px;
       overflow: hidden;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-      background: var(--card-bg);
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(18, 22, 36, 0.8) 100%);
       display: flex;
       flex-direction: column;
-      height: 600px;
       transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      animation: zoomIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
+
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .sat-card:first-child { animation-delay: 0.3s; }
+    .sat-card:last-child { animation-delay: 0.4s; }
 
     html[data-theme="light"] .sat-card {
       border-color: rgba(217, 119, 6, 0.2);
-      box-shadow: 0 20px 60px rgba(217, 119, 6, 0.15);
+      box-shadow: 0 16px 60px rgba(217, 119, 6, 0.12);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 250, 0.9) 100%);
     }
 
-    .sat-card:first-child { animation: slideInLeft 1s ease-out 0.4s both; }
-    .sat-card:last-child { animation: slideInRight 1s ease-out 0.5s both; }
-
     .sat-card:hover {
-      transform: translateY(-20px) scale(1.02);
-      box-shadow: 0 50px 120px rgba(234, 179, 8, 0.2);
-      border-color: rgba(234, 179, 8, 0.4);
+      transform: translateY(-12px);
+      box-shadow: 0 40px 100px rgba(234, 179, 8, 0.2);
+      border-color: rgba(234, 179, 8, 0.5);
     }
 
     .sat-img-container {
@@ -350,7 +443,7 @@
       height: 100%;
       object-fit: cover;
       opacity: 0;
-      transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: opacity 1s ease-out;
     }
 
     .sat-img.active { opacity: 1; }
@@ -368,43 +461,56 @@
       top: 0;
       left: 0;
       right: 0;
-      padding: 32px 40px;
-      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.3), transparent);
+      padding: 24px;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4), transparent);
       z-index: 4;
       pointer-events: none;
+      animation: fadeInDown 0.8s ease-out 0.4s both;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .sat-label-year {
       font-family: 'Playfair Display', serif;
-      font-size: 4.5rem;
+      font-size: 3.2rem;
       font-weight: 900;
       color: #fff;
-      text-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+      text-shadow: 0 6px 24px rgba(0, 0, 0, 0.8);
       line-height: 1;
     }
 
     .sat-label-sub {
-      font-size: 0.9rem;
+      font-size: 0.75rem;
       color: rgba(255, 255, 255, 0.85);
-      margin-top: 10px;
+      margin-top: 6px;
       letter-spacing: 2px;
       text-transform: uppercase;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .sat-bottom {
-      background: linear-gradient(to top, rgba(13, 17, 28, 0.98), rgba(13, 17, 28, 0.8));
+      background: linear-gradient(to top, rgba(13, 17, 28, 0.98), rgba(13, 17, 28, 0.85));
       backdrop-filter: blur(20px);
       border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 24px 32px;
+      padding: 16px 20px;
       z-index: 5;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
+      animation: fadeInUp 0.8s ease-out 0.5s both;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     html[data-theme="light"] .sat-bottom {
-      background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+      background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
       border-top: 1px solid rgba(217, 119, 6, 0.15);
     }
 
@@ -412,14 +518,14 @@
       color: var(--text-secondary);
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
     }
 
     .sat-year-footer {
       font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
+      font-size: 1.4rem;
       font-weight: 900;
       color: var(--gold);
     }
@@ -430,22 +536,17 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(13, 17, 28, 0.9);
+      background: rgba(13, 17, 28, 0.85);
       z-index: 10;
-      animation: fadeIn 0.3s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
     }
 
     .loader.hidden { display: none; }
+
     .loader .spin {
-      width: 60px;
-      height: 60px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      border: 5px solid rgba(234, 179, 8, 0.1);
+      border: 4px solid rgba(234, 179, 8, 0.2);
       border-top-color: var(--gold);
       animation: spin 1.2s linear infinite;
     }
@@ -459,24 +560,23 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 12px;
       background: rgba(13, 17, 28, 0.95);
       z-index: 10;
       padding: 20px;
       text-align: center;
-      animation: fadeIn 0.3s ease-out;
     }
 
     .error-state.show { display: flex; }
-    .error-state p { color: var(--text-secondary); font-size: 0.9rem; }
+    .error-state p { color: var(--text-secondary); font-size: 0.85rem; }
     .error-state button {
-      padding: 10px 24px;
-      border-radius: 24px;
+      padding: 8px 20px;
+      border-radius: 20px;
       background: rgba(234, 179, 8, 0.15);
       border: 1.5px solid rgba(234, 179, 8, 0.4);
       color: var(--gold);
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 700;
       transition: all 0.3s ease;
       backdrop-filter: blur(10px);
@@ -485,55 +585,49 @@
     .error-state button:hover {
       background: rgba(234, 179, 8, 0.25);
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(234, 179, 8, 0.2);
+      box-shadow: 0 8px 20px rgba(234, 179, 8, 0.2);
     }
 
-    /* ── TIMELINE SECTION (FULL SCREEN) ── */
+    /* ── TIMELINE SECTION ── */
     .tl-section {
-      position: relative;
-      min-height: 100vh;
-      width: 100%;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 80px 40px;
-      gap: 60px;
+      gap: 16px;
+      animation: slideInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
     }
 
     .tl-header {
       text-align: center;
-      animation: fadeInUp 1s ease-out both;
-      max-width: 700px;
     }
 
     .tl-tag {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 24px;
+      gap: 6px;
+      padding: 6px 18px;
       border-radius: 50px;
       background: rgba(165, 180, 252, 0.12);
-      border: 1px solid rgba(165, 180, 252, 0.3);
-      font-size: 0.75rem;
-      font-weight: 700;
+      border: 1.5px solid rgba(165, 180, 252, 0.3);
+      font-size: 0.65rem;
+      font-weight: 800;
       letter-spacing: 2px;
       color: #a5b4fc;
       text-transform: uppercase;
-      margin-bottom: 16px;
+      margin-bottom: 8px;
+      backdrop-filter: blur(10px);
     }
 
     .tl-header h2 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2.5rem, 6vw, 3.8rem);
+      font-size: 1.6rem;
       font-weight: 900;
       color: var(--text-primary);
-      margin-bottom: 12px;
+      margin-bottom: 4px;
     }
 
     .tl-header p {
       color: var(--text-secondary);
-      font-size: 1rem;
+      font-size: 0.85rem;
       letter-spacing: 0.5px;
     }
 
@@ -541,26 +635,24 @@
     .tl-card-outer {
       position: relative;
       width: 100%;
-      max-width: 1000px;
-      margin-bottom: 40px;
       perspective: 1200px;
-      animation: fadeInUp 1s ease-out 0.3s both;
+      animation: fadeInUp 0.8s ease-out 0.3s both;
     }
 
     .tl-arrow {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      width: 56px;
-      height: 56px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.06);
       border: 1.5px solid rgba(255, 255, 255, 0.15);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--text-secondary);
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       cursor: pointer;
       z-index: 10;
       transition: all 0.3s ease;
@@ -570,6 +662,7 @@
     }
 
     .tl-card-outer:hover .tl-arrow { opacity: 1; pointer-events: all; }
+
     .tl-arrow:hover {
       background: rgba(255, 255, 255, 0.2);
       border-color: rgba(255, 255, 255, 0.4);
@@ -578,31 +671,37 @@
       box-shadow: 0 12px 32px rgba(255, 255, 255, 0.15);
     }
 
-    .tl-arrow.left { left: -40px; }
-    .tl-arrow.right { right: -40px; }
+    .tl-arrow.left { left: -35px; }
+    .tl-arrow.right { right: -35px; }
     .tl-arrow.disabled { opacity: 0 !important; pointer-events: none !important; }
 
     .tl-card {
-      border-radius: 28px;
-      padding: 48px 60px;
+      border-radius: 24px;
+      padding: 32px 40px;
       border: 1.5px solid rgba(255, 255, 255, 0.1);
-      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(18, 22, 36, 0.8) 100%);
+      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(18, 22, 36, 0.7) 100%);
       backdrop-filter: blur(20px);
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 320px;
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+      min-height: 200px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
       transform-style: preserve-3d;
       transition: all 0.4s ease-out;
+      animation: scaleInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
+    }
+
+    @keyframes scaleInUp {
+      from { opacity: 0; transform: scale(0.95) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
     html[data-theme="light"] .tl-card {
       border-color: rgba(217, 119, 6, 0.2);
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 250, 0.9) 100%);
-      box-shadow: 0 20px 60px rgba(217, 119, 6, 0.15);
+      box-shadow: 0 16px 60px rgba(217, 119, 6, 0.12);
     }
 
     .tl-card::before {
@@ -614,50 +713,23 @@
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(234, 179, 8, 0.5), transparent);
       opacity: 0;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.4s ease;
     }
 
     .tl-card:hover::before { opacity: 1; }
 
-    @keyframes fromRight {
-      from { opacity: 0; transform: translateX(60px) scale(0.95); }
+    @keyframes tlSlideRight {
+      from { opacity: 0; transform: translateX(50px) scale(0.95); }
       to { opacity: 1; transform: translateX(0) scale(1); }
     }
 
-    @keyframes fromLeft {
-      from { opacity: 0; transform: translateX(-60px) scale(0.95); }
+    @keyframes tlSlideLeft {
+      from { opacity: 0; transform: translateX(-50px) scale(0.95); }
       to { opacity: 1; transform: translateX(0) scale(1); }
     }
 
-    @keyframes toLeft {
-      from { opacity: 1; transform: translateX(0) scale(1); }
-      to { opacity: 0; transform: translateX(-60px) scale(0.95); }
-    }
-
-    @keyframes toRight {
-      from { opacity: 1; transform: translateX(0) scale(1); }
-      to { opacity: 0; transform: translateX(60px) scale(0.95); }
-    }
-
-    .slide-from-right { animation: fromRight 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
-    .slide-from-left { animation: fromLeft 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
-    .slide-to-left { animation: toLeft 0.4s ease-in both; }
-    .slide-to-right { animation: toRight 0.4s ease-in both; }
-
-    @keyframes contentReveal {
-      from { opacity: 0; transform: translateY(20px) translateZ(20px); }
-      to { opacity: 1; transform: translateZ(20px); }
-    }
-
-    .animate-content .tl-icon-wrap,
-    .animate-content .tl-title,
-    .animate-content .tl-year-wrap {
-      animation: contentReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-
-    .animate-content .tl-icon-wrap { animation-delay: 0.1s; }
-    .animate-content .tl-title { animation-delay: 0.25s; }
-    .animate-content .tl-year-wrap { animation-delay: 0.15s; }
+    .slide-from-right { animation: tlSlideRight 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .slide-from-left { animation: tlSlideLeft 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
     .tl-top {
       display: flex;
@@ -666,19 +738,26 @@
       width: 100%;
       position: relative;
       z-index: 2;
-      gap: 30px;
+      gap: 20px;
+      margin-bottom: 16px;
     }
 
     .tl-era-badge {
-      padding: 8px 24px;
+      padding: 6px 18px;
       border-radius: 30px;
-      font-size: 0.75rem;
+      font-size: 0.65rem;
       font-weight: 800;
       letter-spacing: 2px;
       text-transform: uppercase;
       border: 1.5px solid;
       background: transparent;
-      transition: all 0.4s ease;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.6s ease-out 0.45s both;
+    }
+
+    @keyframes fadeInUpSmall {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .tl-year-wrap {
@@ -686,22 +765,23 @@
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 6px;
+      gap: 2px;
+      animation: fadeInUpSmall 0.6s ease-out 0.4s both;
     }
 
     .tl-year {
       font-family: 'Playfair Display', serif;
-      font-size: 5.5rem;
+      font-size: 3.5rem;
       font-weight: 900;
       line-height: 0.9;
       color: var(--gold);
-      text-shadow: 0 8px 32px rgba(234, 179, 8, 0.3);
+      text-shadow: 0 6px 24px rgba(234, 179, 8, 0.3);
     }
 
     .tl-year-label {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      letter-spacing: 3px;
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+      letter-spacing: 2px;
       text-transform: uppercase;
       font-weight: 700;
     }
@@ -709,46 +789,42 @@
     .tl-body {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 32px;
-      flex: 1;
-      margin-top: 24px;
-      text-align: center;
+      justify-content: flex-start;
+      gap: 20px;
       position: relative;
       z-index: 2;
+      animation: fadeInUpSmall 0.6s ease-out 0.5s both;
     }
 
     .tl-icon-wrap {
-      font-size: 4rem;
+      font-size: 3rem;
       line-height: 1;
       flex-shrink: 0;
-      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.4));
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
     }
 
     .tl-title {
-      font-size: 1.8rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--text-primary);
-      line-height: 1.4;
-      letter-spacing: 0.3px;
-      max-width: 85%;
+      line-height: 1.3;
+      letter-spacing: 0.2px;
     }
 
-    /* ── DOTS SECTION ── */
+    /* ── DOTS & PLAYBAR ── */
     .tl-dots-section {
       width: 100%;
-      max-width: 900px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 32px;
-      animation: fadeInUp 1s ease-out 0.4s both;
+      gap: 16px;
+      animation: fadeInUp 0.8s ease-out 0.4s both;
     }
 
     .tl-legend {
       display: flex;
       align-items: center;
-      gap: 32px;
+      gap: 20px;
       flex-wrap: wrap;
       justify-content: center;
     }
@@ -756,33 +832,33 @@
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 0.8rem;
+      gap: 10px;
+      font-size: 0.7rem;
       font-weight: 700;
-      color: var(--text-secondary);
+      color: var(--text-tertiary);
       letter-spacing: 1.5px;
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.3s ease;
-      padding: 8px 16px;
-      border-radius: 24px;
+      padding: 6px 14px;
+      border-radius: 20px;
     }
 
     .legend-item:hover {
       color: var(--text-primary);
       background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-3px);
+      transform: translateY(-2px);
     }
 
     .legend-item.active {
       color: var(--text-primary);
       background: rgba(255, 255, 255, 0.15);
-      box-shadow: inset 0 0 16px rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.1);
     }
 
     .legend-dot {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
       opacity: 0.5;
       transition: all 0.3s ease;
@@ -795,29 +871,35 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 14px;
       flex-wrap: wrap;
-      padding: 24px 48px;
+      padding: 20px 40px;
       background: linear-gradient(135deg, var(--track-bg) 0%, rgba(13, 17, 28, 0.6) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
       border-radius: 60px;
-      box-shadow: inset 0 4px 24px rgba(0, 0, 0, 0.4), 0 12px 40px rgba(0, 0, 0, 0.3);
+      box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.4), 0 12px 40px rgba(0, 0, 0, 0.3);
       width: fit-content;
       max-width: 100%;
-      min-height: 64px;
+      min-height: 58px;
       transition: all 0.4s ease;
       backdrop-filter: blur(10px);
+      animation: slideUp 0.6s ease-out 0.45s both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     html[data-theme="light"] .tl-dots-strip {
-      background: linear-gradient(135deg, rgba(240, 244, 249, 0.8) 0%, rgba(245, 247, 250, 0.6) 100%);
-      border-color: rgba(217, 119, 6, 0.15);
-      box-shadow: inset 0 2px 12px rgba(217, 119, 6, 0.05), 0 8px 32px rgba(217, 119, 6, 0.12);
+      background: linear-gradient(135deg, rgba(240, 244, 249, 0.85) 0%, rgba(245, 247, 250, 0.7) 100%);
+      border-color: rgba(217, 119, 6, 0.2);
+      box-shadow: inset 0 2px 10px rgba(217, 119, 6, 0.05), 0 8px 32px rgba(217, 119, 6, 0.1);
     }
 
     .tl-dot {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
       cursor: pointer;
       flex-shrink: 0;
@@ -828,11 +910,11 @@
 
     .tl-dot.hidden-dot { display: none !important; }
     .tl-dot.past { opacity: 0.5; }
-    .tl-dot:hover { opacity: 1; transform: scale(1.8) !important; }
+    .tl-dot:hover { opacity: 1; transform: scale(1.7) !important; }
 
     .tl-dot.active {
       opacity: 1;
-      transform: scale(1.6);
+      transform: scale(1.5);
     }
 
     .tl-dot.active::after {
@@ -841,33 +923,33 @@
       inset: -8px;
       border-radius: 50%;
       border: 2px solid currentColor;
-      animation: expandRing 0.6s ease-out forwards;
+      animation: pulseRing 0.8s ease-out forwards;
     }
 
-    @keyframes expandRing {
-      0% { transform: scale(0.4); opacity: 0; }
+    @keyframes pulseRing {
+      0% { transform: scale(0.3); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
 
     .tl-dot::before {
       content: attr(data-year);
       position: absolute;
-      bottom: 140%;
+      bottom: 130%;
       left: 50%;
-      transform: translateX(-50%) translateY(12px);
+      transform: translateX(-50%) translateY(10px);
       background: #fff;
       color: #000;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 800;
-      padding: 6px 12px;
-      border-radius: 8px;
+      padding: 4px 10px;
+      border-radius: 6px;
       white-space: nowrap;
       letter-spacing: 0.5px;
       opacity: 0;
       pointer-events: none;
       transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
       z-index: 20;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
     }
 
     .tl-dot:hover::before {
@@ -879,21 +961,22 @@
     .tl-playbar {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
       width: 100%;
-      max-width: 700px;
-      animation: fadeInUp 1s ease-out 0.5s both;
+      max-width: 600px;
+      padding: 0 20px;
+      animation: fadeInUp 0.8s ease-out 0.5s both;
     }
 
     .ctrl-btn {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       flex-shrink: 0;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
       color: var(--text-secondary);
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -916,9 +999,9 @@
 
     .tl-progress-track {
       flex: 1;
-      height: 5px;
+      height: 4px;
       background: rgba(255, 255, 255, 0.08);
-      border-radius: 6px;
+      border-radius: 4px;
       overflow: hidden;
       position: relative;
       cursor: pointer;
@@ -927,132 +1010,72 @@
     .tl-progress-fill {
       height: 100%;
       width: 0%;
-      border-radius: 6px;
+      border-radius: 4px;
       background: linear-gradient(90deg, #38bdf8, #818cf8, #d946ef);
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.5);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
       transition: box-shadow 0.3s ease;
     }
 
-    .tl-progress-fill:hover { box-shadow: 0 0 24px rgba(56, 189, 248, 0.8); }
+    .tl-progress-fill:hover { box-shadow: 0 0 20px rgba(56, 189, 248, 0.9); }
 
     .tl-counter-txt {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      letter-spacing: 1px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      letter-spacing: 1.5px;
       white-space: nowrap;
-      min-width: 65px;
+      min-width: 60px;
       text-align: right;
     }
 
     .keyboard-hints {
       display: flex;
-      gap: 16px;
+      gap: 12px;
       align-items: center;
-      opacity: 0.6;
-      font-size: 0.7rem;
+      opacity: 0.5;
+      font-size: 0.65rem;
       color: var(--text-primary);
       letter-spacing: 1px;
       text-transform: uppercase;
-      margin-top: 10px;
       flex-wrap: wrap;
       justify-content: center;
+      animation: fadeIn 0.8s ease-out 0.6s both;
     }
 
     .kbd {
       background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 6px;
-      padding: 3px 8px;
+      border-radius: 5px;
+      padding: 2px 6px;
       font-family: 'Courier New', monospace;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--text-primary);
     }
 
-    /* ── BOTTOM ACTION ── */
-    .actions-row {
-      display: flex;
-      gap: 20px;
-      margin-top: 60px;
-      padding-bottom: 60px;
-      animation: fadeInUp 1s ease-out 0.7s both;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .action-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 36px;
-      border-radius: 50px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1.5px solid rgba(255, 255, 255, 0.12);
-      color: var(--text-secondary);
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      text-decoration: none;
-      letter-spacing: 1px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-    }
-
-    .action-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.25);
-      color: var(--text-primary);
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
-    }
-
-    .action-btn.primary {
-      background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(249, 115, 22, 0.15));
-      border-color: rgba(234, 179, 8, 0.4);
-      color: var(--gold);
-    }
-
-    .action-btn.primary:hover {
-      background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(249, 115, 22, 0.25));
-      border-color: var(--gold);
-      color: #fff;
-      box-shadow: 0 16px 40px rgba(234, 179, 8, 0.2);
-    }
-
-    /* ── SCROLLBAR ── */
-    #page::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    #page::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    #page::-webkit-scrollbar-thumb {
-      background: rgba(234, 179, 8, 0.4);
-      border-radius: 4px;
-    }
-
-    #page::-webkit-scrollbar-thumb:hover {
-      background: rgba(234, 179, 8, 0.7);
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1600px) {
+      .sat-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 3rem; }
+      .sat-label-year { font-size: 2.5rem; }
+      .tl-year { font-size: 2.5rem; }
+      .tl-title { font-size: 1.1rem; }
+      .tl-card { padding: 24px 30px; }
+      .sat-header h2 { font-size: 1.4rem; }
+      .tl-header h2 { font-size: 1.4rem; }
+      .tl-icon-wrap { font-size: 2.5rem; }
     }
 
     @media (max-width: 768px) {
-      .sat-grid { grid-template-columns: 1fr; }
-      .sat-card { height: 450px; }
-      .sat-label-year { font-size: 3rem; }
-      .tl-year { font-size: 3.5rem; }
-      .tl-body { flex-direction: column; gap: 16px; }
-      .tl-title { font-size: 1.4rem; }
-      .tl-card { padding: 32px 24px; }
-      .hero h1 { font-size: 2.5rem; }
-      .sat-header h2 { font-size: 2rem; }
-      .tl-header h2 { font-size: 2rem; }
-      .sat-grid { gap: 30px; }
-      .tl-arrow { width: 44px; height: 44px; font-size: 1.2rem; }
-      .tl-arrow.left { left: -28px; }
-      .tl-arrow.right { right: -28px; }
+      #page { grid-template-columns: 1fr; padding: 20px; gap: 20px; }
+      .hero-section { flex-direction: column; }
+      .info-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero h1 { font-size: 2rem; }
+      .sat-card { }
+      .tl-arrow { width: 40px; height: 40px; font-size: 1.1rem; }
+      .tl-arrow.left { left: -25px; }
+      .tl-arrow.right { right: -25px; }
+      .tl-card { padding: 20px 24px; min-height: auto; }
+      .tl-body { flex-direction: column; gap: 12px; text-align: center; }
     }
   </style>
 </head>
@@ -1069,12 +1092,12 @@
 
 <div id="page">
   
-  <!-- ━━ HERO SECTION ━━ -->
+  <!-- ━━ HERO + INFO ━━ -->
   <section class="hero-section">
     <div class="hero-content">
       <div class="welcome-tag">✦ Analysis Complete ✦</div>
-      <h1>Namaste, {{ name }}!</h1>
-      <p class="sub">Born in {{ birth_year }} &nbsp;·&nbsp; {{ district }}, Bihar</p>
+      <h1>Namaste,<br>{{ name }}!</h1>
+      <p class="sub">Born in {{ birth_year }} · {{ district }}, Bihar</p>
     </div>
 
     <div class="info-grid">
@@ -1086,30 +1109,29 @@
       <div class="info-card">
         <span class="card-icon">🗓️</span>
         <div class="card-label">Date of Birth</div>
-        <div class="card-value" style="font-size:1.2rem;">{{ dob }}</div>
+        <div class="card-value" style="font-size:1rem;">{{ dob }}</div>
       </div>
       <div class="info-card">
         <span class="card-icon">⏳</span>
         <div class="card-label">Age</div>
         {% if age %}
         <div class="card-value big">{{ age }}</div>
-        <div style="color:var(--text-secondary);font-size:0.8rem;margin-top:4px;">years old{% if zodiac %} · {{ zodiac }}{% endif %}</div>
         {% else %}<div class="card-value">—</div>{% endif %}
       </div>
       <div class="info-card">
         <span class="card-icon">📍</span>
-        <div class="card-label">District — Bihar</div>
+        <div class="card-label">District</div>
         <div class="card-value">{{ district }}</div>
       </div>
     </div>
   </section>
 
-  <!-- ━━ SATELLITE SECTION ━━ -->
+  <!-- ━━ SATELLITES ━━ -->
   <section class="sat-section">
     <div class="sat-header">
       <div class="sat-tag">🛰️ Satellite Imagery</div>
       <h2>Your Life Through Satellite</h2>
-      <p>Compare {{ birth_year }} with 2026 • {{ district }}, Bihar</p>
+      <p>Compare {{ birth_year }} with 2026</p>
     </div>
 
     <div class="sat-grid">
@@ -1117,9 +1139,7 @@
         <div class="sat-img-container">
           <img class="sat-img active" id="birthImg" alt="Birth Year" />
           <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg"></svg>
-          <div class="loader" id="birthLoader">
-            <div class="spin"></div>
-          </div>
+          <div class="loader" id="birthLoader"><div class="spin"></div></div>
           <div class="error-state" id="birthError">
             <p>Could not load imagery</p>
             <button onclick="retryBirth()">↻ Retry</button>
@@ -1139,9 +1159,7 @@
         <div class="sat-img-container">
           <img class="sat-img active" id="currentImg" alt="2026" />
           <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg"></svg>
-          <div class="loader" id="currentLoader">
-            <div class="spin"></div>
-          </div>
+          <div class="loader" id="currentLoader"><div class="spin"></div></div>
           <div class="error-state" id="currentError">
             <p>Could not load imagery</p>
             <button onclick="retryCurrent()">↻ Retry</button>
@@ -1159,18 +1177,18 @@
     </div>
   </section>
 
-  <!-- ━━ TIMELINE SECTION ━━ -->
+  <!-- ━━ TIMELINE ━━ -->
   <section class="tl-section">
     <div class="tl-header">
       <div class="tl-tag">📜 Bihar Through Your Years</div>
       <h2>History Since {{ birth_year }}</h2>
-      <p>{{ events|length }} milestones that shaped Bihar during your lifetime</p>
+      <p>{{ events|length }} milestones that shaped Bihar</p>
     </div>
 
     {% if events %}
     <div class="tl-card-outer" id="cardOuter">
       <div class="tl-arrow left" id="arrowLeft" onclick="prevEvent()">‹</div>
-      <div class="tl-card animate-content" id="tlCard">
+      <div class="tl-card" id="tlCard">
         <div class="tl-top">
           <div><span class="tl-era-badge" id="tlEra"></span></div>
           <div class="tl-year-wrap">
@@ -1191,8 +1209,8 @@
       <div class="tl-dots-strip" id="tlDots"></div>
       
       <div class="tl-playbar">
-        <button class="ctrl-btn" id="playBtn" title="Play/Pause">⏸</button>
-        <button class="ctrl-btn speed" id="speedBtn" title="Playback Speed">1x</button>
+        <button class="ctrl-btn" id="playBtn">⏸</button>
+        <button class="ctrl-btn speed" id="speedBtn">1x</button>
         <div class="tl-progress-track"><div class="tl-progress-fill" id="progressFill"></div></div>
         <div class="tl-counter-txt" id="counterTxt">1 / {{ events|length }}</div>
       </div>
@@ -1202,15 +1220,7 @@
         <span><span class="kbd">←</span> <span class="kbd">→</span> Navigate</span>
       </div>
     </div>
-
-    {% else %}
-    <p style="text-align:center;color:var(--text-secondary);padding:40px 0;font-size:1.1rem;">No events found for your birth year onward.</p>
     {% endif %}
-
-    <div class="actions-row">
-      <a href="/" class="action-btn">← Start Over</a>
-      <button class="action-btn primary" onclick="alert('Timeline ready to share!')">🔗 Share Timeline</button>
-    </div>
   </section>
 
 </div>
@@ -1263,7 +1273,7 @@ let geoJsonData = null;
 const imageCache = {};
 
 // ============================================
-// STARS BACKGROUND
+// STARS
 // ============================================
 const canvas = document.getElementById('stars'), ctx = canvas.getContext('2d');
 let stars = [];
@@ -1275,12 +1285,12 @@ function resizeCanvas() {
 }
 
 function initStars() {
-  stars = Array.from({length: 150}, () => ({
+  stars = Array.from({length: 200}, () => ({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
     r: Math.random() * 1.5 + 0.3,
     a: Math.random(),
-    da: (Math.random() - 0.5) * 0.015
+    da: (Math.random() - 0.5) * 0.02
   }));
 }
 
@@ -1291,7 +1301,7 @@ function drawStars() {
     if(s.a <= 0.05 || s.a >= 1) s.da *= -1;
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.r, 0, 2 * Math.PI);
-    ctx.fillStyle = `rgba(255, 255, 255, ${s.a * 0.7})`;
+    ctx.fillStyle = `rgba(255, 255, 255, ${s.a * 0.8})`;
     ctx.fill();
   });
   requestAnimationFrame(drawStars);
@@ -1302,7 +1312,7 @@ resizeCanvas();
 drawStars();
 
 // ============================================
-// GEOJSON & SATELLITE
+// GEOJSON
 // ============================================
 (async function () {
   try {
@@ -1379,6 +1389,9 @@ function drawSatelliteOverlay(svgElement) {
   svgElement.appendChild(grp);
 }
 
+// ============================================
+// SATELLITES
+// ============================================
 function satInfo(year) {
   const srcYear = year < 2013 ? 2013 : year;
   const lngSpan = BBOX.maxLng - BBOX.minLng;
@@ -1476,7 +1489,7 @@ function retryBirth() { loadBirthYearSat(); }
 function retryCurrent() { loadCurrentYearSat(); }
 
 // ============================================
-// TIMELINE LOGIC
+// TIMELINE
 // ============================================
 let cur = 0, autoTimer = null, isPlaying = true;
 let speedMult = 1;
@@ -1491,8 +1504,8 @@ if (EVENTS && EVENTS.length > 0) {
   uniqueEras.forEach((era, idx) => {
     const item = document.createElement('div');
     item.className = 'legend-item';
-    item.dataset.era = era;
-    item.style.animationDelay = `${idx * 0.05}s`;
+        item.dataset.era = era;
+    item.style.animationDelay = `${idx * 0.06}s`;
     item.innerHTML = `<div class="legend-dot" style="background:${eraColors[era]}; box-shadow: 0 0 12px ${eraColors[era]}"></div>${era}`;
     
     item.addEventListener('click', () => {
@@ -1576,7 +1589,7 @@ function goTo(i, dir) {
   const outClass = dir === 'next' ? 'slide-to-left' : 'slide-to-right';
   const inClass = dir === 'next' ? 'slide-from-right' : 'slide-from-left';
   
-  card.classList.remove('animate-content');
+  card.classList.remove('slide-from-right', 'slide-from-left');
   card.classList.add(outClass);
   
   setTimeout(() => {
@@ -1585,10 +1598,8 @@ function goTo(i, dir) {
     updateDots();
     card.classList.remove(outClass);
     card.classList.add(inClass);
-    void card.offsetWidth;
-    card.classList.add('animate-content');
     
-    setTimeout(() => card.classList.remove(inClass), 400);
+    setTimeout(() => card.classList.remove(inClass), 500);
   }, 250);
   resetProgress();
 }

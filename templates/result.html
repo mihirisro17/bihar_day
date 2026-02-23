@@ -168,33 +168,6 @@
         }
       }
 
-      @keyframes shimmer {
-        0% {
-          background-position: -1000px 0;
-        }
-        100% {
-          background-position: 1000px 0;
-        }
-      }
-
-      @keyframes float {
-        0%, 100% {
-          transform: translateY(0px);
-        }
-        50% {
-          transform: translateY(-10px);
-        }
-      }
-
-      @keyframes pulse {
-        0%, 100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.7;
-        }
-      }
-
       @keyframes fR {
         from {
           transform: translateX(35px);
@@ -327,7 +300,6 @@
       html[data-theme="light"] .hero-tag {
         background: rgba(217, 119, 6, 0.15);
         border-color: rgba(217, 119, 6, 0.35);
-        color: var(--accent-gold);
       }
 
       .hero h1 {
@@ -374,7 +346,7 @@
       }
 
       html[data-theme="light"] .ic {
-        background: linear-gradient(135deg, rgba(217, 119, 6, 0.08), rgba(124, 58, 237, 0.08));
+        background: linear-gradient(135deg, rgba(217, 119, 6, 0.08), rgba(124, 58, 237, 0.08), rgba(59, 130, 246, 0.08));
         border-color: rgba(217, 119, 6, 0.15);
       }
 
@@ -524,7 +496,7 @@
       }
 
       html[data-theme="light"] .sat-img-container {
-        background: linear-gradient(135deg, rgba(217, 119, 6, 0.05), rgba(124, 58, 237, 0.05));
+        background: linear-gradient(135deg, rgba(217, 119, 6, 0.05), rgba(124, 58, 237, 0.05), rgba(59, 130, 246, 0.05));
       }
 
       .sat-img {
@@ -684,7 +656,7 @@
         transform: translateY(-2px);
       }
 
-      /* Comparison Timeline */
+      /* Comparison Controls */
       .comparison-controls {
         display: flex;
         justify-content: center;
@@ -946,7 +918,7 @@
 
       html[data-theme="light"] .tl-card {
         border: 1px solid rgba(217, 119, 6, 0.2);
-        background: linear-gradient(135deg, rgba(217, 119, 6, 0.08), rgba(124, 58, 237, 0.08));
+        background: linear-gradient(135deg, rgba(217, 119, 6, 0.08), rgba(124, 58, 237, 0.08), rgba(59, 130, 246, 0.08));
       }
 
       .tl-top {
@@ -1266,9 +1238,7 @@
             </div>
             <div class="sat-bottom">
               <div class="sat-meta">
-                <span class="sat-src" id="birthSrc">
-                  📡 Landsat
-                </span>
+                <span class="sat-src" id="birthSrc">📡 Landsat</span>
                 <span class="sat-year">{{ birth_year }}</span>
               </div>
             </div>
@@ -1292,9 +1262,7 @@
             </div>
             <div class="sat-bottom">
               <div class="sat-meta">
-                <span class="sat-src" id="currentSrc">
-                  📡 Landsat
-                </span>
+                <span class="sat-src" id="currentSrc">📡 Landsat</span>
                 <span class="sat-year">2026</span>
               </div>
             </div>
@@ -1303,15 +1271,9 @@
 
         <!-- Controls -->
         <div class="comparison-controls">
-          <button class="comp-btn active" onclick="setSatSource('landsat')">
-            Landsat
-          </button>
-          <button class="comp-btn" onclick="setSatSource('modis')">
-            MODIS
-          </button>
-          <button class="comp-btn" onclick="setSatSource('sentinel')">
-            Sentinel-2
-          </button>
+          <button class="comp-btn active" onclick="setSatSource('landsat')">Landsat</button>
+          <button class="comp-btn" onclick="setSatSource('modis')">MODIS</button>
+          <button class="comp-btn" onclick="setSatSource('sentinel')">Sentinel-2</button>
         </div>
 
         <!-- Events and Map Split -->
@@ -1325,9 +1287,7 @@
               <div class="sync-bar">
                 <span class="sb-sat">🛰️ Location</span>
                 <span style="color: rgba(255, 255, 255, 0.2)">↔</span>
-                <span class="sb-ev">
-                  Showing: <span id="syncYrTxt">{{ [birth_year,2000]|max }}</span>
-                </span>
+                <span class="sb-ev">Showing: <span id="syncYrTxt">{{ [birth_year,2000]|max }}</span></span>
               </div>
             </div>
 
@@ -1545,15 +1505,12 @@
         const bbox = `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
 
         if (source === "landsat") {
-          // USGS Landsat
           const y = Math.max(year, 2013);
           return `https://www.usgs.gov/media/images/landsat-8-image-sri-lanka`;
         } else if (source === "modis") {
-          // NASA GIBS MODIS
           const timeStr = `${Math.max(year, 2000)}-03-15`;
           return `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${timeStr}&BBOX=${bbox}&WIDTH=${W}&HEIGHT=${H}&FORMAT=image/jpeg&TRANSPARENT=false`;
         } else if (source === "sentinel") {
-          // Sentinel-2
           const y = Math.max(year, 2015);
           return `https://basemap.nationalmap.gov/arcrest/services/USGSTopo/MapServer/tile/0/0/0`;
         }
@@ -1585,7 +1542,6 @@
         img.onerror = () => {
           loader.classList.add("hidden");
           error.classList.add("show");
-          // Fallback to MODIS
           if (currentSource !== "modis") {
             const fallbackUrl = generateSatUrl(year, "modis");
             img.src = fallbackUrl;
@@ -1617,7 +1573,6 @@
         img.onerror = () => {
           loader.classList.add("hidden");
           error.classList.add("show");
-          // Fallback to MODIS
           if (currentSource !== "modis") {
             const fallbackUrl = generateSatUrl(year, "modis");
             img.src = fallbackUrl;
@@ -1645,88 +1600,145 @@
         loadCurrentYearSat();
       }
 
-      // Timeline Events
+      // Timeline Events - Initialize
       {% if events %}
-      const EVS = {{ events | tojson }},
-        TL_MS = {{ tl_interval }};
-      let tlI = 0,
-        tlPlay = true,
-        tlT = null;
+      const EVS = {{ events | tojson }};
+      const TL_MS = {{ tl_interval }};
+      let tlI = 0;
+      let tlPlay = true;
+      let tlT = null;
       const strip = document.getElementById("dotsEl");
       let prevE = "";
 
-      EVS.forEach((ev, i) => {
-        if (i > 0 && ev.era !== prevE) {
-          const g = document.createElement("div");
-          g.className = "dot-gap";
-          strip.appendChild(g);
+      if (EVS && EVS.length > 0) {
+        EVS.forEach((ev, i) => {
+          if (i > 0 && ev.era !== prevE) {
+            const g = document.createElement("div");
+            g.className = "dot-gap";
+            strip.appendChild(g);
+          }
+          const d = document.createElement("div");
+          d.className = "dot";
+          d.dataset.idx = i;
+          d.dataset.year = ev.year;
+          d.style.background = ev.color;
+          d.style.color = ev.color;
+          d.addEventListener("click", () => goTo(i, i >= tlI ? "n" : "p"));
+          strip.appendChild(d);
+          prevE = ev.era;
+        });
+
+        function updDots() {
+          strip.querySelectorAll(".dot").forEach((d, i) => {
+            d.classList.toggle("act", i === tlI);
+          });
         }
-        const d = document.createElement("div");
-        d.className = "dot";
-        d.dataset.idx = i;
-        d.dataset.year = ev.year;
-        d.style.background = ev.color;
-        d.style.color = ev.color;
-        d.addEventListener("click", () => goTo(i, i >= tlI ? "n" : "p"));
-        strip.appendChild(d);
-        prevE = ev.era;
+
+        function updCard(i) {
+          const ev = EVS[i];
+          document.getElementById("tlYr").textContent = ev.year;
+          document.getElementById("tlIco").textContent = ev.icon;
+          document.getElementById("tlTtl").textContent = ev.title;
+          document.getElementById("tlDsc").textContent = ev.description || "";
+          const er = document.getElementById("tlEra");
+          er.textContent = ev.era;
+          er.style.cssText = `background:${ev.color}22;color:${ev.color};border-color:${ev.color}55`;
+          const c = document.getElementById("tlCard");
+          c.style.background = ev.color + "18";
+          c.style.borderColor = ev.color + "40";
+          document.getElementById("arrL").classList.toggle("dis", i === 0);
+          document.getElementById("arrR").classList.toggle("dis", i === EVS.length - 1);
+          document.getElementById("ctrTxt").textContent = `${i + 1} / ${EVS.length}`;
+        }
+
+        function resetProg() {
+          clearTimeout(tlT);
+          const f = document.getElementById("pbFill");
+          f.style.transition = "none";
+          f.style.width = "0%";
+          if (!tlPlay) return;
+          setTimeout(() => {
+            f.style.transition = `width ${TL_MS}ms linear`;
+            f.style.width = "100%";
+          }, 60);
+          tlT = setTimeout(() => {
+            const n = tlI < EVS.length - 1 ? tlI + 1 : 0;
+            goTo(n, n > tlI ? "n" : "p");
+          }, TL_MS);
+        }
+
+        function goTo(i, d) {
+          const c = document.getElementById("tlCard");
+          const oc = d === "n" ? "aTL" : "aTR";
+          const ic = d === "n" ? "aFR" : "aFL";
+          c.classList.add(oc);
+          setTimeout(() => {
+            tlI = i;
+            updCard(i);
+            updDots();
+            c.classList.remove(oc);
+            c.classList.add(ic);
+            setTimeout(() => c.classList.remove(ic), 400);
+            document.getElementById("syncYrTxt").textContent = EVS[i].year;
+          }, 260);
+          resetProg();
+        }
+
+        function tlPrev() {
+          if (tlI > 0) goTo(tlI - 1, "p");
+        }
+
+        function tlNext() {
+          if (tlI < EVS.length - 1) goTo(tlI + 1, "n");
+        }
+
+        document.getElementById("pbBtn").addEventListener("click", () => {
+          tlPlay = !tlPlay;
+          document.getElementById("pbBtn").textContent = tlPlay ? "⏸" : "▶";
+          resetProg();
+        });
+
+        document.addEventListener("keydown", (e) => {
+          if (e.shiftKey) return;
+          if (e.key === "ArrowRight") tlNext();
+          if (e.key === "ArrowLeft") tlPrev();
+                  document.getElementById("pbBtn").addEventListener("click", () => {
+          tlPlay = !tlPlay;
+          document.getElementById("pbBtn").textContent = tlPlay ? "⏸" : "▶";
+          resetProg();
+        });
+
+        document.addEventListener("keydown", (e) => {
+          if (e.shiftKey) return;
+          if (e.key === "ArrowRight") tlNext();
+          if (e.key === "ArrowLeft") tlPrev();
+          if (e.key === " ") {
+            e.preventDefault();
+            document.getElementById("pbBtn").click();
+          }
+        });
+
+        if (EVS.length > 0) {
+          updCard(0);
+          updDots();
+          resetProg();
+        }
+      }
+      {% endif %}
+
+      // Initialize theme and load satellites
+      document.addEventListener("DOMContentLoaded", () => {
+        initTheme();
+        loadSatellites();
       });
 
-      function updDots() {
-        strip.querySelectorAll(".dot").forEach((d, i) => {
-          d.classList.toggle("act", i === tlI);
-        });
-      }
-
-      function updCard(i) {
-        const ev = EVS[i];
-        document.getElementById("tlYr").textContent = ev.year;
-        document.getElementById("tlIco").textContent = ev.icon;
-        document.getElementById("tlTtl").textContent = ev.title;
-        document.getElementById("tlDsc").textContent = ev.description || "";
-        const er = document.getElementById("tlEra");
-        er.textContent = ev.era;
-        er.style.cssText = `background:${ev.color}22;color:${ev.color};border-color:${ev.color}55`;
-        const c = document.getElementById("tlCard");
-        c.style.background = ev.color + "18";
-        c.style.borderColor = ev.color + "40";
-        document.getElementById("arrL").classList.toggle("dis", i === 0);
-        document.getElementById("arrR").classList.toggle(
-          "dis",
-          i === EVS.length - 1
-        );
-        document.getElementById("ctrTxt").textContent = `${i + 1} / ${EVS.length}`;
-      }
-
-      function resetProg() {
-        clearTimeout(tlT);
-        const f = document.getElementById("pbFill");
-        f.style.transition = "none";
-        f.style.width = "0%";
-        if (!tlPlay) return;
-        setTimeout(() => {
-          f.style.transition = `width ${TL_MS}ms linear`;
-          f.style.width = "100%";
-        }, 60);
-        tlT = setTimeout(() => {
-          const n = tlI < EVS.length - 1 ? tlI + 1 : 0;
-          goTo(n, n > tlI ? "n" : "p");
-        }, TL_MS);
-      }
-
-      function goTo(i, d) {
-        const c = document.getElementById("tlCard");
-        const oc = d === "n" ? "aTL" : "aTR";
-        const ic = d === "n" ? "aFR" : "aFL";
-        c.classList.add(oc);
-        setTimeout(() => {
-          tlI = i;
-          updCard(i);
-          updDots();
-          c.classList.remove(oc);
-          c.classList.add(ic);
-          setTimeout(() => c.classList.remove(ic), 400);
-          document.getElementById("syncYrTxt").textContent = EVS[i].year;
-        }, 260);
-        resetProg();
-      }
+      // Keyboard shortcut for theme toggle
+      document.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+          e.preventDefault();
+          toggleTheme();
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -632,7 +632,7 @@
       : (EOX_AVAIL.includes(year) ? year : (EOX_AVAIL.filter(v => v <= year).pop() || LATEST));
     return {
       url:   `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${baseQuery()}`,
-      label: `📡 Sentinel-2 ${y}`
+      label: `📡 Sentinel-2`
     };
   }
 

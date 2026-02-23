@@ -20,8 +20,6 @@ SAT_CACHE_URL = "/sat_cache"           if IS_VERCEL else "/static/sat_cache"
 SAT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 EOX_AVAIL    = [2016,2017,2018,2019,2020,2021,2022,2023,2024]
-LANDSAT_MIN  = 2000
-LANDSAT_MAX  = 2012
 SAT_W, SAT_H = 1600, 900
 TARGET_AR    = 16 / 9
 KM30_LAT, KM30_LNG = 0.27, 0.30
@@ -68,30 +66,37 @@ def _bq(bbox):
 
 
 def get_sentinel_url(year, bbox):
-    y = year if year in EOX_AVAIL else max((v for v in EOX_AVAIL if v<=year), default=EOX_AVAIL[-1])
-    return (f"https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1"
-            f"&REQUEST=GetMap&LAYERS=s2cloudless-{y}{_bq(bbox)}", "Sentinel-2")
-
-
-def get_landsat_url(year, bbox):
-    y = min(max(year, LANDSAT_MIN), LANDSAT_MAX)
-    return (f"https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi"
-            f"?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap"
-            f"&LAYERS=Landsat_WELD_CorrectedReflectance_TrueColor_Global_Annual"
-            f"&TIME={y}-01-01{_bq(bbox)}", "Landsat")
+    """EOX Sentinel-2 cloudless — 2016 to 2024 (latest). 2026 maps to 2024."""
+    y = year if year in EOX_AVAIL else max(
+        (v for v in EOX_AVAIL if v <= year), default=EOX_AVAIL[-1]
+    )
+    return (
+        f"https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1"
+        f"&REQUEST=GetMap&LAYERS=s2cloudless-{y}{_bq(bbox)}",
+        "Sentinel-2"
+    )
 
 
 def get_modis_url(year, bbox):
-    y = max(year, 2000)
-    return (f"https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi"
-            f"?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap"
-            f"&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor"
-            f"&TIME={y}-03-15{_bq(bbox)}", "MODIS Terra")
+    """NASA GIBS MODIS Terra — best color quality for pre-2016 years."""
+    y = min(max(year, 2000), 2024)   # MODIS range 2000–2024
+    return (
+        f"https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi"
+        f"?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap"
+        f"&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor"
+        f"&TIME={y}-06-15{_bq(bbox)}",   # June = best season, less cloud/haze for Bihar
+        "MODIS Terra"
+    )
 
 
 def get_birth_url(year, bbox):
-    if year >= 2016:              return get_sentinel_url(year, bbox)
-    if LANDSAT_MIN <= year <= LANDSAT_MAX: return get_landsat_url(year, bbox)
+    """
+    Pick best-looking source for birth year.
+    2016+ → Sentinel-2 cloudless (sharpest, 10m)
+    pre-2016 → MODIS Terra (best color/quality for Bihar region)
+    """
+    if year >= 2016:
+        return get_sentinel_url(year, bbox)
     return get_modis_url(year, bbox)
 
 
@@ -107,7 +112,7 @@ def fetch_and_cache(url, cache_key):
         if resp.status_code == 200 and "image" in ct:
             filepath.write_bytes(resp.content)
             return static_url, True
-        print(f"[SAT] Bad response {resp.status_code}")
+        print(f"[SAT] Bad response {resp.status_code} for {url}")
     except Exception as e:
         print(f"[SAT] Fetch failed: {e}")
     return None, False
@@ -128,18 +133,10 @@ def sat_cache_local(filename):
 
 # ----------------------------
 # API: fetch one satellite image
-# Called from result.html JS
 # ----------------------------
 
 @app.route("/api/sat_image")
 def api_sat_image():
-    """
-    Query params:
-      type = "birth" | "current"
-      year = int
-      bbox = JSON string  e.g. {"minLng":...}
-    Returns JSON: { url, src_label }
-    """
     img_type = request.args.get("type", "birth")
     try:
         year = int(request.args.get("year", 2000))
@@ -154,8 +151,9 @@ def api_sat_image():
     bbox = compute_padded_bbox(raw_bbox)
 
     if img_type == "current":
-        url, src = get_sentinel_url(year, bbox)
-        key      = f"current_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
+        # 2026 → s2cloudless-2024 (latest EOX)
+        url, src  = get_sentinel_url(year, bbox)
+        key       = f"current_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
         local, ok = fetch_and_cache(url, key)
         if not ok:
             url, src  = get_modis_url(2024, bbox)
@@ -163,16 +161,17 @@ def api_sat_image():
             local, _  = fetch_and_cache(url, key)
             src       = "MODIS Terra"
     else:
+        # Birth year — Sentinel 2016+, MODIS pre-2016
         url, src  = get_birth_url(year, bbox)
         key       = f"birth_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
         local, ok = fetch_and_cache(url, key)
-        # Landsat → MODIS fallback
-        if not ok and LANDSAT_MIN <= year <= LANDSAT_MAX:
-            url, src  = get_modis_url(year, bbox)
+        if not ok:
+            # Primary failed → MODIS fallback
+            url, src  = get_modis_url(max(year, 2000), bbox)
             key       = f"birth_modis_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
             local, ok = fetch_and_cache(url, key)
-        # Final fallback
         if not ok:
+            # Last resort → MODIS 2000
             url, src  = get_modis_url(2000, bbox)
             key       = f"birth_modis_2000_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
             local, _  = fetch_and_cache(url, key)
@@ -218,7 +217,10 @@ def load_events():
                     cands.append({"title":ev,"score":sc})
             cands.sort(key=lambda x: x["score"], reverse=True)
             for ev in cands[:C.EVENTS_PER_YEAR]:
-                events.append({"year":yr,"title":ev["title"],"icon":icon(ev["title"]),"era":el,"color":ec,"score":ev["score"]})
+                events.append({
+                    "year":yr,"title":ev["title"],"icon":icon(ev["title"]),
+                    "era":el,"color":ec,"score":ev["score"]
+                })
 
     events.sort(key=lambda x: x["year"])
     return events
@@ -271,7 +273,6 @@ def analyse():
 
     evs = [e for e in ALL_EVENTS if e["year"] >= by]
 
-    # Pass raw bbox to template — satellite fetch happens client-side
     return render_template(
         "result.html",
         name=name, birth_year=by, age=age,

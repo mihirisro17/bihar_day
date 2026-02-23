@@ -3,1262 +3,346 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Analysis — {{ name }} | {{ app_title }}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <title>बिहार दिवस प्रदर्शनी — {{ name }} | {{ app_title }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800;900&family=Yatra+One&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     
     :root {
-      --gold:    #eab308;
-      --saffron: #f97316;
-      --bg-deep: #0b0f19;
-      --card-bg: #121624;
+      --gold:    #ffc107;
+      --saffron: #ff9933;
+      --green:   #138808;
+      --bg-deep: #060913;
+      --card-bg: rgba(18, 22, 36, 0.6);
       --track-bg: #0d111c;
       --text-primary: #ffffff;
-      --text-secondary: rgba(255, 255, 255, 0.6);
-      --text-tertiary: rgba(255, 255, 255, 0.3);
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-tertiary: rgba(255, 255, 255, 0.4);
+      --accent-glow: rgba(255, 153, 51, 0.3);
     }
     
     html[data-theme="light"] {
       --gold:    #d97706;
       --saffron: #ea580c;
-      --bg-deep: #f5f7fa;
-      --card-bg: #ffffff;
+      --green:   #15803d;
+      --bg-deep: #fdfbf7;
+      --card-bg: rgba(255, 255, 255, 0.8);
       --track-bg: #f0f4f9;
-      --text-primary: #0f172a;
-      --text-secondary: rgba(15, 23, 42, 0.7);
-      --text-tertiary: rgba(15, 23, 42, 0.5);
+      --text-primary: #1e1e1e;
+      --text-secondary: rgba(30, 30, 30, 0.7);
+      --text-tertiary: rgba(30, 30, 30, 0.5);
+      --accent-glow: rgba(234, 88, 12, 0.15);
     }
     
     html, body {
       width: 100%;
       height: 100%;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
+      overflow-x: hidden;
     }
     
     body {
       background: var(--bg-deep);
       font-family: 'Poppins', sans-serif;
       color: var(--text-primary);
-      transition: all 0.4s ease;
-      perspective: 1000px;
+      transition: all 0.5s ease;
+      background-image: radial-gradient(circle at top right, var(--accent-glow) 0%, transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(19, 136, 8, 0.15) 0%, transparent 40%);
     }
 
-    html[data-theme="dark"] body {
-      background: radial-gradient(ellipse at 50% 0%, #1a1f35 0%, #0b0f19 100%);
-    }
-
-    html[data-theme="light"] body {
-      background: linear-gradient(135deg, #f5f7fa 0%, #e8eef8 100%);
+    /* ── HINDI FONT ── */
+    .hindi-text {
+      font-family: 'Yatra One', cursive;
+      letter-spacing: 1px;
     }
 
     /* ── BACKGROUND EFFECTS ── */
-    #stars {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
+    #stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.6; }
+    html[data-theme="light"] #stars { opacity: 0; }
 
-    html[data-theme="dark"] #stars { opacity: 1; }
-
-    .orb {
+    .mandala-bg {
       position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120vw; height: 120vw;
+      background: repeating-conic-gradient(from 0deg, transparent 0deg, transparent 10deg, rgba(255, 153, 51, 0.02) 10deg, rgba(255, 153, 51, 0.02) 20deg);
       border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0;
       z-index: 0;
-      animation: drift 16s ease-in-out infinite alternate;
+      animation: rotateSlow 120s linear infinite;
       pointer-events: none;
-      transition: opacity 0.4s ease;
     }
 
-    html[data-theme="dark"] .orb { opacity: 0.15; }
-
-    .orb1 {
-      width: 700px;
-      height: 700px;
-      background: var(--gold);
-      top: -250px;
-      right: -250px;
-    }
-
-    .orb2 {
-      width: 600px;
-      height: 600px;
-      background: #6366f1;
-      bottom: -200px;
-      left: -200px;
-      animation-delay: -8s;
-    }
-
-    @keyframes drift {
-      from { transform: translate(0, 0); }
-      to { transform: translate(50px, 60px); }
-    }
+    @keyframes rotateSlow { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
     /* ── THEME TOGGLE ── */
     .theme-toggle {
-      position: fixed;
-      top: 25px;
-      right: 25px;
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 18px;
-      border-radius: 50px;
-      background: var(--card-bg);
-      border: 1.5px solid rgba(0, 0, 0, 0.08);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(20px);
-      animation: slideDown 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      position: fixed; top: 20px; right: 20px; z-index: 200;
+      display: flex; align-items: center; gap: 8px; padding: 10px 16px;
+      border-radius: 50px; background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer;
+      backdrop-filter: blur(10px); transition: 0.3s;
     }
+    .theme-toggle:hover { transform: scale(1.05); border-color: var(--saffron); }
 
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .theme-toggle:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.3);
-    }
-
-    .toggle-icon { font-size: 1.3rem; transition: transform 0.3s ease; }
-    .theme-toggle:hover .toggle-icon { transform: scale(1.2) rotate(15deg); }
-    .toggle-label { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; }
-
-    /* ── MAIN PAGE ── */
+    /* ── MAIN LAYOUT ── */
     #page {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      height: 100%;
+      position: relative; z-index: 10;
+      width: 100%; min-height: 100vh;
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-template-rows: auto 1fr;
-      gap: 30px;
-      padding: 40px;
-      overflow: hidden;
+      gap: 40px; padding: 40px 60px;
     }
 
-    @media (max-width: 1600px) {
-      #page { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto; padding: 30px; gap: 25px; }
-    }
-
-    /* ── HERO & INFO (TOP FULL WIDTH) ── */
+    /* ── HERO & INFO (FULL WIDTH TOP) ── */
     .hero-section {
       grid-column: 1 / -1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 40px;
-      animation: fadeIn 1s ease-out;
-    }
-
-    @media (max-width: 1600px) {
-      .hero-section { flex-direction: column; text-align: center; }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .hero-content {
-      flex: 1;
-      animation: slideInLeft 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
-    }
-
-    @keyframes slideInLeft {
-      from { opacity: 0; transform: translateX(-50px); }
-      to { opacity: 1; transform: translateX(0); }
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 20px;
+      animation: fadeInDown 1s ease-out;
     }
 
     .welcome-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 24px;
-      border-radius: 50px;
-      background: rgba(234, 179, 8, 0.12);
-      border: 1.5px solid rgba(234, 179, 8, 0.35);
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 2.5px;
-      color: var(--gold);
-      text-transform: uppercase;
-      margin-bottom: 16px;
-      backdrop-filter: blur(10px);
-      animation: pulse 3s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-
-    .hero h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 4rem;
-      font-weight: 900;
-      color: var(--text-primary);
-      letter-spacing: -1px;
-      margin-bottom: 10px;
-      line-height: 1.1;
-      background: linear-gradient(135deg, var(--text-primary) 0%, rgba(255, 255, 255, 0.7) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: scaleUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
-    }
-
-    @keyframes scaleUp {
-      from { opacity: 0; transform: scale(0.95) translateY(20px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    .hero .sub {
-      color: var(--text-secondary);
-      font-size: 1.1rem;
-      letter-spacing: 1px;
-      font-weight: 300;
-      animation: slideInLeft 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
-    }
-
-    /* ── INFO CARDS GRID ── */
-    .info-grid {
-      flex: 1;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      animation: slideInRight 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
-    }
-
-    @keyframes slideInRight {
-      from { opacity: 0; transform: translateX(50px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    @media (max-width: 1600px) {
-      .info-grid { grid-template-columns: repeat(4, 1fr); flex: unset; width: 100%; }
-    }
-
-    .info-card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1.5px solid rgba(255, 255, 255, 0.12);
-      border-radius: 24px;
-      padding: 24px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
-      position: relative;
-      overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-      cursor: pointer;
-      animation: popIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.85) translateY(20px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    .info-card:nth-child(1) { animation-delay: 0.3s; }
-    .info-card:nth-child(2) { animation-delay: 0.35s; }
-    .info-card:nth-child(3) { animation-delay: 0.4s; }
-    .info-card:nth-child(4) { animation-delay: 0.45s; }
-
-    html[data-theme="light"] .info-card {
-      background: rgba(255, 255, 255, 0.85);
-      border: 1.5px solid rgba(217, 119, 6, 0.15);
-      box-shadow: 0 8px 32px rgba(217, 119, 6, 0.12);
-    }
-
-    .info-card::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .info-card:hover {
-      transform: translateY(-8px);
-      border-color: rgba(234, 179, 8, 0.4);
-      box-shadow: 0 20px 60px rgba(234, 179, 8, 0.15);
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .info-card:hover::before { opacity: 1; }
-
-    .card-icon {
-      font-size: 2.2rem;
-      margin-bottom: 12px;
-      display: inline-block;
-      transition: all 0.3s ease;
-      animation: floatIcon 3s ease-in-out infinite;
-    }
-
-    @keyframes floatIcon {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
-    }
-
-    .info-card:hover .card-icon { transform: scale(1.3) rotate(15deg); animation: none; }
-
-    .card-label {
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      margin-bottom: 8px;
-    }
-
-    .card-value {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .card-value.big {
-      font-size: 2.4rem;
-      background: linear-gradient(135deg, var(--gold), #FF9A3C);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    /* ── SATELLITES SECTION ── */
-    .sat-section {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      animation: slideInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
-    }
-
-    @keyframes slideInUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .sat-header {
-      text-align: center;
-    }
-
-    .sat-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 18px;
-      border-radius: 50px;
-      background: rgba(234, 179, 8, 0.12);
-      border: 1.5px solid rgba(234, 179, 8, 0.3);
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      color: var(--gold);
-      text-transform: uppercase;
-      margin-bottom: 12px;
-      backdrop-filter: blur(10px);
-    }
-
-    .sat-header h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
-      font-weight: 900;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-
-    .sat-header p {
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      letter-spacing: 0.5px;
-    }
-
-    /* ── SATELLITE GRID ── */
-    .sat-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-      height: 100%;
-    }
-
-    .sat-card {
-      position: relative;
-      border-radius: 28px;
-      overflow: hidden;
-      border: 2px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
-      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(18, 22, 36, 0.8) 100%);
-      display: flex;
-      flex-direction: column;
-      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-      animation: zoomIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-
-    @keyframes zoomIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .sat-card:first-child { animation-delay: 0.3s; }
-    .sat-card:last-child { animation-delay: 0.4s; }
-
-    html[data-theme="light"] .sat-card {
-      border-color: rgba(217, 119, 6, 0.2);
-      box-shadow: 0 16px 60px rgba(217, 119, 6, 0.12);
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 250, 0.9) 100%);
-    }
-
-    .sat-card:hover {
-      transform: translateY(-12px);
-      box-shadow: 0 40px 100px rgba(234, 179, 8, 0.2);
-      border-color: rgba(234, 179, 8, 0.5);
-    }
-
-    .sat-img-container {
-      position: relative;
-      flex: 1;
-      overflow: hidden;
-      background: linear-gradient(135deg, var(--track-bg) 0%, rgba(0, 0, 0, 0.8) 100%);
-    }
-
-    .sat-img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0;
-      transition: opacity 1s ease-out;
-    }
-
-    .sat-img.active { opacity: 1; }
-
-    .sat-overlay-svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 3;
-    }
-
-    .sat-label {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      padding: 24px;
-      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4), transparent);
-      z-index: 4;
-      pointer-events: none;
-      animation: fadeInDown 0.8s ease-out 0.4s both;
-    }
-
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .sat-label-year {
-      font-family: 'Playfair Display', serif;
-      font-size: 3.2rem;
-      font-weight: 900;
-      color: #fff;
-      text-shadow: 0 6px 24px rgba(0, 0, 0, 0.8);
-      line-height: 1;
-    }
-
-    .sat-label-sub {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.85);
-      margin-top: 6px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    .sat-bottom {
-      background: linear-gradient(to top, rgba(13, 17, 28, 0.98), rgba(13, 17, 28, 0.85));
-      backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 16px 20px;
-      z-index: 5;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      animation: fadeInUp 0.8s ease-out 0.5s both;
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    html[data-theme="light"] .sat-bottom {
-      background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
-      border-top: 1px solid rgba(217, 119, 6, 0.15);
-    }
-
-    .sat-src {
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
-
-    .sat-year-footer {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.4rem;
-      font-weight: 900;
-      color: var(--gold);
-    }
-
-    .loader {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(13, 17, 28, 0.85);
-      z-index: 10;
-    }
-
-    .loader.hidden { display: none; }
-
-    .loader .spin {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      border: 4px solid rgba(234, 179, 8, 0.2);
-      border-top-color: var(--gold);
-      animation: spin 1.2s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .error-state {
-      position: absolute;
-      inset: 0;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      background: rgba(13, 17, 28, 0.95);
-      z-index: 10;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .error-state.show { display: flex; }
-    .error-state p { color: var(--text-secondary); font-size: 0.85rem; }
-    .error-state button {
-      padding: 8px 20px;
-      border-radius: 20px;
-      background: rgba(234, 179, 8, 0.15);
-      border: 1.5px solid rgba(234, 179, 8, 0.4);
-      color: var(--gold);
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 700;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-    }
-
-    .error-state button:hover {
-      background: rgba(234, 179, 8, 0.25);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(234, 179, 8, 0.2);
-    }
-
-    /* ── TIMELINE SECTION ── */
-    .tl-section {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      animation: slideInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
-    }
-
-    .tl-header {
-      text-align: center;
-    }
-
-    .tl-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 18px;
-      border-radius: 50px;
-      background: rgba(165, 180, 252, 0.12);
-      border: 1.5px solid rgba(165, 180, 252, 0.3);
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      color: #a5b4fc;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      backdrop-filter: blur(10px);
-    }
-
-    .tl-header h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
-      font-weight: 900;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-
-    .tl-header p {
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      letter-spacing: 0.5px;
-    }
-
-    /* ── TIMELINE CARD ── */
-    .tl-card-outer {
-      position: relative;
-      width: 100%;
-      perspective: 1200px;
-      animation: fadeInUp 0.8s ease-out 0.3s both;
-    }
-
-    .tl-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1.5px solid rgba(255, 255, 255, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-secondary);
-      font-size: 1.3rem;
-      cursor: pointer;
-      z-index: 10;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .tl-card-outer:hover .tl-arrow { opacity: 1; pointer-events: all; }
-
-    .tl-arrow:hover {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.4);
-      color: #fff;
-      transform: translateY(-50%) scale(1.15);
-      box-shadow: 0 12px 32px rgba(255, 255, 255, 0.15);
-    }
-
-    .tl-arrow.left { left: -35px; }
-    .tl-arrow.right { right: -35px; }
-    .tl-arrow.disabled { opacity: 0 !important; pointer-events: none !important; }
-
-    .tl-card {
-      border-radius: 24px;
-      padding: 32px 40px;
-      border: 1.5px solid rgba(255, 255, 255, 0.1);
-      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(18, 22, 36, 0.7) 100%);
-      backdrop-filter: blur(20px);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 200px;
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
-      transform-style: preserve-3d;
-      transition: all 0.4s ease-out;
-      animation: scaleInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
-    }
-
-    @keyframes scaleInUp {
-      from { opacity: 0; transform: scale(0.95) translateY(20px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    html[data-theme="light"] .tl-card {
-      border-color: rgba(217, 119, 6, 0.2);
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 250, 0.9) 100%);
-      box-shadow: 0 16px 60px rgba(217, 119, 6, 0.12);
-    }
-
-    .tl-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(234, 179, 8, 0.5), transparent);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-
-    .tl-card:hover::before { opacity: 1; }
-
-    @keyframes tlSlideRight {
-      from { opacity: 0; transform: translateX(50px) scale(0.95); }
-      to { opacity: 1; transform: translateX(0) scale(1); }
-    }
-
-    @keyframes tlSlideLeft {
-      from { opacity: 0; transform: translateX(-50px) scale(0.95); }
-      to { opacity: 1; transform: translateX(0) scale(1); }
-    }
-
-    .slide-from-right { animation: tlSlideRight 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
-    .slide-from-left { animation: tlSlideLeft 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
-
-    .tl-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      width: 100%;
-      position: relative;
-      z-index: 2;
-      gap: 20px;
-      margin-bottom: 16px;
-    }
-
-    .tl-era-badge {
-      padding: 6px 18px;
-      border-radius: 30px;
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      border: 1.5px solid;
-      background: transparent;
-      transition: all 0.3s ease;
-      animation: fadeInUp 0.6s ease-out 0.45s both;
-    }
-
-    @keyframes fadeInUpSmall {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .tl-year-wrap {
-      text-align: right;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 2px;
-      animation: fadeInUpSmall 0.6s ease-out 0.4s both;
-    }
-
-    .tl-year {
-      font-family: 'Playfair Display', serif;
-      font-size: 3.5rem;
-      font-weight: 900;
-      line-height: 0.9;
-      color: var(--gold);
-      text-shadow: 0 6px 24px rgba(234, 179, 8, 0.3);
-    }
-
-    .tl-year-label {
-      font-size: 0.7rem;
-      color: var(--text-tertiary);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    .tl-body {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 20px;
-      position: relative;
-      z-index: 2;
-      animation: fadeInUpSmall 0.6s ease-out 0.5s both;
-    }
-
-    .tl-icon-wrap {
-      font-size: 3rem;
-      line-height: 1;
-      flex-shrink: 0;
-      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
-    }
-
-    .tl-title {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1.3;
-      letter-spacing: 0.2px;
-    }
-
-    /* ── DOTS & PLAYBAR ── */
-    .tl-dots-section {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      animation: fadeInUp 0.8s ease-out 0.4s both;
-    }
-
-    .tl-legend {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: var(--text-tertiary);
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      padding: 6px 14px;
-      border-radius: 20px;
-    }
-
-    .legend-item:hover {
-      color: var(--text-primary);
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-    }
-
-    .legend-item.active {
-      color: var(--text-primary);
-      background: rgba(255, 255, 255, 0.15);
-      box-shadow: 0 0 16px rgba(255, 255, 255, 0.1);
-    }
-
-    .legend-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      opacity: 0.5;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 8px currentColor;
-    }
-
-    .legend-item.active .legend-dot { opacity: 1; box-shadow: 0 0 16px currentColor; }
-
-    .tl-dots-strip {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-      padding: 20px 40px;
-      background: linear-gradient(135deg, var(--track-bg) 0%, rgba(13, 17, 28, 0.6) 100%);
-      border: 1.5px solid rgba(255, 255, 255, 0.1);
-      border-radius: 60px;
-      box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.4), 0 12px 40px rgba(0, 0, 0, 0.3);
-      width: fit-content;
-      max-width: 100%;
-      min-height: 58px;
-      transition: all 0.4s ease;
-      backdrop-filter: blur(10px);
-      animation: slideUp 0.6s ease-out 0.45s both;
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    html[data-theme="light"] .tl-dots-strip {
-      background: linear-gradient(135deg, rgba(240, 244, 249, 0.85) 0%, rgba(245, 247, 250, 0.7) 100%);
-      border-color: rgba(217, 119, 6, 0.2);
-      box-shadow: inset 0 2px 10px rgba(217, 119, 6, 0.05), 0 8px 32px rgba(217, 119, 6, 0.1);
-    }
-
-    .tl-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      cursor: pointer;
-      flex-shrink: 0;
-      position: relative;
-      opacity: 0.25;
-      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .tl-dot.hidden-dot { display: none !important; }
-    .tl-dot.past { opacity: 0.5; }
-    .tl-dot:hover { opacity: 1; transform: scale(1.7) !important; }
-
-    .tl-dot.active {
-      opacity: 1;
-      transform: scale(1.5);
-    }
-
-    .tl-dot.active::after {
-      content: '';
-      position: absolute;
-      inset: -8px;
-      border-radius: 50%;
-      border: 2px solid currentColor;
-      animation: pulseRing 0.8s ease-out forwards;
-    }
-
-    @keyframes pulseRing {
-      0% { transform: scale(0.3); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .tl-dot::before {
-      content: attr(data-year);
-      position: absolute;
-      bottom: 130%;
-      left: 50%;
-      transform: translateX(-50%) translateY(10px);
-      background: #fff;
-      color: #000;
-      font-size: 0.65rem;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 6px;
-      white-space: nowrap;
-      letter-spacing: 0.5px;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-      z-index: 20;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-    }
-
-    .tl-dot:hover::before {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* ── PLAYBAR ── */
-    .tl-playbar {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      width: 100%;
-      max-width: 600px;
-      padding: 0 20px;
-      animation: fadeInUp 0.8s ease-out 0.5s both;
-    }
-
-    .ctrl-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1.5px solid rgba(255, 255, 255, 0.15);
-      color: var(--text-secondary);
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      font-family: 'Poppins', sans-serif;
-      backdrop-filter: blur(10px);
-    }
-
-    .ctrl-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.3);
-      color: var(--text-primary);
-      transform: scale(1.12);
-      box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
-    }
-
-    .ctrl-btn.speed { font-size: 0.85rem; letter-spacing: 0.5px; }
-
-    .tl-progress-track {
-      flex: 1;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 4px;
-      overflow: hidden;
-      position: relative;
-      cursor: pointer;
-    }
-
-    .tl-progress-fill {
-      height: 100%;
-      width: 0%;
-      border-radius: 4px;
-      background: linear-gradient(90deg, #38bdf8, #818cf8, #d946ef);
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
-      transition: box-shadow 0.3s ease;
-    }
-
-    .tl-progress-fill:hover { box-shadow: 0 0 20px rgba(56, 189, 248, 0.9); }
-
-    .tl-counter-txt {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--text-tertiary);
-      letter-spacing: 1.5px;
-      white-space: nowrap;
-      min-width: 60px;
-      text-align: right;
-    }
-
-    .keyboard-hints {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      opacity: 0.5;
-      font-size: 0.65rem;
-      color: var(--text-primary);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      flex-wrap: wrap;
-      justify-content: center;
-      animation: fadeIn 0.8s ease-out 0.6s both;
-    }
-
-    .kbd {
-      background: rgba(255, 255, 255, 0.12);
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 8px 24px; border-radius: 50px;
+      background: linear-gradient(90deg, rgba(255,153,51,0.2), rgba(19,136,8,0.2));
       border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 5px;
-      padding: 2px 6px;
-      font-family: 'Courier New', monospace;
-      font-size: 0.7rem;
-      color: var(--text-primary);
+      font-size: 1rem; color: var(--gold); text-transform: uppercase;
+      backdrop-filter: blur(10px); animation: floatIcon 3s ease-in-out infinite;
     }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 1600px) {
-      .sat-grid { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 3rem; }
-      .sat-label-year { font-size: 2.5rem; }
-      .tl-year { font-size: 2.5rem; }
-      .tl-title { font-size: 1.1rem; }
-      .tl-card { padding: 24px 30px; }
-      .sat-header h2 { font-size: 1.4rem; }
-      .tl-header h2 { font-size: 1.4rem; }
-      .tl-icon-wrap { font-size: 2.5rem; }
+    .hero-section h1 {
+      font-family: 'Playfair Display', serif; font-size: 4rem; font-weight: 900;
+      background: linear-gradient(to right, var(--saffron), var(--gold), #ffffff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      line-height: 1.1; margin-bottom: 5px;
     }
 
+    /* Elegant Info Chips */
+    .info-chips {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px;
+    }
+    .info-chip {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 24px; border-radius: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(12px); transition: all 0.3s ease;
+    }
+    .info-chip:hover {
+      transform: translateY(-5px); border-color: var(--saffron);
+      box-shadow: 0 12px 40px var(--accent-glow);
+    }
+    .chip-icon { font-size: 1.5rem; }
+    .chip-data { display: flex; flex-direction: column; text-align: left; }
+    .chip-label { font-size: 0.65rem; color: var(--text-tertiary); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
+    .chip-val { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); }
+
+    /* ── LEFT: TIMELINE SECTION ── */
+    .tl-section {
+      display: flex; flex-direction: column; gap: 20px;
+      animation: slideInLeft 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+    }
+
+    .section-header h2 {
+      font-size: 1.8rem; font-weight: 800; color: var(--text-primary);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-header p { font-size: 0.9rem; color: var(--text-secondary); margin-top: 5px; }
+
+    .tl-card-outer { position: relative; width: 100%; perspective: 1200px; margin-top: 10px; }
+    
+    .tl-card {
+      border-radius: 24px; padding: 40px; min-height: 250px;
+      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(10, 10, 10, 0.4) 100%);
+      border: 1px solid rgba(255, 153, 51, 0.3);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(255, 153, 51, 0.05);
+      backdrop-filter: blur(20px); position: relative; overflow: hidden;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+
+    html[data-theme="light"] .tl-card { border-color: rgba(234, 88, 12, 0.3); }
+
+    .tl-year { font-family: 'Playfair Display', serif; font-size: 4rem; font-weight: 900; color: var(--gold); line-height: 1; }
+    .tl-body { display: flex; align-items: center; gap: 20px; margin-top: 20px; }
+    .tl-icon-wrap { font-size: 3.5rem; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3)); }
+    .tl-title { font-size: 1.4rem; font-weight: 700; line-height: 1.4; }
+
+    /* Controls */
+    .tl-playbar { display: flex; align-items: center; gap: 15px; margin-top: 20px; background: var(--card-bg); padding: 15px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+    .ctrl-btn {
+      width: 45px; height: 45px; border-radius: 50%; border: none; background: rgba(255,153,51,0.2);
+      color: var(--saffron); font-size: 1.2rem; cursor: pointer; transition: 0.3s;
+    }
+    .ctrl-btn:hover { background: var(--saffron); color: #fff; transform: scale(1.1); box-shadow: 0 0 15px var(--saffron); }
+    .tl-progress-track { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+    .tl-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), var(--saffron)); }
+
+    /* ── RIGHT: SATELLITE SECTION ── */
+    .sat-section {
+      display: flex; flex-direction: column; gap: 20px;
+      animation: slideInRight 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+    }
+
+    .sat-grid { display: grid; grid-template-rows: 1fr 1fr; gap: 20px; height: 100%; }
+    
+    .sat-card {
+      position: relative; border-radius: 24px; overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+      display: flex; flex-direction: column; min-height: 250px;
+    }
+    
+    .sat-card:hover { border-color: var(--gold); transform: translateY(-5px); transition: 0.4s; }
+    
+    .sat-img-container { position: relative; flex: 1; overflow: hidden; background: #000; }
+    .sat-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: 1s; }
+    .sat-card:hover .sat-img { opacity: 1; transform: scale(1.05); }
+    
+    .sat-overlay-svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3; }
+    
+    .sat-label {
+      position: absolute; bottom: 0; left: 0; right: 0; padding: 20px;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); z-index: 4;
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .sat-label-year { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; color: #fff; line-height: 1; }
+    .sat-src { font-size: 0.8rem; color: var(--gold); font-weight: 600; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--gold); }
+
+    /* Animations */
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes floatIcon { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
+
+    @media (max-width: 1200px) {
+      #page { grid-template-columns: 1fr; }
+      .sat-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+    }
     @media (max-width: 768px) {
-      #page { grid-template-columns: 1fr; padding: 20px; gap: 20px; }
-      .hero-section { flex-direction: column; }
-      .info-grid { grid-template-columns: repeat(2, 1fr); }
-      .hero h1 { font-size: 2rem; }
-      .sat-card { }
-      .tl-arrow { width: 40px; height: 40px; font-size: 1.1rem; }
-      .tl-arrow.left { left: -25px; }
-      .tl-arrow.right { right: -25px; }
-      .tl-card { padding: 20px 24px; min-height: auto; }
-      .tl-body { flex-direction: column; gap: 12px; text-align: center; }
+      .sat-grid { grid-template-columns: 1fr; }
+      .hero-section h1 { font-size: 2.5rem; }
+      #page { padding: 20px; }
     }
   </style>
 </head>
 <body>
-<canvas id="stars"></canvas>
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
 
-<!-- THEME TOGGLE -->
+<div class="mandala-bg"></div>
+<canvas id="stars"></canvas>
+
 <div class="theme-toggle" onclick="toggleTheme()">
-  <span class="toggle-icon" id="themeIcon">🌙</span>
-  <span class="toggle-label" id="themeLabel">Dark</span>
+  <span id="themeIcon">🌙</span> <span style="font-size: 0.8rem; font-weight:bold;">Theme</span>
 </div>
 
 <div id="page">
   
-  <!-- ━━ HERO + INFO ━━ -->
   <section class="hero-section">
-    <div class="hero-content">
-      <div class="welcome-tag">✦ Analysis Complete ✦</div>
-      <h1>Namaste,<br>{{ name }}!</h1>
-      <p class="sub">Born in {{ birth_year }} · {{ district }}, Bihar</p>
-    </div>
-
-    <div class="info-grid">
-      <div class="info-card">
-        <span class="card-icon">👤</span>
-        <div class="card-label">Full Name</div>
-        <div class="card-value">{{ name }}</div>
+    <div class="welcome-tag"><span class="hindi-text">बिहार दिवस प्रदर्शनी</span> ✦ Bihar Diwas Exhibition</div>
+    <h1><span class="hindi-text">नमस्ते</span> (Namaste),<br>{{ name }}!</h1>
+    
+    <div class="info-chips">
+      <div class="info-chip">
+        <span class="chip-icon">👤</span>
+        <div class="chip-data"><span class="chip-label">नाम / Name</span><span class="chip-val">{{ name }}</span></div>
       </div>
-      <div class="info-card">
-        <span class="card-icon">🗓️</span>
-        <div class="card-label">Date of Birth</div>
-        <div class="card-value" style="font-size:1rem;">{{ dob }}</div>
+      <div class="info-chip">
+        <span class="chip-icon">🗓️</span>
+        <div class="chip-data"><span class="chip-label">जन्म वर्ष / Birth Year</span><span class="chip-val">{{ birth_year }}</span></div>
       </div>
-      <div class="info-card">
-        <span class="card-icon">⏳</span>
-        <div class="card-label">Age</div>
-        {% if age %}
-        <div class="card-value big">{{ age }}</div>
-        {% else %}<div class="card-value">—</div>{% endif %}
+      <div class="info-chip">
+        <span class="chip-icon">⏳</span>
+        <div class="chip-data"><span class="chip-label">आयु / Age</span><span class="chip-val">{% if age %}{{ age }} Years{% else %}—{% endif %}</span></div>
       </div>
-      <div class="info-card">
-        <span class="card-icon">📍</span>
-        <div class="card-label">District</div>
-        <div class="card-value">{{ district }}</div>
+      <div class="info-chip">
+        <span class="chip-icon">📍</span>
+        <div class="chip-data"><span class="chip-label">ज़िला / District</span><span class="chip-val">{{ district }}</span></div>
       </div>
     </div>
   </section>
 
-  <!-- ━━ SATELLITES ━━ -->
-  <section class="sat-section">
-    <div class="sat-header">
-      <div class="sat-tag">🛰️ Satellite Imagery</div>
-      <h2>Your Life Through Satellite</h2>
-      <p>Compare {{ birth_year }} with 2026</p>
-    </div>
-
-    <div class="sat-grid">
-      <div class="sat-card">
-        <div class="sat-img-container">
-          <img class="sat-img active" id="birthImg" alt="Birth Year" />
-          <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg"></svg>
-          <div class="loader" id="birthLoader"><div class="spin"></div></div>
-          <div class="error-state" id="birthError">
-            <p>Could not load imagery</p>
-            <button onclick="retryBirth()">↻ Retry</button>
-          </div>
-          <div class="sat-label">
-            <div class="sat-label-year">{{ birth_year }}</div>
-            <div class="sat-label-sub">Your Birth Year</div>
-          </div>
-        </div>
-        <div class="sat-bottom">
-          <span class="sat-src" id="birthSrc">📡 Loading...</span>
-          <span class="sat-year-footer">{{ birth_year }}</span>
-        </div>
-      </div>
-
-      <div class="sat-card">
-        <div class="sat-img-container">
-          <img class="sat-img active" id="currentImg" alt="2026" />
-          <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg"></svg>
-          <div class="loader" id="currentLoader"><div class="spin"></div></div>
-          <div class="error-state" id="currentError">
-            <p>Could not load imagery</p>
-            <button onclick="retryCurrent()">↻ Retry</button>
-          </div>
-          <div class="sat-label">
-            <div class="sat-label-year">2026</div>
-            <div class="sat-label-sub">Today</div>
-          </div>
-        </div>
-        <div class="sat-bottom">
-          <span class="sat-src" id="currentSrc">📡 Sentinel-2</span>
-          <span class="sat-year-footer">2026</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ━━ TIMELINE ━━ -->
   <section class="tl-section">
-    <div class="tl-header">
-      <div class="tl-tag">📜 Bihar Through Your Years</div>
-      <h2>History Since {{ birth_year }}</h2>
-      <p>{{ events|length }} milestones that shaped Bihar</p>
+    <div class="section-header">
+      <h2><span class="hindi-text">आपका सफर</span> 📜 Historical Journey</h2>
+      <p>Events that shaped Bihar since {{ birth_year }}</p>
     </div>
 
     {% if events %}
-    <div class="tl-card-outer" id="cardOuter">
-      <div class="tl-arrow left" id="arrowLeft" onclick="prevEvent()">‹</div>
+    <div class="tl-card-outer">
       <div class="tl-card" id="tlCard">
-        <div class="tl-top">
-          <div><span class="tl-era-badge" id="tlEra"></span></div>
-          <div class="tl-year-wrap">
-            <div class="tl-year" id="tlYear"></div>
-            <div class="tl-year-label">Year</div>
-          </div>
+        <div>
+          <span class="welcome-tag" id="tlEra" style="font-size:0.7rem; padding: 4px 12px; margin-bottom: 10px;"></span>
+          <div class="tl-year" id="tlYear"></div>
         </div>
         <div class="tl-body">
           <div class="tl-icon-wrap" id="tlIcon"></div>
           <div class="tl-title" id="tlTitle"></div>
         </div>
       </div>
-      <div class="tl-arrow right" id="arrowRight" onclick="nextEvent()">›</div>
     </div>
 
-    <div class="tl-dots-section">
-      <div class="tl-legend" id="tlLegend"></div>
-      <div class="tl-dots-strip" id="tlDots"></div>
-      
-      <div class="tl-playbar">
-        <button class="ctrl-btn" id="playBtn">⏸</button>
-        <button class="ctrl-btn speed" id="speedBtn">1x</button>
-        <div class="tl-progress-track"><div class="tl-progress-fill" id="progressFill"></div></div>
-        <div class="tl-counter-txt" id="counterTxt">1 / {{ events|length }}</div>
+    <div class="tl-playbar">
+      <button class="ctrl-btn" id="playBtn">⏸</button>
+      <div class="tl-progress-track"><div class="tl-progress-fill" id="progressFill"></div></div>
+      <div style="font-size:0.8rem; font-weight:bold; color:var(--gold);" id="counterTxt">1 / {{ events|length }}</div>
+    </div>
+    {% else %}
+    <div class="tl-card"><p style="text-align:center; opacity:0.6;">No events recorded.</p></div>
+    {% endif %}
+  </section>
+
+  <section class="sat-section">
+    <div class="section-header">
+      <h2><span class="hindi-text">अंतरिक्ष से</span> 🛰️ Satellite View</h2>
+      <p>Comparing {{ birth_year }} with 2026</p>
+    </div>
+
+    <div class="sat-grid">
+      <div class="sat-card">
+        <div class="sat-img-container">
+          <img class="sat-img" id="birthImg" alt="Birth Year Image" />
+          <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="sat-label">
+            <div class="sat-label-year">{{ birth_year }}</div>
+            <div class="sat-src" id="birthSrc">Loading...</div>
+          </div>
+        </div>
       </div>
-      
-      <div class="keyboard-hints">
-        <span><span class="kbd">Space</span> Play/Pause</span>
-        <span><span class="kbd">←</span> <span class="kbd">→</span> Navigate</span>
+
+      <div class="sat-card">
+        <div class="sat-img-container">
+          <img class="sat-img" id="currentImg" alt="2026 Image" />
+          <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="sat-label">
+            <div class="sat-label-year">2026</div>
+            <div class="sat-src" id="currentSrc">Loading...</div>
+          </div>
+        </div>
       </div>
     </div>
-    {% endif %}
   </section>
 
 </div>
 
 <script>
-// ============================================
-// THEME MANAGEMENT
-// ============================================
-function initTheme() {
-  const savedTheme = localStorage.getItem("theme") || "dark";
-  document.documentElement.setAttribute("data-theme", savedTheme);
-  updateThemeToggle();
-}
-
+// ================= THEME & STARS =================
 function toggleTheme() {
-  const current = document.documentElement.getAttribute("data-theme");
-  const newTheme = current === "light" ? "dark" : "light";
-  document.documentElement.setAttribute("data-theme", newTheme);
-  localStorage.setItem("theme", newTheme);
-  updateThemeToggle();
+  const root = document.documentElement;
+  const isLight = root.getAttribute("data-theme") === "light";
+  root.setAttribute("data-theme", isLight ? "dark" : "light");
+  document.getElementById("themeIcon").textContent = isLight ? "🌙" : "☀️";
 }
 
-function updateThemeToggle() {
-  const icon = document.getElementById("themeIcon");
-  const label = document.getElementById("themeLabel");
-  const theme = document.documentElement.getAttribute("data-theme");
-  if (theme === "light") {
-    icon.textContent = "☀️";
-    label.textContent = "Light";
-  } else {
-    icon.textContent = "🌙";
-    label.textContent = "Dark";
-  }
-}
+const canvas = document.getElementById('stars'), ctx = canvas.getContext('2d');
+function resizeCanvas() { canvas.width = innerWidth; canvas.height = innerHeight; }
+window.addEventListener('resize', resizeCanvas); resizeCanvas();
+for(let i=0, stars=[]; i<150; i++) stars.push({x: Math.random()*innerWidth, y: Math.random()*innerHeight, r: Math.random()*1.5});
+setInterval(() => {
+  ctx.clearRect(0,0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgba(255,255,255,0.8)";
+  stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill(); s.y -= 0.2; if(s.y < 0) s.y = canvas.height; });
+}, 50);
 
-// ============================================
-// CONFIG
-// ============================================
+// ================= DATA CONFIG =================
 const EVENTS = {{ events | tojson }};
 const BASE_TL_MS = {{ tl_interval }};
 const BBOX = {{ (bbox or {"minLng": 83.3, "minLat": 24.3, "maxLng": 88.2, "maxLat": 27.5}) | tojson }};
@@ -1266,391 +350,69 @@ const DISTRICT = "{{ district }}";
 const BIRTH_YEAR = {{ birth_year }};
 const CURRENT_YEAR = 2026;
 const NS = 'http://www.w3.org/2000/svg';
-const EOX_BASE = 'https://tiles.maps.eox.at/wms';
-const GIBS_BASE = 'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi';
-const EOX_AVAIL = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
-let geoJsonData = null;
-const imageCache = {};
 
-// ============================================
-// STARS
-// ============================================
-const canvas = document.getElementById('stars'), ctx = canvas.getContext('2d');
-let stars = [];
-
-function resizeCanvas() {
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
-  initStars();
-}
-
-function initStars() {
-  stars = Array.from({length: 200}, () => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 1.5 + 0.3,
-    a: Math.random(),
-    da: (Math.random() - 0.5) * 0.02
-  }));
-}
-
-function drawStars() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  stars.forEach(s => {
-    s.a = Math.max(0.05, Math.min(1, s.a + s.da));
-    if(s.a <= 0.05 || s.a >= 1) s.da *= -1;
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, 2 * Math.PI);
-    ctx.fillStyle = `rgba(255, 255, 255, ${s.a * 0.8})`;
-    ctx.fill();
-  });
-  requestAnimationFrame(drawStars);
-}
-
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-drawStars();
-
-// ============================================
-// GEOJSON
-// ============================================
-(async function () {
-  try {
-    const r = await fetch("/bihar_dist_ready.geojson");
-    geoJsonData = await r.json();
-  } catch (e) {
-    console.error("GeoJSON load error:", e);
-  }
-})();
-
-function drawSatelliteOverlay(svgElement) {
-  if (!geoJsonData || !svgElement) return;
-
-  svgElement.innerHTML = "";
-  const W = svgElement.clientWidth;
-  const H = svgElement.clientHeight;
-  svgElement.setAttribute("viewBox", `0 0 ${W} ${H}`);
-
-  const bMinLng = BBOX.minLng;
-  const bMaxLng = BBOX.maxLng;
-  const bMinLat = BBOX.minLat;
-  const bMaxLat = BBOX.maxLat;
-
-  const sx = W / (bMaxLng - bMinLng);
-  const sy = H / (bMaxLat - bMinLat);
-
-  function proj(lng, lat) {
-    return [(lng - bMinLng) * sx, H - (lat - bMinLat) * sy];
-  }
-
-  function rD(ring) {
-    return ring.map(([ln, lt], i) => {
-      const [px, py] = proj(ln, lt);
-      return (i ? "L" : "M") + px.toFixed(2) + " " + py.toFixed(2);
-    }).join("") + "Z";
-  }
-
-  function gD(g) {
-    return g.type === "Polygon"
-      ? g.coordinates.map(rD).join("")
-      : g.type === "MultiPolygon"
-      ? g.coordinates.map(p => p.map(rD).join("")).join("")
-      : "";
-  }
-
-  function _norm(s) {
-    return String(s).toLowerCase().replace(/[\s\-()+]/g, "");
-  }
-
-  const grp = document.createElementNS(NS, "g");
-  
-  geoJsonData.features.forEach((feat) => {
-    const name = feat.properties.name;
-    const d = gD(feat.geometry);
-    if (!d) return;
-    
-    const path = document.createElementNS(NS, "path");
-    path.setAttribute("d", d);
-    
-    if (_norm(name) === _norm(DISTRICT)) {
-      path.setAttribute("stroke", "#eab308");
-      path.setAttribute("stroke-width", "4");
-      path.setAttribute("fill", "none");
-      path.setAttribute("filter", "drop-shadow(0 0 10px rgba(234,179,8,0.9))");
-    } else {
-      path.setAttribute("stroke", "rgba(255,255,255,0.2)");
-      path.setAttribute("stroke-width", "1.5");
-      path.setAttribute("fill", "none");
-    }
-    
-    grp.appendChild(path);
-  });
-  
-  svgElement.appendChild(grp);
-}
-
-// ============================================
-// SATELLITES
-// ============================================
-function satInfo(year) {
-  const srcYear = year < 2013 ? 2013 : year;
-  const lngSpan = BBOX.maxLng - BBOX.minLng;
-  const latSpan = BBOX.maxLat - BBOX.minLat;
-  const W = 1200;
-  const H = Math.min(900, Math.max(300, Math.round((W * latSpan) / lngSpan)));
-  const b = `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
-  const q = `&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${W}&HEIGHT=${H}&FORMAT=image/jpeg`;
-
-  if (srcYear >= 2016) {
-    const y = EOX_AVAIL.includes(srcYear) ? srcYear : (EOX_AVAIL.filter(v => v <= srcYear).pop() || EOX_AVAIL[EOX_AVAIL.length - 1]);
-    return {
-      url: `${EOX_BASE}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${q}`,
-      label: `Sentinel-2 Cloudless ${y}`
-    };
-  } else {
-    const y = Math.max(srcYear, 2000);
-    return {
-      url: `${GIBS_BASE}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${y}-03-15${q}`,
-      label: `MODIS Terra ${y}`
-    };
-  }
-}
-
-function preloadImage(url) {
-  return new Promise((resolve, reject) => {
-    if (imageCache[url]) {
-      resolve(url);
-      return;
-    }
-    const img = new Image();
-    img.onload = () => { imageCache[url] = url; resolve(url); };
-    img.onerror = reject;
-    img.src = url;
-  });
-}
-
-function loadBirthYearSat() {
-  const img = document.getElementById("birthImg");
-  const loader = document.getElementById("birthLoader");
-  const error = document.getElementById("birthError");
-  const srcSpan = document.getElementById("birthSrc");
-  const overlayEl = document.getElementById("birthMapOverlay");
-
-  loader.classList.remove("hidden");
-  error.classList.remove("show");
-
-  const info = satInfo(BIRTH_YEAR);
-
-  preloadImage(info.url)
-    .then(() => {
-      img.src = info.url;
-      img.onload = () => {
-        loader.classList.add("hidden");
-        error.classList.remove("show");
-        srcSpan.textContent = `📡 ${info.label}`;
-        drawSatelliteOverlay(overlayEl);
-      };
-    })
-    .catch(() => {
-      loader.classList.add("hidden");
-      error.classList.add("show");
-    });
-}
-
-function loadCurrentYearSat() {
-  const img = document.getElementById("currentImg");
-  const loader = document.getElementById("currentLoader");
-  const error = document.getElementById("currentError");
-  const srcSpan = document.getElementById("currentSrc");
-  const overlayEl = document.getElementById("currentMapOverlay");
-
-  loader.classList.remove("hidden");
-  error.classList.remove("show");
-
-  const info = satInfo(CURRENT_YEAR);
-
-  preloadImage(info.url)
-    .then(() => {
-      img.src = info.url;
-      img.onload = () => {
-        loader.classList.add("hidden");
-        error.classList.remove("show");
-        srcSpan.textContent = `📡 ${info.label}`;
-        drawSatelliteOverlay(overlayEl);
-      };
-    })
-    .catch(() => {
-      loader.classList.add("hidden");
-      error.classList.add("show");
-    });
-}
-
-function retryBirth() { loadBirthYearSat(); }
-function retryCurrent() { loadCurrentYearSat(); }
-
-// ============================================
-// TIMELINE
-// ============================================
-let cur = 0, autoTimer = null, isPlaying = true;
-let speedMult = 1;
-const dotsContainer = document.getElementById('tlDots');
-const legendContainer = document.getElementById('tlLegend');
-
-if (EVENTS && EVENTS.length > 0) {
-  const uniqueEras = [...new Set(EVENTS.map(e => e.era))];
-  const eraColors = {};
-  EVENTS.forEach(e => { if(!eraColors[e.era]) eraColors[e.era] = e.color; });
-
-  uniqueEras.forEach((era, idx) => {
-    const item = document.createElement('div');
-    item.className = 'legend-item';
-        item.dataset.era = era;
-    item.style.animationDelay = `${idx * 0.06}s`;
-    item.innerHTML = `<div class="legend-dot" style="background:${eraColors[era]}; box-shadow: 0 0 12px ${eraColors[era]}"></div>${era}`;
-    
-    item.addEventListener('click', () => {
-      const firstEventIdx = EVENTS.findIndex(e => e.era === era);
-      if (firstEventIdx !== -1 && firstEventIdx !== cur) {
-        goTo(firstEventIdx, firstEventIdx > cur ? 'next' : 'prev');
-      }
-    });
-    legendContainer.appendChild(item);
-  });
-
-  EVENTS.forEach((e, i) => {
-    const d = document.createElement('div');
-    d.className = 'tl-dot';
-    d.dataset.idx = i;
-    d.dataset.year = e.year;
-    d.dataset.era = e.era;
-    d.style.backgroundColor = e.color;
-    d.style.color = e.color;
-    d.style.animationDelay = `${i * 0.04}s`;
-    d.addEventListener('click', () => goTo(i, i >= cur ? 'next' : 'prev'));
-    dotsContainer.appendChild(d);
-  });
-}
-
-function updateDots() {
-  const currentEra = EVENTS[cur].era;
-  document.querySelectorAll('.legend-item').forEach(item => {
-    item.classList.toggle('active', item.dataset.era === currentEra);
-  });
-  dotsContainer.querySelectorAll('.tl-dot').forEach((d, i) => {
-    const isCurrentEra = d.dataset.era === currentEra;
-    d.classList.toggle('hidden-dot', !isCurrentEra);
-    d.classList.remove('active', 'past');
-    if (isCurrentEra) {
-      if (i === cur) d.classList.add('active');
-      else if (i < cur) d.classList.add('past');
-    }
-  });
-}
+// ================= TIMELINE LOGIC =================
+let cur = 0, isPlaying = true, autoTimer = null;
 
 function updateCard(i) {
+  if(!EVENTS || !EVENTS.length) return;
   const e = EVENTS[i];
   document.getElementById('tlYear').textContent = e.year;
   document.getElementById('tlIcon').textContent = e.icon;
   document.getElementById('tlTitle').textContent = e.title;
-  
-  const era = document.getElementById('tlEra');
-  era.textContent = e.era;
-  era.style.color = e.color;
-  era.style.borderColor = e.color;
-  era.style.background = e.color + '20';
-
-  document.getElementById('arrowLeft').classList.toggle('disabled', i === 0);
-  document.getElementById('arrowRight').classList.toggle('disabled', i === EVENTS.length - 1);
+  document.getElementById('tlEra').textContent = e.era;
   document.getElementById('counterTxt').textContent = `${i + 1} / ${EVENTS.length}`;
+  
+  // Animate Card Data
+  const card = document.getElementById('tlCard');
+  card.style.opacity = 0;
+  setTimeout(() => { card.style.opacity = 1; card.style.transition = 'opacity 0.5s'; }, 100);
 }
 
 function resetProgress() {
   clearTimeout(autoTimer);
   const fill = document.getElementById('progressFill');
-  fill.style.transition = 'none';
-  fill.style.width = '0%';
+  fill.style.transition = 'none'; fill.style.width = '0%';
   if (!isPlaying) return;
   
-  const currentInterval = BASE_TL_MS / speedMult;
-  
   setTimeout(() => {
-    fill.style.transition = `width ${currentInterval}ms linear`;
+    fill.style.transition = `width ${BASE_TL_MS}ms linear`;
     fill.style.width = '100%';
   }, 50);
   
   autoTimer = setTimeout(() => {
-    const next = cur < EVENTS.length - 1 ? cur + 1 : 0;
-    goTo(next, next > cur ? 'next' : 'prev');
-  }, currentInterval);
+    cur = (cur < EVENTS.length - 1) ? cur + 1 : 0;
+    updateCard(cur);
+    resetProgress();
+  }, BASE_TL_MS);
 }
 
-function goTo(i, dir) {
-  const card = document.getElementById('tlCard');
-  const outClass = dir === 'next' ? 'slide-to-left' : 'slide-to-right';
-  const inClass = dir === 'next' ? 'slide-from-right' : 'slide-from-left';
-  
-  card.classList.remove('slide-from-right', 'slide-from-left');
-  card.classList.add(outClass);
-  
-  setTimeout(() => {
-    cur = i;
-    updateCard(i);
-    updateDots();
-    card.classList.remove(outClass);
-    card.classList.add(inClass);
-    
-    setTimeout(() => card.classList.remove(inClass), 500);
-  }, 250);
-  resetProgress();
+if(EVENTS && EVENTS.length > 0) {
+  updateCard(0); resetProgress();
+  document.getElementById('playBtn').addEventListener('click', () => {
+    isPlaying = !isPlaying;
+    document.getElementById('playBtn').innerHTML = isPlaying ? '⏸' : '▶';
+    resetProgress();
+  });
 }
 
-function nextEvent() {
-  if(cur < EVENTS.length - 1) goTo(cur + 1, 'next');
-}
-
-function prevEvent() {
-  if(cur > 0) goTo(cur - 1, 'prev');
-}
-
-// ============================================
-// CONTROLS
-// ============================================
-document.getElementById('playBtn').addEventListener('click', () => {
-  isPlaying = !isPlaying;
-  document.getElementById('playBtn').innerHTML = isPlaying ? '⏸' : '▶';
-  resetProgress();
-});
-
-document.getElementById('speedBtn').addEventListener('click', () => {
-  if (speedMult === 1) speedMult = 1.5;
-  else if (speedMult === 1.5) speedMult = 2;
-  else speedMult = 1;
-  document.getElementById('speedBtn').textContent = speedMult + 'x';
-  if (isPlaying) resetProgress();
-});
-
-document.addEventListener('keydown', e => {
-  if (e.key === ' ' && e.target === document.body) {
-    e.preventDefault();
-    document.getElementById('playBtn').click();
-  }
-  if (e.key === 'ArrowRight') nextEvent();
-  if (e.key === 'ArrowLeft') prevEvent();
-});
-
-// ============================================
-// INITIALIZE
-// ============================================
-if (EVENTS && EVENTS.length) {
-  updateCard(0);
-  updateDots();
-  resetProgress();
+// ================= SATELLITE MOCK / LOGIC =================
+function getSatUrl(year) {
+  const w = 800, h = 400;
+  const b = `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
+  if(year >= 2016) return `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${year}&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${w}&HEIGHT=${h}&FORMAT=image/jpeg`;
+  return `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${Math.max(year, 2000)}-03-15&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${w}&HEIGHT=${h}&FORMAT=image/jpeg`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  initTheme();
-  loadBirthYearSat();
-  loadCurrentYearSat();
+  const bImg = document.getElementById("birthImg");
+  const cImg = document.getElementById("currentImg");
+  
+  bImg.src = getSatUrl(BIRTH_YEAR);
+  cImg.src = getSatUrl(CURRENT_YEAR);
+  
+  document.getElementById("birthSrc").textContent = BIRTH_YEAR >= 2016 ? "Sentinel-2" : "MODIS Terra";
+  document.getElementById("currentSrc").textContent = "Sentinel-2";
 });
 </script>
 </body>

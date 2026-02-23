@@ -47,10 +47,8 @@
                         radial-gradient(circle at bottom left, rgba(19, 136, 8, 0.08) 0%, transparent 40%);
     }
 
-    /* ── HINDI FONT ── */
     .hindi-text { font-family: 'Yatra One', cursive; letter-spacing: 1px; }
 
-    /* ── THEME TOGGLE ── */
     .theme-toggle {
       position: fixed; top: 20px; right: 20px; z-index: 200;
       display: flex; align-items: center; gap: 8px; padding: 10px 16px;
@@ -62,7 +60,6 @@
     html[data-theme="dark"] .theme-toggle { border-color: rgba(255, 255, 255, 0.1); }
     .theme-toggle:hover { transform: scale(1.05); border-color: var(--saffron); }
 
-    /* ── MAIN LAYOUT ── */
     #page {
       position: relative; z-index: 10;
       width: 100%; min-height: 100vh;
@@ -72,7 +69,6 @@
       gap: 30px; padding: 30px 50px;
     }
 
-    /* ── HERO & INFO ── */
     .hero-section {
       grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center;
       text-align: center; gap: 15px; animation: fadeInDown 1s ease-out;
@@ -109,7 +105,6 @@
     .chip-label { font-size: 0.65rem; color: var(--text-tertiary); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
     .chip-val { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
 
-    /* ── LEFT: TIMELINE ── */
     .tl-section {
       display: flex; flex-direction: column; gap: 15px;
       animation: slideInLeft 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
@@ -130,7 +125,6 @@
     }
     html[data-theme="dark"] .tl-card { background: linear-gradient(135deg, var(--card-bg) 0%, rgba(10, 10, 10, 0.4) 100%); border-color: rgba(255, 153, 51, 0.3); }
 
-    /* Animation Classes */
     .slide-out-left { animation: slideOutLeft 0.4s forwards; }
     .slide-out-right { animation: slideOutRight 0.4s forwards; }
     .slide-in-left { animation: slideInLeftAnim 0.4s forwards; }
@@ -146,7 +140,6 @@
     .tl-icon-wrap { font-size: 4rem; filter: drop-shadow(0 4px 10px var(--shadow-color)); }
     .tl-title { font-size: 1.5rem; font-weight: 700; line-height: 1.4; color: var(--text-primary); }
 
-    /* Controls */
     .tl-playbar { display: flex; align-items: center; gap: 15px; margin-top: 15px; background: var(--card-bg); padding: 15px 20px; border-radius: 20px; border: 1px solid rgba(15, 23, 42, 0.05); box-shadow: 0 8px 25px var(--shadow-color); }
     html[data-theme="dark"] .tl-playbar { border-color: rgba(255,255,255,0.05); }
     
@@ -162,7 +155,6 @@
     kbd { background: var(--track-bg); padding: 2px 6px; border-radius: 4px; font-family: monospace; border: 1px solid rgba(15,23,42,0.1); color: var(--text-secondary); }
     html[data-theme="dark"] kbd { border-color: rgba(255,255,255,0.2); }
 
-    /* ── RIGHT: SATELLITES (BIGGER) ── */
     .sat-section {
       display: flex; flex-direction: column; gap: 15px;
       animation: slideInRight 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
@@ -178,23 +170,27 @@
       background: #000;
     }
     html[data-theme="dark"] .sat-card { border-color: rgba(255, 255, 255, 0.1); }
-    .sat-card:hover { border-color: var(--gold); transform: translateY(-5px); transition: 0.4s; box-shadow: 0 20px 50px var(--accent-glow); }
+    .sat-card:hover { border-color: var(--gold); box-shadow: 0 20px 50px var(--accent-glow); transition: 0.4s; }
     
-    .sat-img-container { position: relative; flex: 1; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-    .sat-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: transform 2s ease-out, opacity 1s; }
-    .sat-card:hover .sat-img { opacity: 1; transform: scale(1.08); }
+    .sat-img-container { position: relative; flex: 1; overflow: hidden; }
+    
+    /* ── HOVER SYNC WRAPPER ── */
+    /* Keeps Image and SVG together during zoom so lines never unalign */
+    .sat-layer-group { position: absolute; inset: 0; width: 100%; height: 100%; transition: transform 2s ease-out; }
+    .sat-card:hover .sat-layer-group { transform: scale(1.08); }
+    
+    .sat-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: opacity 1s; }
     
     .sat-overlay-svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; }
     
     .sat-label {
       position: absolute; bottom: 0; left: 0; right: 0; padding: 25px 25px 20px 25px;
       background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent); z-index: 4;
-      display: flex; justify-content: space-between; align-items: flex-end;
+      display: flex; justify-content: space-between; align-items: flex-end; pointer-events: none;
     }
     .sat-label-year { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
     .sat-src { font-size: 0.8rem; color: #fff; font-weight: 700; background: rgba(234, 88, 12, 0.8); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
 
-    /* Animations */
     @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
@@ -220,7 +216,6 @@
 </div>
 
 <div id="page">
-  
   <section class="hero-section">
     <div class="welcome-tag"><span class="hindi-text">बिहार दिवस प्रदर्शनी</span> ✦ Bihar Diwas Exhibition</div>
     <h1><span class="hindi-text">नमस्ते</span> (Namaste),<br>{{ name }}!</h1>
@@ -289,8 +284,10 @@
     <div class="sat-grid">
       <div class="sat-card">
         <div class="sat-img-container">
-          <img class="sat-img" id="birthImg" alt="Birth Year Image" crossorigin="anonymous" />
-          <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"></svg>
+          <div class="sat-layer-group">
+            <img class="sat-img" id="birthImg" alt="Birth Year Image" crossorigin="anonymous" />
+            <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"></svg>
+          </div>
           <div class="sat-label">
             <div class="sat-label-year">{{ birth_year }}</div>
             <div class="sat-src" id="birthSrc">Loading...</div>
@@ -300,8 +297,10 @@
 
       <div class="sat-card">
         <div class="sat-img-container">
-          <img class="sat-img" id="currentImg" alt="2026 Image" crossorigin="anonymous" />
-          <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"></svg>
+          <div class="sat-layer-group">
+            <img class="sat-img" id="currentImg" alt="2026 Image" crossorigin="anonymous" />
+            <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"></svg>
+          </div>
           <div class="sat-label">
             <div class="sat-label-year">2026</div>
             <div class="sat-src" id="currentSrc">Loading...</div>
@@ -323,15 +322,30 @@ function toggleTheme() {
   document.getElementById("themeText").textContent = isLight ? "Light" : "Dark";
 }
 
-// ================= DATA CONFIG =================
+// ================= DATA CONFIG & PADDING LOGIC =================
 const EVENTS = {{ events | tojson }};
 let BASE_TL_MS = {{ tl_interval }};
-const BBOX = {{ (bbox or {"minLng": 83.3, "minLat": 24.3, "maxLng": 88.2, "maxLat": 27.5}) | tojson }};
+const RAW_BBOX = {{ (bbox or {"minLng": 83.3, "minLat": 24.3, "maxLng": 88.2, "maxLat": 27.5}) | tojson }};
 const DISTRICT = "{{ district }}";
 const BIRTH_YEAR = {{ birth_year }};
 const CURRENT_YEAR = 2026;
 const NS = 'http://www.w3.org/2000/svg';
 const EOX_AVAIL = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
+
+// Calculate a 15% margin around the actual district bounds
+const latPad = Math.abs(RAW_BBOX.maxLat - RAW_BBOX.minLat) * 0.15;
+const lngPad = Math.abs(RAW_BBOX.maxLng - RAW_BBOX.minLng) * 0.15;
+
+const PADDED_BBOX = {
+  minLng: RAW_BBOX.minLng - lngPad,
+  maxLng: RAW_BBOX.maxLng + lngPad,
+  minLat: RAW_BBOX.minLat - latPad,
+  maxLat: RAW_BBOX.maxLat + latPad
+};
+
+// Fixed Resolution for syncing Image Object-Fit & SVG viewBox
+const W_RES = 1200;
+const H_RES = 800;
 
 // ================= GEOJSON MAP OVERLAY LOGIC =================
 let geoJsonData = null;
@@ -351,20 +365,18 @@ function drawSatelliteOverlay(svgElement) {
   if (!geoJsonData || !svgElement) return;
 
   svgElement.innerHTML = "";
-  // Get natural dimensions of the container
-  const W = svgElement.clientWidth || 800;
-  const H = svgElement.clientHeight || 400;
-  svgElement.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  // Lock Viewbox perfectly to image resolution requested
+  svgElement.setAttribute("viewBox", `0 0 ${W_RES} ${H_RES}`);
 
-  const bMinLng = BBOX.minLng;
-  const bMaxLng = BBOX.maxLng;
-  const bMinLat = BBOX.minLat;
-  const bMaxLat = BBOX.maxLat;
+  const bMinLng = PADDED_BBOX.minLng;
+  const bMaxLng = PADDED_BBOX.maxLng;
+  const bMinLat = PADDED_BBOX.minLat;
+  const bMaxLat = PADDED_BBOX.maxLat;
 
-  const sx = W / (bMaxLng - bMinLng);
-  const sy = H / (bMaxLat - bMinLat);
+  const sx = W_RES / (bMaxLng - bMinLng);
+  const sy = H_RES / (bMaxLat - bMinLat);
 
-  function proj(lng, lat) { return [(lng - bMinLng) * sx, H - (lat - bMinLat) * sy]; }
+  function proj(lng, lat) { return [(lng - bMinLng) * sx, H_RES - (lat - bMinLat) * sy]; }
 
   function rD(ring) {
     return ring.map(([ln, lt], i) => {
@@ -391,11 +403,10 @@ function drawSatelliteOverlay(svgElement) {
     path.setAttribute("d", d);
     
     if (_norm(name) === _norm(DISTRICT)) {
-      // Highlight the specific district outline (NO FILL COLOR)
       path.setAttribute("stroke", "#ea580c"); 
-      path.setAttribute("stroke-width", "3");
-      path.setAttribute("fill", "none"); // Removed the fill
-      path.setAttribute("filter", "drop-shadow(0 0 8px rgba(255,153,51,1))");
+      path.setAttribute("stroke-width", "5"); // Made slightly bolder to look better on high res
+      path.setAttribute("fill", "none"); 
+      path.setAttribute("filter", "drop-shadow(0 0 10px rgba(234,88,12,1))");
       grp.appendChild(path); 
     } else {
       path.setAttribute("stroke", "rgba(255,255,255,0.4)");
@@ -408,11 +419,7 @@ function drawSatelliteOverlay(svgElement) {
   svgElement.appendChild(grp);
 }
 
-// Redraw map on window resize to ensure correct projection
-window.addEventListener('resize', () => {
-  drawSatelliteOverlay(document.getElementById("birthMapOverlay"));
-  drawSatelliteOverlay(document.getElementById("currentMapOverlay"));
-});
+// No resize listener needed anymore since scale is governed by preserveAspectRatio slice
 
 // ================= TIMELINE LOGIC =================
 let cur = 0, isPlaying = true, autoTimer = null;
@@ -432,12 +439,10 @@ function animateCardChange(i, direction) {
   const outClass = direction === 'next' ? 'slide-out-left' : 'slide-out-right';
   const inClass = direction === 'next' ? 'slide-in-right' : 'slide-in-left';
 
-  // Animate out
   card.className = `tl-card ${outClass}`;
   
   setTimeout(() => {
     updateCardContent(i);
-    // Animate in
     card.className = `tl-card ${inClass}`;
   }, 400); 
 }
@@ -468,14 +473,12 @@ if(EVENTS && EVENTS.length > 0) {
   updateCardContent(0);
   resetProgress();
   
-  // Play/Pause Button
   document.getElementById('playBtn').addEventListener('click', () => {
     isPlaying = !isPlaying;
     document.getElementById('playBtn').innerHTML = isPlaying ? '⏸' : '▶';
     resetProgress();
   });
 
-  // Speed Button
   document.getElementById('speedBtn').addEventListener('click', () => {
     if (speedMult === 1) speedMult = 1.5;
     else if (speedMult === 1.5) speedMult = 2;
@@ -484,7 +487,6 @@ if(EVENTS && EVENTS.length > 0) {
     if(isPlaying) resetProgress();
   });
 
-  // Keyboard Navigation
   document.addEventListener('keydown', (e) => {
     if (e.key === ' ') {
       e.preventDefault();
@@ -507,12 +509,11 @@ if(EVENTS && EVENTS.length > 0) {
 
 // ================= SATELLITE MOCK / LOGIC =================
 function getSatUrl(year) {
-  const w = 1200, h = 800;
-  const b = `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
-  const q = `&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${w}&HEIGHT=${h}&FORMAT=image/jpeg`;
+  // Use the padded BBOX for fetching images
+  const b = `${PADDED_BBOX.minLng},${PADDED_BBOX.minLat},${PADDED_BBOX.maxLng},${PADDED_BBOX.maxLat}`;
+  const q = `&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${W_RES}&HEIGHT=${H_RES}&FORMAT=image/jpeg`;
 
   if(year >= 2016) {
-    // Restored fallback logic for future years like 2026
     const y = EOX_AVAIL.includes(year) ? year : (EOX_AVAIL.filter(v=>v<=year).pop() || EOX_AVAIL[EOX_AVAIL.length-1]);
     return `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${q}`;
   } else {
@@ -525,14 +526,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const bImg = document.getElementById("birthImg");
   const cImg = document.getElementById("currentImg");
   
-  // Assign sources
   bImg.src = getSatUrl(BIRTH_YEAR);
   cImg.src = getSatUrl(CURRENT_YEAR);
   
   document.getElementById("birthSrc").textContent = BIRTH_YEAR >= 2016 ? "📡 Sentinel-2" : "📡 MODIS Terra";
   document.getElementById("currentSrc").textContent = "📡 Sentinel-2";
 
-  // Trigger GeoJSON loading once DOM is ready
   loadGeoJson();
 });
 </script>

@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>बिहार दिवस प्रदर्शनी — {{ name }} | {{ app_title }}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800;900&family=Yatra+One&display=swap" rel="stylesheet"/>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800;900&family=Yatra+One&display=swap"
+    rel="stylesheet" />
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     :root {
-      --gold:    #ffc107;
+      --gold: #ffc107;
       --saffron: #ff9933;
       --saffron-dark: #ea580c;
-      --green:   #138808;
+      --green: #138808;
       --bg-deep: #060913;
       --card-bg: rgba(18, 22, 36, 0.6);
       --track-bg: #0d111c;
@@ -22,12 +31,12 @@
       --accent-glow: rgba(255, 153, 51, 0.25);
       --shadow-color: rgba(0, 0, 0, 0.5);
     }
-    
+
     html[data-theme="light"] {
-      --gold:    #d97706;
+      --gold: #d97706;
       --saffron: #ea580c;
       --saffron-dark: #c2410c;
-      --green:   #15803d;
+      --green: #15803d;
       --bg-deep: #f8fafc;
       --card-bg: rgba(255, 255, 255, 0.85);
       --track-bg: #e2e8f0;
@@ -37,25 +46,38 @@
       --accent-glow: rgba(234, 88, 12, 0.15);
       --shadow-color: rgba(234, 88, 12, 0.08);
     }
-    
-    html, body { width: 100vw; height: 100vh; overflow: hidden; margin: 0; cursor: default; }
-    
+
+    html,
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      margin: 0;
+      cursor: default;
+    }
+
     body {
       background: var(--bg-deep);
       font-family: 'Poppins', sans-serif;
       color: var(--text-primary);
       transition: background 0.6s ease, color 0.6s ease;
-      background-image: radial-gradient(circle at top right, var(--accent-glow) 0%, transparent 40%),
-                        radial-gradient(circle at bottom left, rgba(19, 136, 8, 0.08) 0%, transparent 40%);
+      background-image: radial-gradient(circle at 15% 20%, var(--accent-glow) 0%, transparent 35%),
+        radial-gradient(circle at 85% 80%, rgba(19, 136, 8, 0.08) 0%, transparent 35%),
+        radial-gradient(circle at 50% 50%, rgba(255, 193, 7, 0.04) 0%, transparent 50%);
     }
 
-    .hindi-text { font-family: 'Yatra One', cursive; letter-spacing: 1px; }
+    .hindi-text {
+      font-family: 'Yatra One', cursive;
+      letter-spacing: 1px;
+    }
 
     /* ── MAGIC MOUSE GLOW ── */
     #mouseGlow {
       position: fixed;
-      top: 0; left: 0;
-      width: 400px; height: 400px;
+      top: 0;
+      left: 0;
+      width: 400px;
+      height: 400px;
       background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
       border-radius: 50%;
       pointer-events: none;
@@ -67,93 +89,331 @@
 
     /* ── TOP BUTTONS (BACK & THEME) ── */
     .top-btn {
-      position: fixed; top: 15px; z-index: 200;
-      display: flex; align-items: center; gap: 8px; padding: 8px 16px;
-      border-radius: 50px; background: var(--card-bg);
-      border: 1px solid rgba(15, 23, 42, 0.1); cursor: pointer;
-      backdrop-filter: blur(10px); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: fixed;
+      top: 15px;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 50px;
+      background: var(--card-bg);
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      cursor: pointer;
+      backdrop-filter: blur(14px);
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
       box-shadow: 0 4px 15px var(--shadow-color);
-      color: var(--text-primary); text-decoration: none; font-weight: 700; font-size: 0.8rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
     }
-    html[data-theme="dark"] .top-btn { border-color: rgba(255, 255, 255, 0.1); }
-    .top-btn:hover { border-color: var(--saffron); box-shadow: 0 8px 20px var(--accent-glow); color: var(--saffron); }
-    
-    .back-btn { left: 20px; }
-    .back-btn:hover { transform: scale(1.05) translateX(-2px); }
-    
-    .theme-toggle { right: 20px; }
-    .theme-toggle:hover { transform: scale(1.05) translateY(-2px); }
+
+    html[data-theme="dark"] .top-btn {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .top-btn:hover {
+      border-color: var(--saffron);
+      box-shadow: 0 8px 20px var(--accent-glow);
+      color: var(--saffron);
+    }
+
+    .back-btn {
+      left: 20px;
+    }
+
+    .back-btn:hover {
+      transform: scale(1.05) translateX(-2px);
+    }
+
+    .theme-toggle {
+      right: 20px;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.05) translateY(-2px);
+    }
 
     /* ── MAIN 2-COLUMN GRID ── */
     #page {
-      position: relative; z-index: 10;
-      width: 100%; height: 100%;
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
       display: grid;
       grid-template-columns: 1fr 1.1fr;
-      gap: 30px; padding: 25px 40px; padding-top: 60px; /* Space for top buttons */
+      gap: 30px;
+      padding: 25px 40px;
+      padding-top: 60px;
+      /* Space for top buttons */
     }
 
-    .left-column { display: flex; flex-direction: column; gap: 20px; height: 100%; min-height: 0; }
-    .right-column { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+    }
 
     /* ── LEFT: HERO & INFO ── */
     .hero-section {
-      display: flex; flex-direction: column; align-items: flex-start;
-      text-align: left; gap: 10px; animation: slideInLeftAnim 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      gap: 10px;
+      animation: slideInLeftAnim 0.8s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .welcome-tag {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 6px 20px; border-radius: 50px;
-      background: linear-gradient(90deg, rgba(234,88,12,0.1), rgba(21,128,61,0.1));
-      border: 1px solid rgba(234, 88, 12, 0.2);
-      font-size: 0.8rem; color: var(--saffron); text-transform: uppercase; font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 20px;
+      border-radius: 50px;
+      background: linear-gradient(90deg, rgba(234, 88, 12, 0.12), rgba(21, 128, 61, 0.1));
+      border: 1px solid rgba(234, 88, 12, 0.25);
+      font-size: 0.8rem;
+      color: var(--saffron);
+      text-transform: uppercase;
+      font-weight: 700;
       backdrop-filter: blur(10px);
+      animation: tagGlow 2.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes tagGlow {
+      0% {
+        box-shadow: 0 0 0 0 transparent;
+      }
+
+      100% {
+        box-shadow: 0 0 20px var(--accent-glow), 0 0 40px rgba(234, 88, 12, 0.08);
+      }
     }
 
     .hero-section h1 {
-      font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900;
-      background: linear-gradient(to right, var(--saffron), var(--gold));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      line-height: 1.1; text-shadow: 0 4px 20px rgba(234, 88, 12, 0.2); margin: 0;
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--saffron), var(--gold), var(--saffron));
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+      margin: 0;
+      animation: heroShimmer 3.5s ease-in-out infinite;
     }
 
-    .info-chips { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 12px; margin-top: 5px; }
-    .info-chip {
-      display: flex; align-items: center; gap: 10px;
-      background: var(--card-bg); border: 1px solid rgba(15, 23, 42, 0.05);
-      padding: 8px 16px; border-radius: 30px;
-      box-shadow: 0 6px 20px var(--shadow-color);
-      backdrop-filter: blur(12px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    @keyframes heroShimmer {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      100% {
+        background-position: 200% 50%;
+      }
     }
-    html[data-theme="dark"] .info-chip { border-color: rgba(255, 255, 255, 0.1); }
-    .info-chip:hover { transform: translateY(-4px) scale(1.02); border-color: var(--saffron); box-shadow: 0 10px 25px var(--accent-glow); }
-    .chip-icon { font-size: 1.2rem; }
-    .chip-data { display: flex; flex-direction: column; text-align: left; }
-    .chip-label { font-size: 0.6rem; color: var(--text-tertiary); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
-    .chip-val { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+
+    .info-chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 12px;
+      margin-top: 5px;
+    }
+
+    .info-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card-bg);
+      border: 1px solid rgba(15, 23, 42, 0.05);
+      padding: 8px 16px;
+      border-radius: 30px;
+      box-shadow: 0 6px 20px var(--shadow-color);
+      backdrop-filter: blur(12px);
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      animation: chipSlideIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .info-chip:nth-child(1) {
+      animation-delay: 0.3s;
+    }
+
+    .info-chip:nth-child(2) {
+      animation-delay: 0.4s;
+    }
+
+    .info-chip:nth-child(3) {
+      animation-delay: 0.5s;
+    }
+
+    .info-chip:nth-child(4) {
+      animation-delay: 0.6s;
+    }
+
+    @keyframes chipSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.92);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    html[data-theme="dark"] .info-chip {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .info-chip:hover {
+      transform: translateY(-5px) scale(1.03);
+      border-color: var(--saffron);
+      box-shadow: 0 12px 30px var(--accent-glow), 0 0 20px var(--accent-glow);
+    }
+
+    .info-chip:hover .chip-icon {
+      animation: iconBounce 0.5s ease;
+    }
+
+    @keyframes iconBounce {
+      0% {
+        transform: scale(1);
+      }
+
+      40% {
+        transform: scale(1.3) rotate(-8deg);
+      }
+
+      100% {
+        transform: scale(1) rotate(0);
+      }
+    }
+
+    .chip-icon {
+      font-size: 1.2rem;
+      transition: transform 0.3s;
+    }
+
+    .chip-data {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .chip-label {
+      font-size: 0.6rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .chip-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
 
     /* ── LEFT: TIMELINE ── */
     .tl-section {
-      flex: 1; display: flex; flex-direction: column; gap: 10px; min-height: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
       animation: slideInLeftAnim 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
     }
 
-    .section-header { text-align: left; }
-    .section-header h2 { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 10px; margin: 0; }
-    .section-header p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px; }
+    .section-header {
+      text-align: left;
+    }
 
-    .tl-card-outer { flex: 1; position: relative; width: 100%; perspective: 1200px; display: flex; flex-direction: column; min-height: 0; }
-    
+    .section-header h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+    }
+
+    .section-header p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .tl-card-outer {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      perspective: 1200px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
     .tl-card {
-      flex: 1; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; justify-content: center;
-      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(255,255,255,0.4) 100%);
+      flex: 1;
+      border-radius: 24px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(255, 255, 255, 0.4) 100%);
       border: 1px solid rgba(234, 88, 12, 0.2);
       box-shadow: 0 15px 40px var(--shadow-color), inset 0 0 20px rgba(255, 153, 51, 0.05);
-      backdrop-filter: blur(20px); position: relative; overflow: hidden;
+      backdrop-filter: blur(20px) saturate(140%);
+      position: relative;
+      overflow: hidden;
       transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    html[data-theme="dark"] .tl-card { background: linear-gradient(135deg, var(--card-bg) 0%, rgba(10, 10, 10, 0.4) 100%); border-color: rgba(255, 153, 51, 0.3); }
+
+    /* Animated border glow */
+    .tl-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 25px;
+      background: linear-gradient(60deg, transparent 30%, var(--saffron) 50%, transparent 70%);
+      background-size: 300% 100%;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.5s;
+      animation: borderSweep 3s linear infinite;
+    }
+
+    .tl-card-outer:hover .tl-card::before {
+      opacity: 0.6;
+    }
+
+    @keyframes borderSweep {
+      0% {
+        background-position: 0% 0%;
+      }
+
+      100% {
+        background-position: 300% 0%;
+      }
+    }
+
+    html[data-theme="dark"] .tl-card {
+      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(10, 10, 10, 0.4) 100%);
+      border-color: rgba(255, 153, 51, 0.3);
+    }
 
     /* Fadeout / Glow effect on Hover */
     .tl-card-outer:hover .tl-card {
@@ -165,80 +425,322 @@
 
     /* Side Navigation Arrows */
     .tl-arrow {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      width: 45px; height: 45px; border-radius: 50%;
-      background: var(--card-bg); border: 1px solid rgba(15, 23, 42, 0.1);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--text-primary); font-size: 1.5rem; cursor: pointer;
-      z-index: 20; transition: all 0.3s ease; backdrop-filter: blur(10px);
-      opacity: 0; pointer-events: none; box-shadow: 0 8px 20px var(--shadow-color);
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      z-index: 20;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 8px 20px var(--shadow-color);
     }
-    html[data-theme="dark"] .tl-arrow { border-color: rgba(255, 255, 255, 0.2); }
-    .tl-card-outer:hover .tl-arrow { opacity: 1; pointer-events: all; }
-    .tl-arrow:hover { background: var(--saffron); color: #fff; border-color: var(--saffron); transform: translateY(-50%) scale(1.15); box-shadow: 0 10px 25px var(--accent-glow); }
-    .tl-arrow.left { left: -15px; }
-    .tl-arrow.right { right: -15px; }
+
+    html[data-theme="dark"] .tl-arrow {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .tl-card-outer:hover .tl-arrow {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .tl-arrow:hover {
+      background: var(--saffron);
+      color: #fff;
+      border-color: var(--saffron);
+      transform: translateY(-50%) scale(1.15);
+      box-shadow: 0 10px 25px var(--accent-glow);
+    }
+
+    .tl-arrow.left {
+      left: -15px;
+    }
+
+    .tl-arrow.right {
+      right: -15px;
+    }
 
     /* Animations */
-    .slide-out-left { animation: slideOutLeft 0.5s cubic-bezier(0.8, 0, 0.2, 1) forwards; }
-    .slide-out-right { animation: slideOutRight 0.5s cubic-bezier(0.8, 0, 0.2, 1) forwards; }
-    .slide-in-left { animation: slideInLeftAnim 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-    .slide-in-right { animation: slideInRightAnim 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-
-    @keyframes slideOutLeft { to { opacity: 0; transform: translateX(-40px) scale(0.95); } }
-    @keyframes slideOutRight { to { opacity: 0; transform: translateX(40px) scale(0.95); } }
-    @keyframes slideInLeftAnim { from { opacity: 0; transform: translateX(40px) scale(0.95); } to { opacity: 1; transform: translateX(0) scale(1); } }
-    @keyframes slideInRightAnim { from { opacity: 0; transform: translateX(-40px) scale(0.95); } to { opacity: 1; transform: translateX(0) scale(1); } }
-
-    .tl-year { font-family: 'Playfair Display', serif; font-size: 3.8rem; font-weight: 900; color: var(--gold); line-height: 1; text-shadow: 0 4px 15px rgba(234, 88, 12, 0.2); transition: transform 0.4s ease; }
-    .tl-card-outer:hover .tl-year { transform: scale(1.05) translateOrigin(left center); }
-    
-    .tl-body { display: flex; align-items: center; gap: 20px; margin-top: 15px; }
-    .tl-icon-wrap { font-size: 3.5rem; filter: drop-shadow(0 4px 10px var(--shadow-color)); transition: transform 0.4s ease; }
-    .tl-card-outer:hover .tl-icon-wrap { transform: scale(1.1) rotate(5deg); }
-    .tl-title { font-size: 1.3rem; font-weight: 700; line-height: 1.4; color: var(--text-primary); transition: color 0.4s ease; }
-
-    .tl-playbar { display: flex; align-items: center; gap: 15px; margin-top: 10px; background: var(--card-bg); padding: 12px 20px; border-radius: 20px; border: 1px solid rgba(15, 23, 42, 0.05); box-shadow: 0 8px 25px var(--shadow-color); flex-shrink: 0; }
-    html[data-theme="dark"] .tl-playbar { border-color: rgba(255,255,255,0.05); }
-    
-    .ctrl-btn {
-      width: 40px; height: 40px; border-radius: 50%; border: none; background: rgba(234,88,12,0.15);
-      color: var(--saffron); font-size: 1.1rem; cursor: pointer; transition: 0.3s; font-weight: 700; display:flex; align-items:center; justify-content:center;
+    .slide-out-left {
+      animation: slideOutLeft 0.5s cubic-bezier(0.8, 0, 0.2, 1) forwards;
     }
-    .ctrl-btn:hover { background: var(--saffron); color: #fff; transform: scale(1.1); box-shadow: 0 0 15px var(--accent-glow); }
-    .tl-progress-track { flex: 1; height: 6px; background: var(--track-bg); border-radius: 10px; overflow: hidden; }
-    .tl-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), var(--saffron)); }
 
-    .keyboard-hints { text-align: left; padding-left: 10px; font-size: 0.7rem; color: var(--text-tertiary); font-weight: 600; letter-spacing: 0.5px; }
-    kbd { background: var(--track-bg); padding: 2px 6px; border-radius: 4px; font-family: monospace; border: 1px solid rgba(15,23,42,0.1); color: var(--text-secondary); }
-    html[data-theme="dark"] kbd { border-color: rgba(255,255,255,0.2); }
+    .slide-out-right {
+      animation: slideOutRight 0.5s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+    }
+
+    .slide-in-left {
+      animation: slideInLeftAnim 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .slide-in-right {
+      animation: slideInRightAnim 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes slideOutLeft {
+      to {
+        opacity: 0;
+        transform: translateX(-40px) scale(0.95);
+      }
+    }
+
+    @keyframes slideOutRight {
+      to {
+        opacity: 0;
+        transform: translateX(40px) scale(0.95);
+      }
+    }
+
+    @keyframes slideInLeftAnim {
+      from {
+        opacity: 0;
+        transform: translateX(40px) scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+    }
+
+    @keyframes slideInRightAnim {
+      from {
+        opacity: 0;
+        transform: translateX(-40px) scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+    }
+
+    .tl-year {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.8rem;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+      text-shadow: 0 4px 15px rgba(234, 88, 12, 0.2), 0 0 30px var(--accent-glow);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), text-shadow 0.4s;
+    }
+
+    .tl-card-outer:hover .tl-year {
+      transform: scale(1.05);
+      text-shadow: 0 4px 20px rgba(234, 88, 12, 0.4), 0 0 50px var(--accent-glow);
+    }
+
+    .tl-body {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-top: 15px;
+    }
+
+    .tl-icon-wrap {
+      font-size: 3.5rem;
+      filter: drop-shadow(0 4px 10px var(--shadow-color));
+      transition: transform 0.4s ease;
+    }
+
+    .tl-card-outer:hover .tl-icon-wrap {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .tl-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--text-primary);
+      transition: color 0.4s ease;
+    }
+
+    .tl-playbar {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 10px;
+      background: var(--card-bg);
+      padding: 12px 20px;
+      border-radius: 20px;
+      border: 1px solid rgba(15, 23, 42, 0.05);
+      box-shadow: 0 8px 25px var(--shadow-color);
+      flex-shrink: 0;
+    }
+
+    html[data-theme="dark"] .tl-playbar {
+      border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .ctrl-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(234, 88, 12, 0.15);
+      color: var(--saffron);
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ctrl-btn:hover {
+      background: var(--saffron);
+      color: #fff;
+      transform: scale(1.15);
+      box-shadow: 0 0 20px var(--accent-glow), 0 0 40px rgba(234, 88, 12, 0.15);
+    }
+
+    .tl-progress-track {
+      flex: 1;
+      height: 6px;
+      background: var(--track-bg);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .tl-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--green), var(--saffron), var(--gold));
+      background-size: 200% 100%;
+      animation: progressGradient 2s linear infinite;
+      border-radius: 10px;
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    @keyframes progressGradient {
+      0% {
+        background-position: 0% 0%;
+      }
+
+      100% {
+        background-position: 200% 0%;
+      }
+    }
+
+    .keyboard-hints {
+      text-align: left;
+      padding-left: 10px;
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    kbd {
+      background: var(--track-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      color: var(--text-secondary);
+    }
+
+    html[data-theme="dark"] kbd {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
 
     /* ── RIGHT: SATELLITES ── */
     .sat-section {
-      flex: 1; display: flex; flex-direction: column; gap: 10px; min-height: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
       animation: slideInRight 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
     }
 
-    .sat-grid { flex: 1; display: flex; flex-direction: column; gap: 20px; min-height: 0; }
-    
+    .sat-grid {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-height: 0;
+    }
+
     .sat-card {
-      flex: 1; position: relative; border-radius: 24px; overflow: hidden; min-height: 0;
+      flex: 1;
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      min-height: 0;
       border: 1px solid rgba(15, 23, 42, 0.08);
       box-shadow: 0 15px 40px var(--shadow-color);
-      display: flex; flex-direction: column; 
+      display: flex;
+      flex-direction: column;
       background: #000;
     }
-    html[data-theme="dark"] .sat-card { border-color: rgba(255, 255, 255, 0.1); }
-    .sat-card:hover { border-color: var(--gold); box-shadow: 0 20px 50px var(--accent-glow); z-index: 5; }
-    
-    .sat-img-container { position: relative; width: 100%; height: 100%; overflow: hidden; }
-    
-    .sat-layer-group { position: absolute; inset: 0; width: 100%; height: 100%; transition: transform 3s cubic-bezier(0.25, 1, 0.5, 1); }
-    .sat-card:hover .sat-layer-group { transform: scale(1.08); }
-    
-    .sat-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: opacity 1s; }
-    
-    .sat-overlay-svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; }
+
+    html[data-theme="dark"] .sat-card {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sat-card:hover {
+      border-color: var(--gold);
+      box-shadow: 0 20px 60px var(--accent-glow), 0 0 30px rgba(255, 193, 7, 0.1);
+      z-index: 5;
+      transform: translateY(-4px);
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .sat-card {
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .sat-img-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .sat-layer-group {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      transition: transform 3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .sat-card:hover .sat-layer-group {
+      transform: scale(1.08);
+    }
+
+    .sat-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.85;
+      transition: opacity 1s;
+    }
+
+    .sat-overlay-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 3;
+      pointer-events: none;
+    }
 
     .animated-boundary {
       stroke-dasharray: 4000;
@@ -246,417 +748,584 @@
       animation: drawPath 3s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.5s;
     }
 
-    @keyframes drawPath { to { stroke-dashoffset: 0; } }
-    
-    .sat-label {
-      position: absolute; bottom: 0; left: 0; right: 0; padding: 25px 25px 20px 25px;
-      background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.4), transparent); z-index: 4;
-      display: flex; justify-content: space-between; align-items: flex-end; pointer-events: none;
+    @keyframes drawPath {
+      to {
+        stroke-dashoffset: 0;
+      }
     }
-    .sat-label-year { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 4px 15px rgba(0,0,0,0.9); }
-    .sat-src { font-size: 0.75rem; color: #fff; font-weight: 700; background: rgba(234, 88, 12, 0.85); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--gold); box-shadow: 0 4px 15px rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
 
-    @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+    .sat-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 25px 25px 20px 25px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.4), transparent);
+      z-index: 4;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      pointer-events: none;
+    }
+
+    .sat-label-year {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+      text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9);
+    }
+
+    .sat-src {
+      font-size: 0.75rem;
+      color: #fff;
+      font-weight: 700;
+      background: rgba(234, 88, 12, 0.85);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--gold);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      animation: srcPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes srcPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+      }
+
+      50% {
+        box-shadow: 0 4px 20px rgba(234, 88, 12, 0.5), 0 0 30px rgba(234, 88, 12, 0.2);
+      }
+    }
+
+    /* Satellite image loading shimmer */
+    .sat-img-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 25%, rgba(255, 255, 255, 0.08) 37%, transparent 50%);
+      background-size: 200% 100%;
+      animation: satShimmer 2s ease-in-out infinite;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 1s;
+    }
+
+    .sat-img[src]:not([src=''])~.sat-overlay-svg~*~.sat-img-container::before,
+    .sat-img.loaded~*~.sat-img-container::before {
+      opacity: 0;
+    }
+
+    @keyframes satShimmer {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* Year label glow */
+    .sat-label-year {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+      text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9), 0 0 40px rgba(234, 88, 12, 0.3);
+      animation: yearGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes yearGlow {
+      0% {
+        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9), 0 0 30px rgba(234, 88, 12, 0.2);
+      }
+
+      100% {
+        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9), 0 0 60px rgba(234, 88, 12, 0.5);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
 
     /* ── MOBILE FALLBACK ── */
     @media (max-width: 1024px) {
-      html, body { height: auto; overflow-y: auto; overflow-x: hidden; }
-      #page { grid-template-columns: 1fr; height: auto; padding: 20px; padding-top: 70px; }
-      .left-column, .right-column { height: auto; }
-      .sat-card { min-height: 300px; }
-      .hero-section { align-items: center; text-align: center; }
-      .info-chips { justify-content: center; }
-      .section-header { text-align: center; justify-content: center; }
-      .section-header h2 { justify-content: center; }
-      #mouseGlow { display: none; } /* Disable custom cursor on mobile */
+
+      html,
+      body {
+        height: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      #page {
+        grid-template-columns: 1fr;
+        height: auto;
+        padding: 20px;
+        padding-top: 70px;
+      }
+
+      .left-column,
+      .right-column {
+        height: auto;
+      }
+
+      .sat-card {
+        min-height: 300px;
+      }
+
+      .hero-section {
+        align-items: center;
+        text-align: center;
+      }
+
+      .info-chips {
+        justify-content: center;
+      }
+
+      .section-header {
+        text-align: center;
+        justify-content: center;
+      }
+
+      .section-header h2 {
+        justify-content: center;
+      }
+
+      #mouseGlow {
+        display: none;
+      }
+
+      /* Disable custom cursor on mobile */
     }
   </style>
 </head>
+
 <body>
 
-<div id="mouseGlow"></div>
+  <div id="mouseGlow"></div>
 
-<a href="/" class="top-btn back-btn">
-  <span style="font-size: 1.2rem; line-height: 0.8;">←</span> Back
-</a>
+  <a href="/" class="top-btn back-btn">
+    <span style="font-size: 1.2rem; line-height: 0.8;">←</span> Back
+  </a>
 
-<div class="top-btn theme-toggle" onclick="toggleTheme()">
-  <span id="themeIcon">🌙</span> <span id="themeText">Dark</span>
-</div>
-
-<div id="page">
-  
-  <div class="left-column">
-    <section class="hero-section">
-      <div class="welcome-tag"><span class="hindi-text">बिहार दिवस प्रदर्शनी</span> ✦ Bihar Diwas Exhibition</div>
-      <h1><span class="hindi-text">नमस्ते</span> (Namaste),<br>{{ name }}!</h1>
-      
-      <div class="info-chips">
-        <div class="info-chip">
-          <span class="chip-icon">👤</span>
-          <div class="chip-data"><span class="chip-label">नाम / Name</span><span class="chip-val">{{ name }}</span></div>
-        </div>
-        <div class="info-chip">
-          <span class="chip-icon">🗓️</span>
-          <div class="chip-data"><span class="chip-label">जन्म वर्ष / Birth Year</span><span class="chip-val">{{ birth_year }}</span></div>
-        </div>
-        <div class="info-chip">
-          <span class="chip-icon">⏳</span>
-          <div class="chip-data"><span class="chip-label">आयु / Age</span><span class="chip-val">{% if age %}{{ age }} Years{% else %}—{% endif %}</span></div>
-        </div>
-        <div class="info-chip">
-          <span class="chip-icon">📍</span>
-          <div class="chip-data"><span class="chip-label">ज़िला / District</span><span class="chip-val">{{ district }}</span></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="tl-section">
-      <div class="section-header">
-        <h2><span class="hindi-text">आपका सफर</span> 📜 Historical Journey</h2>
-        <p>Events that shaped Bihar since {{ birth_year }}</p>
-      </div>
-
-      {% if events %}
-      <div class="tl-card-outer">
-        <div class="tl-arrow left" onclick="prevEvent()">‹</div>
-        <div class="tl-arrow right" onclick="nextEvent()">›</div>
-
-        <div class="tl-card" id="tlCard">
-          <div>
-            <span class="welcome-tag" id="tlEra" style="font-size:0.7rem; padding: 4px 14px; margin-bottom: 10px;"></span>
-            <div class="tl-year" id="tlYear"></div>
-          </div>
-          <div class="tl-body">
-            <div class="tl-icon-wrap" id="tlIcon"></div>
-            <div class="tl-title" id="tlTitle"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="tl-playbar">
-        <button class="ctrl-btn" id="playBtn">⏸</button>
-        <button class="ctrl-btn" id="speedBtn" style="font-size:0.85rem;">1x</button>
-        <div class="tl-progress-track"><div class="tl-progress-fill" id="progressFill"></div></div>
-        <div style="font-size:0.85rem; font-weight:800; color:var(--saffron-dark);" id="counterTxt">1 / {{ events|length }}</div>
-      </div>
-      
-      <div class="keyboard-hints">
-        <kbd>Space</kbd> Play/Pause &nbsp;&nbsp;|&nbsp;&nbsp; <kbd>←</kbd> <kbd>→</kbd> Navigate
-      </div>
-      {% else %}
-      <div class="tl-card"><p style="text-align:center; opacity:0.6;">No events recorded.</p></div>
-      {% endif %}
-    </section>
+  <div class="top-btn theme-toggle" onclick="toggleTheme()">
+    <span id="themeIcon">🌙</span> <span id="themeText">Dark</span>
   </div>
 
-  <div class="right-column">
-    <section class="sat-section">
-      <div class="section-header" style="text-align: left;">
-        <h2><span class="hindi-text">अंतरिक्ष से</span> 🛰️ Satellite View</h2>
-        <p>Comparing {{ birth_year }} with 2026</p>
-      </div>
+  <div id="page">
 
-      <div class="sat-grid">
-        <div class="sat-card">
-          <div class="sat-img-container">
-            <div class="sat-layer-group">
-              <img class="sat-img" id="birthImg" alt="Birth Year Image" crossorigin="anonymous" />
-              <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"></svg>
+    <div class="left-column">
+      <section class="hero-section">
+        <div class="welcome-tag"><span class="hindi-text">बिहार दिवस प्रदर्शनी</span> ✦ Bihar Diwas Exhibition</div>
+        <h1><span class="hindi-text">नमस्ते</span> (Namaste),<br>{{ name }}!</h1>
+
+        <div class="info-chips">
+          <div class="info-chip">
+            <span class="chip-icon">👤</span>
+            <div class="chip-data"><span class="chip-label">नाम / Name</span><span class="chip-val">{{ name }}</span>
             </div>
-            <div class="sat-label">
-              <div class="sat-label-year">{{ birth_year }}</div>
-              <div class="sat-src" id="birthSrc">Loading...</div>
+          </div>
+          <div class="info-chip">
+            <span class="chip-icon">🗓️</span>
+            <div class="chip-data"><span class="chip-label">जन्म वर्ष / Birth Year</span><span class="chip-val">{{
+                birth_year }}</span></div>
+          </div>
+          <div class="info-chip">
+            <span class="chip-icon">⏳</span>
+            <div class="chip-data"><span class="chip-label">आयु / Age</span><span class="chip-val">{% if age %}{{ age }}
+                Years{% else %}—{% endif %}</span></div>
+          </div>
+          <div class="info-chip">
+            <span class="chip-icon">📍</span>
+            <div class="chip-data"><span class="chip-label">ज़िला / District</span><span class="chip-val">{{ district
+                }}</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tl-section">
+        <div class="section-header">
+          <h2><span class="hindi-text">आपका सफर</span> 📜 Historical Journey</h2>
+          <p>Events that shaped Bihar since {{ birth_year }}</p>
+        </div>
+
+        {% if events %}
+        <div class="tl-card-outer">
+          <div class="tl-arrow left" onclick="prevEvent()">‹</div>
+          <div class="tl-arrow right" onclick="nextEvent()">›</div>
+
+          <div class="tl-card" id="tlCard">
+            <div>
+              <span class="welcome-tag" id="tlEra"
+                style="font-size:0.7rem; padding: 4px 14px; margin-bottom: 10px;"></span>
+              <div class="tl-year" id="tlYear"></div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-icon-wrap" id="tlIcon"></div>
+              <div class="tl-title" id="tlTitle"></div>
             </div>
           </div>
         </div>
 
-        <div class="sat-card">
-          <div class="sat-img-container">
-            <div class="sat-layer-group">
-              <img class="sat-img" id="currentImg" alt="2026 Image" crossorigin="anonymous" />
-              <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"></svg>
+        <div class="tl-playbar">
+          <button class="ctrl-btn" id="playBtn">⏸</button>
+          <button class="ctrl-btn" id="speedBtn" style="font-size:0.85rem;">1x</button>
+          <div class="tl-progress-track">
+            <div class="tl-progress-fill" id="progressFill"></div>
+          </div>
+          <div style="font-size:0.85rem; font-weight:800; color:var(--saffron-dark);" id="counterTxt">1 / {{
+            events|length }}</div>
+        </div>
+
+        <div class="keyboard-hints">
+          <kbd>Space</kbd> Play/Pause &nbsp;&nbsp;|&nbsp;&nbsp; <kbd>←</kbd> <kbd>→</kbd> Navigate
+        </div>
+        {% else %}
+        <div class="tl-card">
+          <p style="text-align:center; opacity:0.6;">No events recorded.</p>
+        </div>
+        {% endif %}
+      </section>
+    </div>
+
+    <div class="right-column">
+      <section class="sat-section">
+        <div class="section-header" style="text-align: left;">
+          <h2><span class="hindi-text">अंतरिक्ष से</span> 🛰️ Satellite View</h2>
+          <p>Comparing {{ birth_year }} with 2026</p>
+        </div>
+
+        <div class="sat-grid">
+          <div class="sat-card">
+            <div class="sat-img-container">
+              <div class="sat-layer-group">
+                <img class="sat-img" id="birthImg" alt="Birth Year Image" crossorigin="anonymous" />
+                <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"></svg>
+              </div>
+              <div class="sat-label">
+                <div class="sat-label-year">{{ birth_year }}</div>
+                <div class="sat-src" id="birthSrc">Loading...</div>
+              </div>
             </div>
-            <div class="sat-label">
-              <div class="sat-label-year">2026</div>
-              <div class="sat-src" id="currentSrc">Loading...</div>
+          </div>
+
+          <div class="sat-card">
+            <div class="sat-img-container">
+              <div class="sat-layer-group">
+                <img class="sat-img" id="currentImg" alt="2026 Image" crossorigin="anonymous" />
+                <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"></svg>
+              </div>
+              <div class="sat-label">
+                <div class="sat-label-year">2026</div>
+                <div class="sat-src" id="currentSrc">Loading...</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
+
   </div>
 
-</div>
+  <script>
+    // ================= MOUSE GLOW LOGIC =================
+    const mouseGlow = document.getElementById('mouseGlow');
+    document.addEventListener('mousemove', (e) => {
+      // Use requestAnimationFrame for smooth performance
+      requestAnimationFrame(() => {
+        mouseGlow.style.left = e.clientX + 'px';
+        mouseGlow.style.top = e.clientY + 'px';
+      });
+    });
 
-<script>
-// ================= MOUSE GLOW LOGIC =================
-const mouseGlow = document.getElementById('mouseGlow');
-document.addEventListener('mousemove', (e) => {
-  // Use requestAnimationFrame for smooth performance
-  requestAnimationFrame(() => {
-    mouseGlow.style.left = e.clientX + 'px';
-    mouseGlow.style.top = e.clientY + 'px';
-  });
-});
+    // Expand glow when hovering over interactive elements
+    document.querySelectorAll('.tl-card, .sat-card, .info-chip, .top-btn, .ctrl-btn, .tl-arrow').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        mouseGlow.style.width = '600px';
+        mouseGlow.style.height = '600px';
+        mouseGlow.style.opacity = '0.8';
+      });
+      el.addEventListener('mouseleave', () => {
+        mouseGlow.style.width = '400px';
+        mouseGlow.style.height = '400px';
+        mouseGlow.style.opacity = '0.6';
+      });
+    });
 
-// Expand glow when hovering over interactive elements
-document.querySelectorAll('.tl-card, .sat-card, .info-chip, .top-btn, .ctrl-btn, .tl-arrow').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    mouseGlow.style.width = '600px';
-    mouseGlow.style.height = '600px';
-    mouseGlow.style.opacity = '0.8';
-  });
-  el.addEventListener('mouseleave', () => {
-    mouseGlow.style.width = '400px';
-    mouseGlow.style.height = '400px';
-    mouseGlow.style.opacity = '0.6';
-  });
-});
-
-// ================= THEME =================
-function toggleTheme() {
-  const root = document.documentElement;
-  const isLight = root.getAttribute("data-theme") === "light";
-  root.setAttribute("data-theme", isLight ? "dark" : "light");
-  document.getElementById("themeIcon").textContent = isLight ? "☀️" : "🌙";
-  document.getElementById("themeText").textContent = isLight ? "Light" : "Dark";
-}
-
-// ================= DATA CONFIG & MATH PADDING =================
-const EVENTS = {{ events | tojson }};
-let BASE_TL_MS = {{ tl_interval }};
-const RAW_BBOX = {{ (bbox or {"minLng": 83.3, "minLat": 24.3, "maxLng": 88.2, "maxLat": 27.5}) | tojson }};
-const DISTRICT = "{{ district }}";
-const BIRTH_YEAR = {{ birth_year }};
-const CURRENT_YEAR = 2026;
-const NS = 'http://www.w3.org/2000/svg';
-const EOX_AVAIL = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
-
-const TARGET_AR = 16 / 9;
-
-let lngSpan = RAW_BBOX.maxLng - RAW_BBOX.minLng;
-let latSpan = RAW_BBOX.maxLat - RAW_BBOX.minLat;
-let cx = (RAW_BBOX.maxLng + RAW_BBOX.minLng) / 2;
-let cy = (RAW_BBOX.maxLat + RAW_BBOX.minLat) / 2;
-
-let paddedW = lngSpan * 1.4;
-let paddedH = latSpan * 1.4;
-
-if (paddedW / paddedH > TARGET_AR) {
-  paddedH = paddedW / TARGET_AR;
-} else {
-  paddedW = paddedH * TARGET_AR;
-}
-
-const PADDED_BBOX = {
-  minLng: cx - paddedW / 2,
-  maxLng: cx + paddedW / 2,
-  minLat: cy - paddedH / 2,
-  maxLat: cy + paddedH / 2
-};
-
-const W_RES = 1600;
-const H_RES = 900;
-
-// ================= GEOJSON MAP OVERLAY LOGIC =================
-let geoJsonData = null;
-
-async function loadGeoJson() {
-  try {
-    const response = await fetch("/bihar_dist_ready.geojson");
-    if(response.ok) {
-      geoJsonData = await response.json();
-      drawSatelliteOverlay(document.getElementById("birthMapOverlay"));
-      drawSatelliteOverlay(document.getElementById("currentMapOverlay"));
+    // ================= THEME =================
+    function toggleTheme() {
+      const root = document.documentElement;
+      const isLight = root.getAttribute("data-theme") === "light";
+      root.setAttribute("data-theme", isLight ? "dark" : "light");
+      document.getElementById("themeIcon").textContent = isLight ? "☀️" : "🌙";
+      document.getElementById("themeText").textContent = isLight ? "Light" : "Dark";
     }
-  } catch(e) { console.error("GeoJSON load failed:", e); }
-}
 
-function drawSatelliteOverlay(svgElement) {
-  if (!geoJsonData || !svgElement) return;
+    // ================= DATA CONFIG & MATH PADDING =================
+    const EVENTS = {{ events | tojson }};
+    let BASE_TL_MS = {{ tl_interval }};
+    const RAW_BBOX = {{ (bbox or { "minLng": 83.3, "minLat": 24.3, "maxLng": 88.2, "maxLat": 27.5 }) | tojson }};
+    const DISTRICT = "{{ district }}";
+    const BIRTH_YEAR = {{ birth_year }};
+    const CURRENT_YEAR = 2026;
+    const NS = 'http://www.w3.org/2000/svg';
+    const EOX_AVAIL = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
 
-  svgElement.innerHTML = "";
-  svgElement.setAttribute("viewBox", `0 0 ${W_RES} ${H_RES}`);
+    const TARGET_AR = 16 / 9;
 
-  const bMinLng = PADDED_BBOX.minLng;
-  const bMaxLng = PADDED_BBOX.maxLng;
-  const bMinLat = PADDED_BBOX.minLat;
-  const bMaxLat = PADDED_BBOX.maxLat;
+    // Add 5km buffer on all sides (~0.045° lat, ~0.05° lng at Bihar's latitude)
+    const KM5_LAT = 0.045;   // 5km in degrees latitude
+    const KM5_LNG = 0.05;    // 5km in degrees longitude (~at 25°N)
 
-  const sx = W_RES / (bMaxLng - bMinLng);
-  const sy = H_RES / (bMaxLat - bMinLat);
+    const EXPANDED_BBOX = {
+      minLng: RAW_BBOX.minLng - KM5_LNG,
+      maxLng: RAW_BBOX.maxLng + KM5_LNG,
+      minLat: RAW_BBOX.minLat - KM5_LAT,
+      maxLat: RAW_BBOX.maxLat + KM5_LAT
+    };
 
-  function proj(lng, lat) { return [(lng - bMinLng) * sx, H_RES - (lat - bMinLat) * sy]; }
+    let lngSpan = EXPANDED_BBOX.maxLng - EXPANDED_BBOX.minLng;
+    let latSpan = EXPANDED_BBOX.maxLat - EXPANDED_BBOX.minLat;
+    let cx = (EXPANDED_BBOX.maxLng + EXPANDED_BBOX.minLng) / 2;
+    let cy = (EXPANDED_BBOX.maxLat + EXPANDED_BBOX.minLat) / 2;
 
-  function rD(ring) {
-    return ring.map(([ln, lt], i) => {
-      const [px, py] = proj(ln, lt);
-      return (i ? "L" : "M") + px.toFixed(2) + " " + py.toFixed(2);
-    }).join("") + "Z";
-  }
+    let paddedW = lngSpan * 1.3;
+    let paddedH = latSpan * 1.3;
 
-  function gD(g) {
-    return g.type === "Polygon" ? g.coordinates.map(rD).join("") : 
-           g.type === "MultiPolygon" ? g.coordinates.map(p => p.map(rD).join("")).join("") : "";
-  }
-
-  function _norm(s) { return String(s).toLowerCase().replace(/[\s\-()+]/g, ""); }
-
-  const grp = document.createElementNS(NS, "g");
-  
-  geoJsonData.features.forEach((feat) => {
-    const name = feat.properties.name;
-    const d = gD(feat.geometry);
-    if (!d) return;
-    
-    const path = document.createElementNS(NS, "path");
-    path.setAttribute("d", d);
-    
-    if (_norm(name) === _norm(DISTRICT)) {
-      path.setAttribute("stroke", "#ea580c"); 
-      path.setAttribute("stroke-width", "5"); 
-      path.setAttribute("fill", "none"); 
-      path.setAttribute("stroke-linecap", "round");
-      path.setAttribute("stroke-linejoin", "round");
-      path.setAttribute("filter", "drop-shadow(0 0 10px rgba(234,88,12,1))");
-      path.classList.add("animated-boundary"); 
-      
-      setTimeout(() => {
-        const length = path.getTotalLength();
-        path.style.strokeDasharray = length;
-        path.style.strokeDashoffset = length;
-      }, 0);
-
-      grp.appendChild(path); 
+    if (paddedW / paddedH > TARGET_AR) {
+      paddedH = paddedW / TARGET_AR;
     } else {
-      path.setAttribute("stroke", "rgba(255,255,255,0.25)");
-      path.setAttribute("stroke-width", "1");
-      path.setAttribute("fill", "none");
-      grp.insertBefore(path, grp.firstChild);
+      paddedW = paddedH * TARGET_AR;
     }
-  });
-  
-  svgElement.appendChild(grp);
-}
 
-// ================= TIMELINE LOGIC =================
-let cur = 0, isPlaying = true, autoTimer = null;
-let speedMult = 1;
+    const PADDED_BBOX = {
+      minLng: cx - paddedW / 2,
+      maxLng: cx + paddedW / 2,
+      minLat: cy - paddedH / 2,
+      maxLat: cy + paddedH / 2
+    };
 
-function updateCardContent(i) {
-  const e = EVENTS[i];
-  document.getElementById('tlYear').textContent = e.year;
-  document.getElementById('tlIcon').textContent = e.icon;
-  document.getElementById('tlTitle').textContent = e.title;
-  document.getElementById('tlEra').textContent = e.era;
-  document.getElementById('counterTxt').textContent = `${i + 1} / ${EVENTS.length}`;
-}
+    const W_RES = 1600;
+    const H_RES = 900;
 
-function animateCardChange(i, direction) {
-  const card = document.getElementById('tlCard');
-  const outClass = direction === 'next' ? 'slide-out-left' : 'slide-out-right';
-  const inClass = direction === 'next' ? 'slide-in-right' : 'slide-in-left';
+    // ================= GEOJSON MAP OVERLAY LOGIC =================
+    let geoJsonData = null;
 
-  card.className = `tl-card ${outClass}`;
-  
-  setTimeout(() => {
-    updateCardContent(i);
-    card.className = `tl-card ${inClass}`;
-  }, 400); 
-}
-
-function resetProgress() {
-  clearTimeout(autoTimer);
-  const fill = document.getElementById('progressFill');
-  fill.style.transition = 'none'; fill.style.width = '0%';
-  
-  if (!isPlaying) return;
-  
-  const currentInterval = BASE_TL_MS / speedMult;
-  
-  setTimeout(() => {
-    fill.style.transition = `width ${currentInterval}ms linear`;
-    fill.style.width = '100%';
-  }, 50);
-  
-  autoTimer = setTimeout(() => {
-    nextEvent();
-  }, currentInterval);
-}
-
-function nextEvent() {
-  const nextIdx = (cur < EVENTS.length - 1) ? cur + 1 : 0;
-  animateCardChange(nextIdx, 'next');
-  cur = nextIdx;
-  resetProgress();
-}
-
-function prevEvent() {
-  const prevIdx = (cur > 0) ? cur - 1 : EVENTS.length - 1;
-  animateCardChange(prevIdx, 'prev');
-  cur = prevIdx;
-  resetProgress();
-}
-
-if(EVENTS && EVENTS.length > 0) {
-  updateCardContent(0);
-  resetProgress();
-  
-  document.getElementById('playBtn').addEventListener('click', () => {
-    isPlaying = !isPlaying;
-    document.getElementById('playBtn').innerHTML = isPlaying ? '⏸' : '▶';
-    resetProgress();
-  });
-
-  document.getElementById('speedBtn').addEventListener('click', () => {
-    if (speedMult === 1) speedMult = 1.5;
-    else if (speedMult === 1.5) speedMult = 2;
-    else speedMult = 1;
-    document.getElementById('speedBtn').textContent = speedMult + 'x';
-    if(isPlaying) resetProgress();
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === ' ') {
-      e.preventDefault();
-      document.getElementById('playBtn').click();
+    async function loadGeoJson() {
+      try {
+        const response = await fetch("/bihar_dist_ready.geojson");
+        if (response.ok) {
+          geoJsonData = await response.json();
+          drawSatelliteOverlay(document.getElementById("birthMapOverlay"));
+          drawSatelliteOverlay(document.getElementById("currentMapOverlay"));
+        }
+      } catch (e) { console.error("GeoJSON load failed:", e); }
     }
-    else if (e.key === 'ArrowRight') {
-      nextEvent();
+
+    function drawSatelliteOverlay(svgElement) {
+      if (!geoJsonData || !svgElement) return;
+
+      svgElement.innerHTML = "";
+      svgElement.setAttribute("viewBox", `0 0 ${W_RES} ${H_RES}`);
+
+      const bMinLng = PADDED_BBOX.minLng;
+      const bMaxLng = PADDED_BBOX.maxLng;
+      const bMinLat = PADDED_BBOX.minLat;
+      const bMaxLat = PADDED_BBOX.maxLat;
+
+      const sx = W_RES / (bMaxLng - bMinLng);
+      const sy = H_RES / (bMaxLat - bMinLat);
+
+      function proj(lng, lat) { return [(lng - bMinLng) * sx, H_RES - (lat - bMinLat) * sy]; }
+
+      function rD(ring) {
+        return ring.map(([ln, lt], i) => {
+          const [px, py] = proj(ln, lt);
+          return (i ? "L" : "M") + px.toFixed(2) + " " + py.toFixed(2);
+        }).join("") + "Z";
+      }
+
+      function gD(g) {
+        return g.type === "Polygon" ? g.coordinates.map(rD).join("") :
+          g.type === "MultiPolygon" ? g.coordinates.map(p => p.map(rD).join("")).join("") : "";
+      }
+
+      function _norm(s) { return String(s).toLowerCase().replace(/[\s\-()+]/g, ""); }
+
+      const grp = document.createElementNS(NS, "g");
+
+      geoJsonData.features.forEach((feat) => {
+        const name = feat.properties.name;
+        const d = gD(feat.geometry);
+        if (!d) return;
+
+        const path = document.createElementNS(NS, "path");
+        path.setAttribute("d", d);
+
+        if (_norm(name) === _norm(DISTRICT)) {
+          path.setAttribute("stroke", "#ea580c");
+          path.setAttribute("stroke-width", "5");
+          path.setAttribute("fill", "none");
+          path.setAttribute("stroke-linecap", "round");
+          path.setAttribute("stroke-linejoin", "round");
+          path.setAttribute("filter", "drop-shadow(0 0 10px rgba(234,88,12,1))");
+          path.classList.add("animated-boundary");
+
+          setTimeout(() => {
+            const length = path.getTotalLength();
+            path.style.strokeDasharray = length;
+            path.style.strokeDashoffset = length;
+          }, 0);
+
+          grp.appendChild(path);
+        } else {
+          path.setAttribute("stroke", "rgba(255,255,255,0.25)");
+          path.setAttribute("stroke-width", "1");
+          path.setAttribute("fill", "none");
+          grp.insertBefore(path, grp.firstChild);
+        }
+      });
+
+      svgElement.appendChild(grp);
     }
-    else if (e.key === 'ArrowLeft') {
-      prevEvent();
+
+    // ================= TIMELINE LOGIC =================
+    let cur = 0, isPlaying = true, autoTimer = null;
+    let speedMult = 1;
+
+    function updateCardContent(i) {
+      const e = EVENTS[i];
+      document.getElementById('tlYear').textContent = e.year;
+      document.getElementById('tlIcon').textContent = e.icon;
+      document.getElementById('tlTitle').textContent = e.title;
+      document.getElementById('tlEra').textContent = e.era;
+      document.getElementById('counterTxt').textContent = `${i + 1} / ${EVENTS.length}`;
     }
-  });
-}
 
-// ================= SATELLITE MOCK / LOGIC =================
-function getSatUrl(year) {
-  const b = `${PADDED_BBOX.minLng},${PADDED_BBOX.minLat},${PADDED_BBOX.maxLng},${PADDED_BBOX.maxLat}`;
-  const q = `&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${W_RES}&HEIGHT=${H_RES}&FORMAT=image/jpeg`;
+    function animateCardChange(i, direction) {
+      const card = document.getElementById('tlCard');
+      const outClass = direction === 'next' ? 'slide-out-left' : 'slide-out-right';
+      const inClass = direction === 'next' ? 'slide-in-right' : 'slide-in-left';
 
-  if(year >= 2016) {
-    const y = EOX_AVAIL.includes(year) ? year : (EOX_AVAIL.filter(v=>v<=year).pop() || EOX_AVAIL[EOX_AVAIL.length-1]);
-    return `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${q}`;
-  } else {
-    const y = Math.max(year, 2000);
-    return `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${y}-03-15${q}`;
-  }
-}
+      card.className = `tl-card ${outClass}`;
 
-document.addEventListener('DOMContentLoaded', () => {
-  const bImg = document.getElementById("birthImg");
-  const cImg = document.getElementById("currentImg");
-  
-  bImg.src = getSatUrl(BIRTH_YEAR);
-  cImg.src = getSatUrl(CURRENT_YEAR);
-  
-  document.getElementById("birthSrc").textContent = BIRTH_YEAR >= 2016 ? "📡 Sentinel-2" : "📡 MODIS Terra";
-  document.getElementById("currentSrc").textContent = "📡 Sentinel-2";
+      setTimeout(() => {
+        updateCardContent(i);
+        card.className = `tl-card ${inClass}`;
+      }, 400);
+    }
 
-  loadGeoJson();
-});
-</script>
+    function resetProgress() {
+      clearTimeout(autoTimer);
+      const fill = document.getElementById('progressFill');
+      fill.style.transition = 'none'; fill.style.width = '0%';
+
+      if (!isPlaying) return;
+
+      const currentInterval = BASE_TL_MS / speedMult;
+
+      setTimeout(() => {
+        fill.style.transition = `width ${currentInterval}ms linear`;
+        fill.style.width = '100%';
+      }, 50);
+
+      autoTimer = setTimeout(() => {
+        nextEvent();
+      }, currentInterval);
+    }
+
+    function nextEvent() {
+      const nextIdx = (cur < EVENTS.length - 1) ? cur + 1 : 0;
+      animateCardChange(nextIdx, 'next');
+      cur = nextIdx;
+      resetProgress();
+    }
+
+    function prevEvent() {
+      const prevIdx = (cur > 0) ? cur - 1 : EVENTS.length - 1;
+      animateCardChange(prevIdx, 'prev');
+      cur = prevIdx;
+      resetProgress();
+    }
+
+    if (EVENTS && EVENTS.length > 0) {
+      updateCardContent(0);
+      resetProgress();
+
+      document.getElementById('playBtn').addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        document.getElementById('playBtn').innerHTML = isPlaying ? '⏸' : '▶';
+        resetProgress();
+      });
+
+      document.getElementById('speedBtn').addEventListener('click', () => {
+        if (speedMult === 1) speedMult = 1.5;
+        else if (speedMult === 1.5) speedMult = 2;
+        else speedMult = 1;
+        document.getElementById('speedBtn').textContent = speedMult + 'x';
+        if (isPlaying) resetProgress();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === ' ') {
+          e.preventDefault();
+          document.getElementById('playBtn').click();
+        }
+        else if (e.key === 'ArrowRight') {
+          nextEvent();
+        }
+        else if (e.key === 'ArrowLeft') {
+          prevEvent();
+        }
+      });
+    }
+
+    // ================= SATELLITE MOCK / LOGIC =================
+    function getSatUrl(year) {
+      const b = `${PADDED_BBOX.minLng},${PADDED_BBOX.minLat},${PADDED_BBOX.maxLng},${PADDED_BBOX.maxLat}`;
+      const q = `&STYLES=&SRS=EPSG:4326&BBOX=${b}&WIDTH=${W_RES}&HEIGHT=${H_RES}&FORMAT=image/jpeg`;
+
+      if (year >= 2016) {
+        const y = EOX_AVAIL.includes(year) ? year : (EOX_AVAIL.filter(v => v <= year).pop() || EOX_AVAIL[EOX_AVAIL.length - 1]);
+        return `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${q}`;
+      } else {
+        const y = Math.max(year, 2000);
+        return `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${y}-03-15${q}`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const bImg = document.getElementById("birthImg");
+      const cImg = document.getElementById("currentImg");
+
+      bImg.src = getSatUrl(BIRTH_YEAR);
+      cImg.src = getSatUrl(CURRENT_YEAR);
+
+      document.getElementById("birthSrc").textContent = BIRTH_YEAR >= 2016 ? "📡 Sentinel-2" : "📡 MODIS Terra";
+      document.getElementById("currentSrc").textContent = "📡 Sentinel-2";
+
+      loadGeoJson();
+    });
+  </script>
 </body>
+
 </html>

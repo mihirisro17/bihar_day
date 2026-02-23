@@ -626,16 +626,17 @@
       return `&STYLES=&SRS=EPSG:4326&BBOX=${bboxParam()}&WIDTH=${W_RES}&HEIGHT=${H_RES}&FORMAT=image/jpeg`;
     }
   
-    function getSentinelUrl(year) {
-      // Map to nearest available EOX year (max 2024)
-      const y = EOX_AVAIL.includes(year)
-        ? year
-        : (EOX_AVAIL.filter(v => v <= year).pop() || EOX_AVAIL[EOX_AVAIL.length - 1]);
-      return {
-        url: `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${baseQuery()}`,
-        label: '📡 Sentinel-2'
-      };
-    }
+   function getSentinelUrl(year) {
+    // Always clamp to latest available EOX year (2024)
+    const LATEST = EOX_AVAIL[EOX_AVAIL.length - 1]; // 2024
+    const y = year <= LATEST
+      ? (EOX_AVAIL.includes(year) ? year : EOX_AVAIL.filter(v => v <= year).pop() || LATEST)
+      : LATEST; // 2025, 2026, etc → always use 2024
+    return {
+      url:   `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${baseQuery()}`,
+      label: `📡 Sentinel-2 ${y}`
+    };
+  }
   
     function getModisUrl(year) {
       const y = Math.min(Math.max(year, 2000), 2024);
@@ -645,13 +646,19 @@
       };
     }
   
-    function getBirthSrc(year) {
-      return year >= 2016 ? getSentinelUrl(year) : getModisUrl(year);
-    }
+   function getBirthSrc(year) {
+    // 2016+ → Sentinel-2, pre-2016 → MODIS Terra
+    return year >= 2016 ? getSentinelUrl(year) : getModisUrl(year);
+  }
+
   
     function getCurrentSrc() {
-      return getSentinelUrl(2026); // maps to s2cloudless-2024
-    }
+    // Explicitly request s2cloudless-2024 for the "2026" present day card
+    return {
+      url:   `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-2024${baseQuery()}`,
+      label: '📡 Sentinel-2 2024'
+    };
+  }
   
     // ═══ LOAD SATELLITE IMAGE ═══
     // Browser fetches WMS directly — no Vercel timeout issue

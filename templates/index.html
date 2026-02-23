@@ -393,6 +393,85 @@
         to { transform: rotate(360deg); }
       }
 
+      /* ── Floating Famous Photos ── */
+      .photo-orb {
+        position: absolute;
+        background-size: cover;
+        background-position: center;
+        box-shadow: 0 12px 30px var(--shadow-overlay);
+        border: 2px solid var(--form-border);
+        z-index: 1; /* Below the main text, above background */
+        opacity: 0.85;
+        overflow: hidden;
+        animation: floatOrb 7s ease-in-out infinite alternate;
+        transition: transform 0.3s, opacity 0.3s;
+      }
+      .photo-orb::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6));
+      }
+      .photo-orb:hover {
+        opacity: 1;
+        z-index: 5;
+        border-color: var(--accent-gold);
+        box-shadow: 0 15px 40px var(--accent-gold-glow);
+      }
+      .po-label {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.55rem;
+        font-weight: 700;
+        color: #fff; /* Always white for contrast against the dark overlay */
+        background: rgba(0, 0, 0, 0.5);
+        padding: 3px 10px;
+        border-radius: 12px;
+        z-index: 2;
+        white-space: nowrap;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        letter-spacing: 1px;
+      }
+
+      .po-1 {
+        width: 140px;
+        height: 190px;
+        border-radius: 20px;
+        top: 12%;
+        left: 6%;
+        background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Mahabodhi_Temple_Bodh_Gaya_Bihar_India.jpg/525px-Mahabodhi_Temple_Bodh_Gaya_Bihar_India.jpg');
+        --rot: -6deg;
+        animation-delay: 0s;
+      }
+      .po-2 {
+        width: 170px;
+        height: 120px;
+        border-radius: 16px;
+        top: 45%;
+        right: 4%;
+        background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Nalanda_University_India_ruins.jpg/640px-Nalanda_University_India_ruins.jpg');
+        --rot: 5deg;
+        animation-delay: -3s;
+      }
+      .po-3 {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        bottom: 12%;
+        left: 8%;
+        background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Golghar_patna.jpg/640px-Golghar_patna.jpg');
+        --rot: -4deg;
+        animation-delay: -5s;
+      }
+
+      @keyframes floatOrb {
+        0% { transform: translateY(0) rotate(var(--rot)); }
+        100% { transform: translateY(-18px) rotate(calc(var(--rot) + 3deg)); }
+      }
+
       /* ── Celebration content ── */
       .bh-content {
         position: relative;
@@ -1138,6 +1217,13 @@
         .bh-stats { gap: 8px; }
         .bh-stat { flex: 1 1 calc(50% - 8px); min-width: calc(50% - 8px); }
         .bh-ticker { display: none; }
+        
+        /* Adjust floating photos for mobile */
+        .photo-orb { opacity: 0.35; z-index: 0; filter: grayscale(40%); }
+        .po-1 { width: 100px; height: 130px; top: 4%; left: 2%; }
+        .po-2 { width: 110px; height: 80px; top: 45%; right: -5%; }
+        .po-3 { width: 90px; height: 90px; bottom: 18%; left: 2%; }
+
         .form-panel { flex: none; width: 100%; padding: 32px 20px 48px; min-height: auto; }
         .fp-corner { display: none; }
         .fp-brand-text h1 { font-size: 1.4rem; }
@@ -1211,6 +1297,17 @@
         <div class="ring r2"></div>
         <div class="ring r3"></div>
         <div class="ring r4"></div>
+
+        <div class="photo-orb po-1">
+          <div class="po-label">Bodh Gaya</div>
+        </div>
+        <div class="photo-orb po-2">
+          <div class="po-label">Nalanda</div>
+        </div>
+        <div class="photo-orb po-3">
+          <div class="po-label">Golghar</div>
+        </div>
+
         <div class="bh-content">
           <div class="bh-eyebrow">
             &#10022; &nbsp; बिहार राज्य स्थापना दिवस &nbsp; &#10022;

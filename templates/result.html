@@ -1332,7 +1332,9 @@
     </div>
 
     <script>
-      // Theme Management
+      // ============================================
+      // THEME MANAGEMENT - Available Always
+      // ============================================
       function initTheme() {
         const theme = localStorage.getItem("theme") || "light";
         document.documentElement.setAttribute("data-theme", theme);
@@ -1360,7 +1362,9 @@
         }
       }
 
-      // Stars Animation
+      // ============================================
+      // STARS ANIMATION
+      // ============================================
       (function () {
         const c = document.getElementById("stars"),
           x = c.getContext("2d");
@@ -1396,7 +1400,9 @@
         d();
       })();
 
-      // 3D Tilt effect on cards
+      // ============================================
+      // 3D TILT EFFECT ON CARDS
+      // ============================================
       document.querySelectorAll(".ic").forEach((c) => {
         c.addEventListener("mousemove", (e) => {
           const r = c.getBoundingClientRect();
@@ -1409,7 +1415,9 @@
         });
       });
 
-      // Map & Satellite Configuration
+      // ============================================
+      // MAP & SATELLITE CONFIGURATION
+      // ============================================
       const BBOX = {{ (bbox or {
           "minLng": 83.3,
           "minLat": 24.3,
@@ -1422,7 +1430,9 @@
       const CURRENT_YEAR = 2026;
       const NS = 'http://www.w3.org/2000/svg';
 
-      // Load GeoJSON Map
+      // ============================================
+      // LOAD GEOJSON MAP
+      // ============================================
       (async function () {
         const svgEl = document.getElementById("mapSvg");
         const panel = svgEl.parentElement;
@@ -1491,7 +1501,9 @@
         svgEl.appendChild(grp);
       })();
 
-      // Satellite Image URLs
+      // ============================================
+      // SATELLITE IMAGE FUNCTIONS - Available Always
+      // ============================================
       let currentSource = "landsat";
 
       function generateSatUrl(year, source) {
@@ -1600,7 +1612,9 @@
         loadCurrentYearSat();
       }
 
-      // Timeline Events - Initialize
+      // ============================================
+      // TIMELINE EVENTS - Only if events exist
+      // ============================================
       {% if events %}
       const EVS = {{ events | tojson }};
       const TL_MS = {{ tl_interval }};
@@ -1702,16 +1716,6 @@
           if (e.shiftKey) return;
           if (e.key === "ArrowRight") tlNext();
           if (e.key === "ArrowLeft") tlPrev();
-                  document.getElementById("pbBtn").addEventListener("click", () => {
-          tlPlay = !tlPlay;
-          document.getElementById("pbBtn").textContent = tlPlay ? "⏸" : "▶";
-          resetProg();
-        });
-
-        document.addEventListener("keydown", (e) => {
-          if (e.shiftKey) return;
-          if (e.key === "ArrowRight") tlNext();
-          if (e.key === "ArrowLeft") tlPrev();
           if (e.key === " ") {
             e.preventDefault();
             document.getElementById("pbBtn").click();
@@ -1726,13 +1730,17 @@
       }
       {% endif %}
 
-      // Initialize theme and load satellites
+      // ============================================
+      // INITIALIZE ON DOM READY
+      // ============================================
       document.addEventListener("DOMContentLoaded", () => {
         initTheme();
         loadSatellites();
       });
 
-      // Keyboard shortcut for theme toggle
+      // ============================================
+      // KEYBOARD SHORTCUTS
+      // ============================================
       document.addEventListener("keydown", (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key === "k") {
           e.preventDefault();

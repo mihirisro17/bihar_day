@@ -103,8 +103,13 @@ def get_ridam_url(year, bbox):
     ISRO/SAC RIDAM — Landsat dataset T0S1P11, RGB composite.
     Available: 1997–2016. Fixed date: Dec 31 of each year.
     """
+    from urllib.parse import quote, urlencode
+
     date_str = f"{year}1231"
-    args = ";".join([
+
+    # Build ARGS string — colons and semicolons MUST be percent-encoded (%3A, %3B)
+    # exactly as the original RIDAM URL requires. safe='' encodes everything.
+    args_raw = ";".join([
         "r_dataset_id:T0S1P11", "g_dataset_id:T0S1P11", "b_dataset_id:T0S1P11",
         f"r_from_time:{date_str}", f"r_to_time:{date_str}",
         f"g_from_time:{date_str}", f"g_to_time:{date_str}",
@@ -112,14 +117,31 @@ def get_ridam_url(year, bbox):
         "r_index:1", "g_index:2", "b_index:3",
         "r_max:50",  "g_max:50",  "b_max:50",
     ])
-    url = (
-        "https://vedas.sac.gov.in/ridam/wms"
-        "?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap"
-        "&TRANSPARENT=true&name=RIDAM_RGB&layers=T0S0M1"
-        f"&PROJECTION=EPSG:4326&ARGS={requests.utils.quote(args, safe=':;')}"
-        + _bq_latlng(bbox)
-    )
+    args_encoded = quote(args_raw, safe='')  # encodes : → %3A and ; → %3B
+
+    # WMS 1.3.0 EPSG:4326 — BBOX axis order is minLat,minLng,maxLat,maxLng
+    bbox_str = f"{bbox['minLat']},{bbox['minLng']},{bbox['maxLat']},{bbox['maxLng']}"
+
+    params = urlencode({
+        "SERVICE":    "WMS",
+        "VERSION":    "1.3.0",
+        "REQUEST":    "GetMap",
+        "FORMAT":     "image/png",
+        "TRANSPARENT":"true",
+        "name":       "RIDAM_RGB",
+        "layers":     "T0S0M1",
+        "PROJECTION": "EPSG:4326",
+        "ARGS":       args_raw,      # urlencode handles encoding of the value
+        "WIDTH":      SAT_W,
+        "HEIGHT":     SAT_H,
+        "CRS":        "EPSG:4326",
+        "STYLES":     "",
+        "BBOX":       bbox_str,
+    })
+
+    url = f"https://vedas.sac.gov.in/ridam/wms?{params}"
     return url, f"RIDAM Landsat {year}"
+
 
 
 def get_birth_url(year, bbox):
@@ -158,14 +180,9 @@ def get_birth_url(year, bbox):
 #         print(f"[SAT] Fetch failed: {e}")
 #     return None, False
 def fetch_and_cache(url, cache_key, ext="jpg"):
-    """
-    Local dev : fetch → cache to disk → return static file URL.
-    Vercel    : fetch → return base64 data URI directly (no cross-instance /tmp sharing).
-    """
     mime = "image/png" if ext == "png" else "image/jpeg"
 
     if not IS_VERCEL:
-        # ── Local file cache ──
         filename   = hashlib.md5(cache_key.encode()).hexdigest() + f".{ext}"
         filepath   = SAT_CACHE_DIR / filename
         static_url = f"{SAT_CACHE_URL}/{filename}"
@@ -174,26 +191,25 @@ def fetch_and_cache(url, cache_key, ext="jpg"):
         try:
             resp = requests.get(url, timeout=30, headers={"User-Agent": "BiharDiwas/1.0"})
             ct   = resp.headers.get("content-type", "")
+            print(f"[SAT] {resp.status_code} ct={ct} url={url[:100]}")  # ← debug
             if resp.status_code == 200 and "image" in ct:
                 filepath.write_bytes(resp.content)
                 return static_url, True
-            print(f"[SAT] Bad response {resp.status_code} ct={ct} for {url[:120]}")
+        except Exception as e:
+            print(f"[SAT] Fetch failed: {e}")
+        return None, False
+    else:
+        try:
+            resp = requests.get(url, timeout=30, headers={"User-Agent": "BiharDiwas/1.0"})
+            ct   = resp.headers.get("content-type", "")
+            print(f"[SAT] {resp.status_code} ct={ct} url={url[:100]}")  # ← debug
+            if resp.status_code == 200 and "image" in ct:
+                b64 = base64.b64encode(resp.content).decode("utf-8")
+                return f"data:{mime};base64,{b64}", True
         except Exception as e:
             print(f"[SAT] Fetch failed: {e}")
         return None, False
 
-    else:
-        # ── Vercel: base64 data URI — avoids /tmp cross-instance 404 ──
-        try:
-            resp = requests.get(url, timeout=30, headers={"User-Agent": "BiharDiwas/1.0"})
-            ct   = resp.headers.get("content-type", "")
-            if resp.status_code == 200 and "image" in ct:
-                b64 = base64.b64encode(resp.content).decode("utf-8")
-                return f"data:{mime};base64,{b64}", True
-            print(f"[SAT] Bad response {resp.status_code} ct={ct} for {url[:120]}")
-        except Exception as e:
-            print(f"[SAT] Fetch failed: {e}")
-        return None, False
 
 
 # ----------------------------

@@ -644,9 +644,13 @@
     };
   }
 
-  function getBirthSrc(year) {
-    return year >= 2016 ? getSentinelUrl(year) : getModisUrl(year);
-  }
+  // function getBirthSrc(year) {
+  //   return year >= 2016 ? getSentinelUrl(year) : getModisUrl(year);
+  // }
+function getBirthSrc(year) {
+  if (year >= 1997 && year <= 2016) return getRidamUrl(year);
+  return year >= 2016 ? getSentinelUrl(year) : getModisUrl(year);
+}
 
   function getCurrentSrc() {
     return getSentinelUrl(2026); // clamps to s2cloudless-2024
@@ -656,6 +660,8 @@
   function loadSatImage(type, year, skeletonEl, imgEl, svgEl, srcEl) {
     const primary  = type === 'current' ? getCurrentSrc() : getBirthSrc(year);
     const fallback = getModisUrl(Math.min(Math.max(year, 2000), 2023));
+
+
 
     srcEl.textContent = primary.label;
 
@@ -828,6 +834,35 @@
       card.className = 'tl-card ' + (dir==='next' ? 'slide-in-right' : 'slide-in-left');
     }, 360);
   }
+
+  // For WMS 1.3.0 EPSG:4326 — axis order is minLat,minLng,maxLat,maxLng
+function bboxParamLatLon() {
+  return `${BBOX.minLat},${BBOX.minLng},${BBOX.maxLat},${BBOX.maxLng}`;
+}
+function getRidamUrl(year) {
+  const date = `${year}1231`; // always Dec 31
+  const args = [
+    `r_dataset_id:T0S1P11`, `g_dataset_id:T0S1P11`, `b_dataset_id:T0S1P11`,
+    `r_from_time:${date}`,   `r_to_time:${date}`,
+    `g_from_time:${date}`,   `g_to_time:${date}`,
+    `b_from_time:${date}`,   `b_to_time:${date}`,
+    `r_index:1`, `g_index:2`, `b_index:3`,
+    `r_max:50`,  `g_max:50`,  `b_max:50`
+  ].join(';');
+
+  return {
+    url: `https://vedas.sac.gov.in/ridam/wms?SERVICE=WMS&VERSION=1.3.0`
+       + `&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=true`
+       + `&name=RIDAM_RGB&layers=T0S0M1&PROJECTION=EPSG:4326`
+       + `&ARGS=${encodeURIComponent(args)}`
+       + `&WIDTH=${WRES}&HEIGHT=${HRES}`
+       + `&CRS=EPSG:4326&STYLES=`
+       + `&BBOX=${bboxParamLatLon()}`,
+    label: `RIDAM (ISRO/SAC) ${year}`
+  };
+}
+
+
 
   function resetProgress() {
     clearTimeout(autoTimer);

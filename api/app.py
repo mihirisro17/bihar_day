@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
 from datetime import date
-import csv, os, sys, json, hashlib, requests
+import csv, os, sys, json, hashlib, requests, base64, io
+import concurrent.futures
 from pathlib import Path
-import base64  
-
+from PIL import Image
 
 BASE_DIR = os.getcwd()
 sys.path.insert(0, BASE_DIR)
@@ -15,31 +15,25 @@ app = Flask(
     static_folder=os.path.join(BASE_DIR, "static")
 )
 
-# ── Cache dir ──
+# ── Cache ──
 IS_VERCEL     = bool(os.environ.get("VERCEL", ""))
 SAT_CACHE_DIR = Path("/tmp/sat_cache") if IS_VERCEL else Path(BASE_DIR) / "static" / "sat_cache"
 SAT_CACHE_URL = "/sat_cache"           if IS_VERCEL else "/static/sat_cache"
 SAT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-
 EOX_AVAIL    = [2016,2017,2018,2019,2020,2021,2022,2023,2024]
-SAT_W, SAT_H         = 1600, 900   # Sentinel / MODIS — supports large images
-RIDAM_W, RIDAM_H     = 1024, 576   # RIDAM tile server — fails above ~1024px
+SAT_W, SAT_H = 1600, 900   # Sentinel / MODIS
 TARGET_AR    = 16 / 9
 KM30_LAT, KM30_LNG = 0.27, 0.30
 
+# RIDAM tile grid — 256×256 per tile, 4 cols × 3 rows = 1024×768 stitched
+RIDAM_TILE = 256
+RIDAM_COLS = 4
+RIDAM_ROWS = 3
 
 
 # ----------------------------
-# Utility
-# ----------------------------
-
-def _norm(s):
-    return "".join(str(s).lower().split()).replace("-","").replace("(","").replace(")","")
-
-
-# ----------------------------
-# Satellite helpers
+# BBox
 # ----------------------------
 
 def compute_padded_bbox(raw_bbox):
@@ -51,12 +45,10 @@ def compute_padded_bbox(raw_bbox):
         "minLat": raw_bbox["minLat"] - KM30_LAT,
         "maxLat": raw_bbox["maxLat"] + KM30_LAT,
     }
-    lng_span = exp["maxLng"] - exp["minLng"]
-    lat_span = exp["maxLat"] - exp["minLat"]
     cx = (exp["maxLng"] + exp["minLng"]) / 2
     cy = (exp["maxLat"] + exp["minLat"]) / 2
-    pW = lng_span * 1.5
-    pH = lat_span * 1.5
+    pW = (exp["maxLng"] - exp["minLng"]) * 1.5
+    pH = (exp["maxLat"] - exp["minLat"]) * 1.5
     if pW / pH > TARGET_AR: pH = pW / TARGET_AR
     else: pW = pH * TARGET_AR
     return {
@@ -65,20 +57,17 @@ def compute_padded_bbox(raw_bbox):
     }
 
 
+# ----------------------------
+# WMS URL builders
+# ----------------------------
+
 def _bq(bbox):
-    """WMS 1.1.1 — SRS EPSG:4326, axis order: minLng,minLat,maxLng,maxLat"""
+    """WMS 1.1.1 — axis order: minLng,minLat,maxLng,maxLat"""
     b = f"{bbox['minLng']},{bbox['minLat']},{bbox['maxLng']},{bbox['maxLat']}"
     return f"&STYLES=&SRS=EPSG:4326&BBOX={b}&WIDTH={SAT_W}&HEIGHT={SAT_H}&FORMAT=image/jpeg"
 
 
-def _bq_latlng(bbox):
-    """WMS 1.3.0 — CRS EPSG:4326, axis order FLIPPED: minLat,minLng,maxLat,maxLng"""
-    b = f"{bbox['minLat']},{bbox['minLng']},{bbox['maxLat']},{bbox['maxLng']}"
-    return f"&STYLES=&CRS=EPSG:4326&BBOX={b}&WIDTH={SAT_W}&HEIGHT={SAT_H}&FORMAT=image/png"
-
-
 def get_sentinel_url(year, bbox):
-    """EOX Sentinel-2 cloudless — 2016 to 2024."""
     y = year if year in EOX_AVAIL else max(
         (v for v in EOX_AVAIL if v <= year), default=EOX_AVAIL[-1]
     )
@@ -90,7 +79,6 @@ def get_sentinel_url(year, bbox):
 
 
 def get_modis_url(year, bbox):
-    """NASA GIBS MODIS Terra — pre-1997 fallback only."""
     y = min(max(year, 2000), 2024)
     return (
         f"https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi"
@@ -101,15 +89,10 @@ def get_modis_url(year, bbox):
     )
 
 
-def get_ridam_url(year, bbox):
-    """
-    ISRO/SAC RIDAM — Landsat dataset T0S1P11, RGB composite.
-    Available: 1997–2016. Date fixed: Dec 31 of each year.
-    URL constructed to exactly match the working reference URL format.
-    """
+def _ridam_tile_url(year, tile_bbox):
+    """Build a single 256×256 RIDAM WMS tile URL for a sub-bbox."""
+    from urllib.parse import quote
     date_str = f"{year}1231"
-
-    # ARGS must be percent-encoded — colons → %3A, semicolons → %3B
     args_raw = (
         f"r_dataset_id:T0S1P11;g_dataset_id:T0S1P11;b_dataset_id:T0S1P11;"
         f"r_from_time:{date_str};r_to_time:{date_str};"
@@ -118,64 +101,118 @@ def get_ridam_url(year, bbox):
         f"r_index:1;g_index:2;b_index:3;"
         f"r_max:50;g_max:50;b_max:50"
     )
-    from urllib.parse import quote
-    args_enc = quote(args_raw, safe='')   # : → %3A, ; → %3B
-
-    # WMS 1.3.0 + EPSG:4326 → BBOX axis order is minLat,minLng,maxLat,maxLng
-    bbox_str = f"{bbox['minLat']},{bbox['minLng']},{bbox['maxLat']},{bbox['maxLng']}"
-
-    url = (
+    args_enc = quote(args_raw, safe='')  # : → %3A, ; → %3B
+    # WMS 1.3.0 EPSG:4326 — BBOX axis order: minLat,minLng,maxLat,maxLng
+    bbox_str = (
+        f"{tile_bbox['minLat']},"
+        f"{tile_bbox['minLng']},"
+        f"{tile_bbox['maxLat']},"
+        f"{tile_bbox['maxLng']}"
+    )
+    return (
         "https://vedas.sac.gov.in/ridam/wms"
         "?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap"
         "&FORMAT=image%2Fpng&TRANSPARENT=true"
         "&name=RIDAM_RGB&layers=T0S0M1"
         "&PROJECTION=EPSG%3A4326"
         f"&ARGS={args_enc}"
-        f"&WIDTH={RIDAM_W}&HEIGHT={RIDAM_H}"
+        f"&WIDTH={RIDAM_TILE}&HEIGHT={RIDAM_TILE}"
         "&CRS=EPSG%3A4326&STYLES="
         f"&BBOX={bbox_str}"
     )
-    return url, f"RIDAM Landsat {year}"
 
 
-
-
-def get_birth_url(year, bbox):
+def fetch_ridam_tiled(year, bbox):
     """
-    Source selection by birth year:
-      1997–2016 → RIDAM Landsat (ISRO/SAC), Dec 31 of that year  [fetched server-side]
-      2016+     → Sentinel-2 cloudless (EOX), sharpest 10 m
-      pre-1997  → MODIS Terra (NASA GIBS)
+    Split bbox into a RIDAM_COLS × RIDAM_ROWS grid of 256×256 tiles.
+    Fetch all tiles in parallel, stitch with PIL, return JPEG bytes.
+    Returns (bytes, 'jpg') on success, (None, None) on failure.
     """
-    if 1997 <= year <= 2016:
-        return get_ridam_url(year, bbox)
-    if year >= 2016:
-        return get_sentinel_url(year, bbox)
-    return get_modis_url(year, bbox)
+    lng_span = bbox['maxLng'] - bbox['minLng']
+    lat_span = bbox['maxLat'] - bbox['minLat']
+    lng_step = lng_span / RIDAM_COLS
+    lat_step = lat_span / RIDAM_ROWS
+
+    # Build tile definitions: (col, row, sub-bbox)
+    tile_defs = []
+    for row in range(RIDAM_ROWS):
+        for col in range(RIDAM_COLS):
+            tile_bbox = {
+                'minLng': bbox['minLng'] + col * lng_step,
+                'maxLng': bbox['minLng'] + (col + 1) * lng_step,
+                'maxLat': bbox['maxLat'] - row * lat_step,        # top edge of tile
+                'minLat': bbox['maxLat'] - (row + 1) * lat_step,  # bottom edge of tile
+            }
+            tile_defs.append((col, row, tile_bbox))
+
+    def fetch_one(args):
+        col, row, tile_bbox = args
+        url = _ridam_tile_url(year, tile_bbox)
+        try:
+            resp = requests.get(url, timeout=30, headers={"User-Agent": "BiharDiwas/1.0"})
+            ct   = resp.headers.get("content-type", "")
+            if resp.status_code == 200 and "image" in ct and len(resp.content) > 500:
+                return col, row, resp.content
+            print(f"[RIDAM tile ({col},{row})] {resp.status_code} ct={ct} | {resp.content[:120]}")
+        except Exception as e:
+            print(f"[RIDAM tile ({col},{row})] error: {e}")
+        return col, row, None
+
+    # Fetch all tiles concurrently
+    with concurrent.futures.ThreadPoolExecutor(max_workers=RIDAM_COLS * RIDAM_ROWS) as ex:
+        results = list(ex.map(fetch_one, tile_defs))
+
+    success_count = sum(1 for _, _, d in results if d is not None)
+    total = RIDAM_COLS * RIDAM_ROWS
+    print(f"[RIDAM] {success_count}/{total} tiles fetched for year={year}")
+
+    if success_count < total * 0.5:
+        print(f"[RIDAM] Too many failures — falling back")
+        return None, None
+
+    # Stitch tiles onto canvas
+    canvas_w = RIDAM_COLS * RIDAM_TILE
+    canvas_h = RIDAM_ROWS * RIDAM_TILE
+    canvas = Image.new("RGBA", (canvas_w, canvas_h), (10, 10, 20, 255))
+
+    for col, row, data in results:
+        if data:
+            try:
+                tile_img = Image.open(io.BytesIO(data)).convert("RGBA")
+                canvas.paste(tile_img, (col * RIDAM_TILE, row * RIDAM_TILE))
+            except Exception as e:
+                print(f"[RIDAM stitch ({col},{row})] {e}")
+
+    # Flatten to RGB (dark background for transparent areas)
+    bg    = Image.new("RGB", canvas.size, (10, 10, 20))
+    alpha = canvas.split()[3]
+    bg.paste(canvas.convert("RGB"), mask=alpha)
+
+    buf = io.BytesIO()
+    bg.save(buf, format="JPEG", quality=90)
+    return buf.getvalue(), "jpg"
 
 
-# def fetch_and_cache(url, cache_key, ext="jpg"):
-#     """
-#     Server-side fetch + local cache.
-#     ext = 'jpg' for Sentinel/MODIS, 'png' for RIDAM.
-#     Avoids all browser CORS restrictions.
-#     """
-#     filename   = hashlib.md5(cache_key.encode()).hexdigest() + f".{ext}"
-#     filepath   = SAT_CACHE_DIR / filename
-#     static_url = f"{SAT_CACHE_URL}/{filename}"
-#     if filepath.exists() and filepath.stat().st_size > 10_000:
-#         return static_url, True
-#     try:
-#         resp = requests.get(url, timeout=30, headers={"User-Agent": "BiharDiwas/1.0"})
-#         ct   = resp.headers.get("content-type", "")
-#         if resp.status_code == 200 and "image" in ct:
-#             filepath.write_bytes(resp.content)
-#             return static_url, True
-#         print(f"[SAT] Bad response {resp.status_code} ct={ct} for {url[:120]}")
-#     except Exception as e:
-#         print(f"[SAT] Fetch failed: {e}")
-#     return None, False
+# ----------------------------
+# Cache / Fetch helpers
+# ----------------------------
+
+def _image_to_url(img_bytes, cache_key, ext):
+    """Write bytes to disk (local) or return base64 data URI (Vercel)."""
+    if not IS_VERCEL:
+        filename   = hashlib.md5(cache_key.encode()).hexdigest() + f".{ext}"
+        filepath   = SAT_CACHE_DIR / filename
+        static_url = f"{SAT_CACHE_URL}/{filename}"
+        filepath.write_bytes(img_bytes)
+        return static_url
+    else:
+        mime = "image/png" if ext == "png" else "image/jpeg"
+        b64  = base64.b64encode(img_bytes).decode("utf-8")
+        return f"data:{mime};base64,{b64}"
+
+
 def fetch_and_cache(url, cache_key, ext="jpg"):
+    """Fetch a WMS URL (Sentinel/MODIS) — cache to disk or return base64 URI."""
     mime = "image/png" if ext == "png" else "image/jpeg"
 
     if not IS_VERCEL:
@@ -187,12 +224,11 @@ def fetch_and_cache(url, cache_key, ext="jpg"):
         try:
             resp = requests.get(url, timeout=45, headers={"User-Agent": "BiharDiwas/1.0"})
             ct   = resp.headers.get("content-type", "")
-            print(f"[SAT] {resp.status_code} ct={ct} size={len(resp.content)} url={url[:120]}")
+            print(f"[SAT] {resp.status_code} ct={ct} size={len(resp.content)} url={url[:100]}")
             if resp.status_code == 200 and "image" in ct and len(resp.content) > 10_000:
                 filepath.write_bytes(resp.content)
                 return static_url, True
-            # Log the response body to see WMS errors
-            print(f"[SAT] Response body: {resp.content[:300]}")
+            print(f"[SAT] body: {resp.content[:200]}")
         except Exception as e:
             print(f"[SAT] Fetch failed: {e}")
         return None, False
@@ -200,36 +236,14 @@ def fetch_and_cache(url, cache_key, ext="jpg"):
         try:
             resp = requests.get(url, timeout=55, headers={"User-Agent": "BiharDiwas/1.0"})
             ct   = resp.headers.get("content-type", "")
-            print(f"[SAT] {resp.status_code} ct={ct} size={len(resp.content)} url={url[:120]}")
+            print(f"[SAT] {resp.status_code} ct={ct} size={len(resp.content)} url={url[:100]}")
             if resp.status_code == 200 and "image" in ct and len(resp.content) > 10_000:
                 b64 = base64.b64encode(resp.content).decode("utf-8")
                 return f"data:{mime};base64,{b64}", True
-            # Print first 300 bytes of response to diagnose WMS errors / geo-blocks
-            print(f"[SAT] Non-image response: {resp.content[:300]}")
+            print(f"[SAT] body: {resp.content[:200]}")
         except Exception as e:
             print(f"[SAT] Fetch failed: {e}")
         return None, False
-@app.route("/api/debug_ridam")
-def debug_ridam():
-    """Test RIDAM directly — visit /api/debug_ridam?year=2005 in browser to diagnose."""
-    year = int(request.args.get("year", 2005))
-    bbox = compute_padded_bbox(None)   # use default Bihar bbox
-    url, label = get_ridam_url(year, bbox)
-    try:
-        resp = requests.get(url, timeout=55, headers={"User-Agent": "BiharDiwas/1.0"})
-        ct   = resp.headers.get("content-type", "")
-        return jsonify({
-            "url":         url,
-            "status":      resp.status_code,
-            "content_type": ct,
-            "size_bytes":  len(resp.content),
-            "body_preview": resp.content[:500].decode("utf-8", errors="replace"),
-            "is_image":    "image" in ct,
-        })
-    except Exception as e:
-        return jsonify({"error": str(e), "url": url})
-
-
 
 
 # ----------------------------
@@ -246,7 +260,7 @@ def sat_cache_local(filename):
 
 
 # ----------------------------
-# API: fetch one satellite image  (called by result.html JS)
+# API: satellite image
 # ----------------------------
 
 @app.route("/api/sat_image")
@@ -263,8 +277,11 @@ def api_sat_image():
         raw_bbox = None
 
     bbox = compute_padded_bbox(raw_bbox)
+    local = None
+    src   = "Unknown"
 
     if img_type == "current":
+        # ── Present: Sentinel-2 cloudless ──
         url, src  = get_sentinel_url(year, bbox)
         key       = f"current_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
         local, ok = fetch_and_cache(url, key, ext="jpg")
@@ -275,33 +292,84 @@ def api_sat_image():
             src       = "MODIS Terra"
 
     else:
-        # Birth year — RIDAM for 1997-2016 (server-side, no CORS)
-        url, src  = get_birth_url(year, bbox)
-        is_ridam  = (1997 <= year <= 2016)
-        ext       = "png" if is_ridam else "jpg"
+        if 1997 <= year <= 2016:
+            # ── RIDAM tiled fetch + PIL stitch ──
+            src = f"RIDAM Landsat {year}"
+            key = f"ridam_tiled_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
 
-        key       = f"birth_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
-        local, ok = fetch_and_cache(url, key, ext=ext)
+            # Check disk cache first (local only)
+            if not IS_VERCEL:
+                filename   = hashlib.md5(key.encode()).hexdigest() + ".jpg"
+                filepath   = SAT_CACHE_DIR / filename
+                static_url = f"{SAT_CACHE_URL}/{filename}"
+                if filepath.exists() and filepath.stat().st_size > 10_000:
+                    local = static_url
+                else:
+                    img_bytes, ext = fetch_ridam_tiled(year, bbox)
+                    if img_bytes:
+                        filepath.write_bytes(img_bytes)
+                        local = static_url
+            else:
+                img_bytes, ext = fetch_ridam_tiled(year, bbox)
+                if img_bytes:
+                    local = _image_to_url(img_bytes, key, "jpg")
 
-        if not ok:
-            # Fallback 1 — MODIS
+            # Fallback to MODIS if RIDAM completely failed
+            if not local:
+                print(f"[RIDAM] Tiled fetch failed for {year} — MODIS fallback")
+                url, src  = get_modis_url(max(year, 2000), bbox)
+                key       = f"birth_modis_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
+                local, ok = fetch_and_cache(url, key, ext="jpg")
+                src       = "MODIS Terra"
+                if not ok:
+                    url, src  = get_modis_url(2000, bbox)
+                    key       = f"birth_modis_2000_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
+                    local, _  = fetch_and_cache(url, key, ext="jpg")
+                    src       = "MODIS Terra"
+
+        elif year >= 2016:
+            # ── Sentinel-2 cloudless ──
+            url, src  = get_sentinel_url(year, bbox)
+            key       = f"birth_s2_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
+            local, ok = fetch_and_cache(url, key, ext="jpg")
+            if not ok:
+                url, src  = get_modis_url(year, bbox)
+                key       = f"birth_modis_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
+                local, _  = fetch_and_cache(url, key, ext="jpg")
+                src       = "MODIS Terra"
+
+        else:
+            # ── pre-1997: MODIS Terra ──
             url, src  = get_modis_url(max(year, 2000), bbox)
             key       = f"birth_modis_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
             local, ok = fetch_and_cache(url, key, ext="jpg")
             src       = "MODIS Terra"
-
-        if not ok:
-            # Fallback 2 — MODIS 2000 absolute last resort
-            url, src  = get_modis_url(2000, bbox)
-            key       = f"birth_modis_2000_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
-            local, _  = fetch_and_cache(url, key, ext="jpg")
-            src       = "MODIS Terra"
+            if not ok:
+                url, src  = get_modis_url(2000, bbox)
+                key       = f"birth_modis_2000"
+                local, _  = fetch_and_cache(url, key, ext="jpg")
+                src       = "MODIS Terra"
 
     return jsonify({
         "url":       local or "",
         "src_label": f"📡 {src}",
         "bbox":      bbox
     })
+
+
+# ----------------------------
+# Debug endpoint (remove after confirmed working)
+# ----------------------------
+
+@app.route("/api/debug_ridam")
+def debug_ridam():
+    year = int(request.args.get("year", 2005))
+    bbox = compute_padded_bbox(None)
+    img_bytes, ext = fetch_ridam_tiled(year, bbox)
+    if img_bytes:
+        b64 = base64.b64encode(img_bytes).decode("utf-8")
+        return f'<img src="data:image/jpeg;base64,{b64}" style="max-width:100%;"/>'
+    return "RIDAM tiled fetch failed — check server logs", 500
 
 
 # ----------------------------
@@ -341,7 +409,6 @@ def load_events():
                     "year":yr,"title":ev["title"],"icon":icon(ev["title"]),
                     "era":el,"color":ec,"score":ev["score"]
                 })
-
     events.sort(key=lambda x: x["year"])
     return events
 

@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 from datetime import date
 import csv, os, sys, json, hashlib, requests
 from pathlib import Path
+import base64  
+
 
 BASE_DIR = os.getcwd()
 sys.path.insert(0, BASE_DIR)
@@ -134,27 +136,64 @@ def get_birth_url(year, bbox):
     return get_modis_url(year, bbox)
 
 
+# def fetch_and_cache(url, cache_key, ext="jpg"):
+#     """
+#     Server-side fetch + local cache.
+#     ext = 'jpg' for Sentinel/MODIS, 'png' for RIDAM.
+#     Avoids all browser CORS restrictions.
+#     """
+#     filename   = hashlib.md5(cache_key.encode()).hexdigest() + f".{ext}"
+#     filepath   = SAT_CACHE_DIR / filename
+#     static_url = f"{SAT_CACHE_URL}/{filename}"
+#     if filepath.exists() and filepath.stat().st_size > 10_000:
+#         return static_url, True
+#     try:
+#         resp = requests.get(url, timeout=30, headers={"User-Agent": "BiharDiwas/1.0"})
+#         ct   = resp.headers.get("content-type", "")
+#         if resp.status_code == 200 and "image" in ct:
+#             filepath.write_bytes(resp.content)
+#             return static_url, True
+#         print(f"[SAT] Bad response {resp.status_code} ct={ct} for {url[:120]}")
+#     except Exception as e:
+#         print(f"[SAT] Fetch failed: {e}")
+#     return None, False
 def fetch_and_cache(url, cache_key, ext="jpg"):
     """
-    Server-side fetch + local cache.
-    ext = 'jpg' for Sentinel/MODIS, 'png' for RIDAM.
-    Avoids all browser CORS restrictions.
+    Local dev : fetch → cache to disk → return static file URL.
+    Vercel    : fetch → return base64 data URI directly (no cross-instance /tmp sharing).
     """
-    filename   = hashlib.md5(cache_key.encode()).hexdigest() + f".{ext}"
-    filepath   = SAT_CACHE_DIR / filename
-    static_url = f"{SAT_CACHE_URL}/{filename}"
-    if filepath.exists() and filepath.stat().st_size > 10_000:
-        return static_url, True
-    try:
-        resp = requests.get(url, timeout=30, headers={"User-Agent": "BiharDiwas/1.0"})
-        ct   = resp.headers.get("content-type", "")
-        if resp.status_code == 200 and "image" in ct:
-            filepath.write_bytes(resp.content)
+    mime = "image/png" if ext == "png" else "image/jpeg"
+
+    if not IS_VERCEL:
+        # ── Local file cache ──
+        filename   = hashlib.md5(cache_key.encode()).hexdigest() + f".{ext}"
+        filepath   = SAT_CACHE_DIR / filename
+        static_url = f"{SAT_CACHE_URL}/{filename}"
+        if filepath.exists() and filepath.stat().st_size > 10_000:
             return static_url, True
-        print(f"[SAT] Bad response {resp.status_code} ct={ct} for {url[:120]}")
-    except Exception as e:
-        print(f"[SAT] Fetch failed: {e}")
-    return None, False
+        try:
+            resp = requests.get(url, timeout=30, headers={"User-Agent": "BiharDiwas/1.0"})
+            ct   = resp.headers.get("content-type", "")
+            if resp.status_code == 200 and "image" in ct:
+                filepath.write_bytes(resp.content)
+                return static_url, True
+            print(f"[SAT] Bad response {resp.status_code} ct={ct} for {url[:120]}")
+        except Exception as e:
+            print(f"[SAT] Fetch failed: {e}")
+        return None, False
+
+    else:
+        # ── Vercel: base64 data URI — avoids /tmp cross-instance 404 ──
+        try:
+            resp = requests.get(url, timeout=30, headers={"User-Agent": "BiharDiwas/1.0"})
+            ct   = resp.headers.get("content-type", "")
+            if resp.status_code == 200 and "image" in ct:
+                b64 = base64.b64encode(resp.content).decode("utf-8")
+                return f"data:{mime};base64,{b64}", True
+            print(f"[SAT] Bad response {resp.status_code} ct={ct} for {url[:120]}")
+        except Exception as e:
+            print(f"[SAT] Fetch failed: {e}")
+        return None, False
 
 
 # ----------------------------

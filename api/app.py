@@ -61,8 +61,15 @@ def compute_padded_bbox(raw_bbox):
 
 
 def _bq(bbox):
+    """WMS 1.1.1 SRS:EPSG:4326 — axis order lng,lat (minLng,minLat,maxLng,maxLat)"""
     b = f"{bbox['minLng']},{bbox['minLat']},{bbox['maxLng']},{bbox['maxLat']}"
     return f"&STYLES=&SRS=EPSG:4326&BBOX={b}&WIDTH={SAT_W}&HEIGHT={SAT_H}&FORMAT=image/jpeg"
+
+
+def _bq_latlng(bbox):
+    """WMS 1.3.0 CRS:EPSG:4326 — axis order lat,lng (minLat,minLng,maxLat,maxLng)"""
+    b = f"{bbox['minLat']},{bbox['minLng']},{bbox['maxLat']},{bbox['maxLng']}"
+    return f"&STYLES=&CRS=EPSG:4326&BBOX={b}&WIDTH={SAT_W}&HEIGHT={SAT_H}&FORMAT=image/png"
 
 
 def get_sentinel_url(year, bbox):
@@ -79,36 +86,60 @@ def get_sentinel_url(year, bbox):
 
 def get_modis_url(year, bbox):
     """NASA GIBS MODIS Terra — best color quality for pre-2016 years."""
-    y = min(max(year, 2000), 2024)   # MODIS range 2000–2024
+    y = min(max(year, 2000), 2024)
     return (
         f"https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi"
         f"?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap"
         f"&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor"
-        f"&TIME={y}-06-15{_bq(bbox)}",   # June = best season, less cloud/haze for Bihar
+        f"&TIME={y}-06-15{_bq(bbox)}",
         "MODIS Terra"
     )
 
 
+def get_ridam_url(year, bbox):
+    """ISRO/SAC RIDAM AWiFS — available 1997–2016, fixed Dec 31 of each year."""
+    date_str = f"{year}1231"
+    args = ";".join([
+        "r_dataset_id:T0S1P11", "g_dataset_id:T0S1P11", "b_dataset_id:T0S1P11",
+        f"r_from_time:{date_str}", f"r_to_time:{date_str}",
+        f"g_from_time:{date_str}", f"g_to_time:{date_str}",
+        f"b_from_time:{date_str}", f"b_to_time:{date_str}",
+        "r_index:1", "g_index:2", "b_index:3",
+        "r_max:50",  "g_max:50",  "b_max:50",
+    ])
+    url = (
+        f"https://vedas.sac.gov.in/ridam/wms"
+        f"?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap"
+        f"&TRANSPARENT=true&name=RIDAM_RGB&layers=T0S0M1"
+        f"&PROJECTION=EPSG:4326&ARGS={requests.utils.quote(args, safe=':;')}"
+        + _bq_latlng(bbox)
+    )
+    return url, f"RIDAM AWiFS {year}"
+
+
 def get_birth_url(year, bbox):
     """
-    Pick best-looking source for birth year.
-    2016+ → Sentinel-2 cloudless (sharpest, 10m)
-    pre-2016 → MODIS Terra (best color/quality for Bihar region)
+    1997–2016 → RIDAM AWiFS (ISRO/SAC), Dec 31 of each year
+    2016+     → Sentinel-2 cloudless (EOX), sharpest 10m
+    pre-1997  → MODIS Terra
     """
+    if 1997 <= year <= 2016:
+        return get_ridam_url(year, bbox)
     if year >= 2016:
         return get_sentinel_url(year, bbox)
     return get_modis_url(year, bbox)
 
 
-def fetch_and_cache(url, cache_key):
-    filename   = hashlib.md5(cache_key.encode()).hexdigest() + ".jpg"
+def fetch_and_cache(url, cache_key, ext="jpg"):
+    """Fetch a satellite tile and cache it locally. ext: 'jpg' or 'png'."""
+    filename   = hashlib.md5(cache_key.encode()).hexdigest() + f".{ext}"
     filepath   = SAT_CACHE_DIR / filename
     static_url = f"{SAT_CACHE_URL}/{filename}"
     if filepath.exists() and filepath.stat().st_size > 10_000:
         return static_url, True
     try:
-        resp = requests.get(url, timeout=30, headers={"User-Agent":"BiharDiwas/1.0"})
-        ct   = resp.headers.get("content-type","")
+        resp = requests.get(url, timeout=30, headers={"User-Agent": "BiharDiwas/1.0"})
+        ct   = resp.headers.get("content-type", "")
         if resp.status_code == 200 and "image" in ct:
             filepath.write_bytes(resp.content)
             return static_url, True
@@ -154,27 +185,32 @@ def api_sat_image():
         # 2026 → s2cloudless-2024 (latest EOX)
         url, src  = get_sentinel_url(year, bbox)
         key       = f"current_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
-        local, ok = fetch_and_cache(url, key)
+        local, ok = fetch_and_cache(url, key, ext="jpg")
         if not ok:
             url, src  = get_modis_url(2024, bbox)
             key       = f"current_modis_2024_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
-            local, _  = fetch_and_cache(url, key)
+            local, _  = fetch_and_cache(url, key, ext="jpg")
             src       = "MODIS Terra"
     else:
-        # Birth year — Sentinel 2016+, MODIS pre-2016
+        # Birth year — RIDAM 1997–2016, Sentinel 2016+, MODIS pre-1997
         url, src  = get_birth_url(year, bbox)
+        is_ridam  = (1997 <= year <= 2016)
+        ext       = "png" if is_ridam else "jpg"
+
         key       = f"birth_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
-        local, ok = fetch_and_cache(url, key)
+        local, ok = fetch_and_cache(url, key, ext=ext)
+
         if not ok:
-            # Primary failed → MODIS fallback
+            # Fallback 1 — MODIS (always JPEG)
             url, src  = get_modis_url(max(year, 2000), bbox)
             key       = f"birth_modis_{year}_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
-            local, ok = fetch_and_cache(url, key)
+            local, ok = fetch_and_cache(url, key, ext="jpg")
+
         if not ok:
-            # Last resort → MODIS 2000
+            # Fallback 2 — MODIS 2000 as last resort
             url, src  = get_modis_url(2000, bbox)
             key       = f"birth_modis_2000_{bbox['minLng']:.3f}_{bbox['minLat']:.3f}"
-            local, _  = fetch_and_cache(url, key)
+            local, _  = fetch_and_cache(url, key, ext="jpg")
             src       = "MODIS Terra"
 
     return jsonify({
@@ -280,4 +316,3 @@ def analyse():
         eras=C.ERAS, tl_interval=C.TIMELINE_INTERVAL_MS,
         current_year=today.year, app_title=C.APP_TITLE,
     )
-

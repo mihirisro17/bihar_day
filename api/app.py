@@ -21,10 +21,13 @@ SAT_CACHE_DIR = Path("/tmp/sat_cache") if IS_VERCEL else Path(BASE_DIR) / "stati
 SAT_CACHE_URL = "/sat_cache"           if IS_VERCEL else "/static/sat_cache"
 SAT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
+
 EOX_AVAIL    = [2016,2017,2018,2019,2020,2021,2022,2023,2024]
-SAT_W, SAT_H = 1600, 900
+SAT_W, SAT_H         = 1600, 900   # Sentinel / MODIS — supports large images
+RIDAM_W, RIDAM_H     = 1024, 576   # RIDAM tile server — fails above ~1024px
 TARGET_AR    = 16 / 9
 KM30_LAT, KM30_LNG = 0.27, 0.30
+
 
 
 # ----------------------------
@@ -101,46 +104,39 @@ def get_modis_url(year, bbox):
 def get_ridam_url(year, bbox):
     """
     ISRO/SAC RIDAM — Landsat dataset T0S1P11, RGB composite.
-    Available: 1997–2016. Fixed date: Dec 31 of each year.
+    Available: 1997–2016. Date fixed: Dec 31 of each year.
+    URL constructed to exactly match the working reference URL format.
     """
-    from urllib.parse import quote, urlencode
-
     date_str = f"{year}1231"
 
-    # Build ARGS string — colons and semicolons MUST be percent-encoded (%3A, %3B)
-    # exactly as the original RIDAM URL requires. safe='' encodes everything.
-    args_raw = ";".join([
-        "r_dataset_id:T0S1P11", "g_dataset_id:T0S1P11", "b_dataset_id:T0S1P11",
-        f"r_from_time:{date_str}", f"r_to_time:{date_str}",
-        f"g_from_time:{date_str}", f"g_to_time:{date_str}",
-        f"b_from_time:{date_str}", f"b_to_time:{date_str}",
-        "r_index:1", "g_index:2", "b_index:3",
-        "r_max:50",  "g_max:50",  "b_max:50",
-    ])
-    args_encoded = quote(args_raw, safe='')  # encodes : → %3A and ; → %3B
+    # ARGS must be percent-encoded — colons → %3A, semicolons → %3B
+    args_raw = (
+        f"r_dataset_id:T0S1P11;g_dataset_id:T0S1P11;b_dataset_id:T0S1P11;"
+        f"r_from_time:{date_str};r_to_time:{date_str};"
+        f"g_from_time:{date_str};g_to_time:{date_str};"
+        f"b_from_time:{date_str};b_to_time:{date_str};"
+        f"r_index:1;g_index:2;b_index:3;"
+        f"r_max:50;g_max:50;b_max:50"
+    )
+    from urllib.parse import quote
+    args_enc = quote(args_raw, safe='')   # : → %3A, ; → %3B
 
-    # WMS 1.3.0 EPSG:4326 — BBOX axis order is minLat,minLng,maxLat,maxLng
+    # WMS 1.3.0 + EPSG:4326 → BBOX axis order is minLat,minLng,maxLat,maxLng
     bbox_str = f"{bbox['minLat']},{bbox['minLng']},{bbox['maxLat']},{bbox['maxLng']}"
 
-    params = urlencode({
-        "SERVICE":    "WMS",
-        "VERSION":    "1.3.0",
-        "REQUEST":    "GetMap",
-        "FORMAT":     "image/png",
-        "TRANSPARENT":"true",
-        "name":       "RIDAM_RGB",
-        "layers":     "T0S0M1",
-        "PROJECTION": "EPSG:4326",
-        "ARGS":       args_raw,      # urlencode handles encoding of the value
-        "WIDTH":      SAT_W,
-        "HEIGHT":     SAT_H,
-        "CRS":        "EPSG:4326",
-        "STYLES":     "",
-        "BBOX":       bbox_str,
-    })
-
-    url = f"https://vedas.sac.gov.in/ridam/wms?{params}"
+    url = (
+        "https://vedas.sac.gov.in/ridam/wms"
+        "?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap"
+        "&FORMAT=image%2Fpng&TRANSPARENT=true"
+        "&name=RIDAM_RGB&layers=T0S0M1"
+        "&PROJECTION=EPSG%3A4326"
+        f"&ARGS={args_enc}"
+        f"&WIDTH={RIDAM_W}&HEIGHT={RIDAM_H}"
+        "&CRS=EPSG%3A4326&STYLES="
+        f"&BBOX={bbox_str}"
+    )
     return url, f"RIDAM Landsat {year}"
+
 
 
 
@@ -189,26 +185,50 @@ def fetch_and_cache(url, cache_key, ext="jpg"):
         if filepath.exists() and filepath.stat().st_size > 10_000:
             return static_url, True
         try:
-            resp = requests.get(url, timeout=30, headers={"User-Agent": "BiharDiwas/1.0"})
+            resp = requests.get(url, timeout=45, headers={"User-Agent": "BiharDiwas/1.0"})
             ct   = resp.headers.get("content-type", "")
-            print(f"[SAT] {resp.status_code} ct={ct} url={url[:100]}")  # ← debug
-            if resp.status_code == 200 and "image" in ct:
+            print(f"[SAT] {resp.status_code} ct={ct} size={len(resp.content)} url={url[:120]}")
+            if resp.status_code == 200 and "image" in ct and len(resp.content) > 10_000:
                 filepath.write_bytes(resp.content)
                 return static_url, True
+            # Log the response body to see WMS errors
+            print(f"[SAT] Response body: {resp.content[:300]}")
         except Exception as e:
             print(f"[SAT] Fetch failed: {e}")
         return None, False
     else:
         try:
-            resp = requests.get(url, timeout=30, headers={"User-Agent": "BiharDiwas/1.0"})
+            resp = requests.get(url, timeout=55, headers={"User-Agent": "BiharDiwas/1.0"})
             ct   = resp.headers.get("content-type", "")
-            print(f"[SAT] {resp.status_code} ct={ct} url={url[:100]}")  # ← debug
-            if resp.status_code == 200 and "image" in ct:
+            print(f"[SAT] {resp.status_code} ct={ct} size={len(resp.content)} url={url[:120]}")
+            if resp.status_code == 200 and "image" in ct and len(resp.content) > 10_000:
                 b64 = base64.b64encode(resp.content).decode("utf-8")
                 return f"data:{mime};base64,{b64}", True
+            # Print first 300 bytes of response to diagnose WMS errors / geo-blocks
+            print(f"[SAT] Non-image response: {resp.content[:300]}")
         except Exception as e:
             print(f"[SAT] Fetch failed: {e}")
         return None, False
+@app.route("/api/debug_ridam")
+def debug_ridam():
+    """Test RIDAM directly — visit /api/debug_ridam?year=2005 in browser to diagnose."""
+    year = int(request.args.get("year", 2005))
+    bbox = compute_padded_bbox(None)   # use default Bihar bbox
+    url, label = get_ridam_url(year, bbox)
+    try:
+        resp = requests.get(url, timeout=55, headers={"User-Agent": "BiharDiwas/1.0"})
+        ct   = resp.headers.get("content-type", "")
+        return jsonify({
+            "url":         url,
+            "status":      resp.status_code,
+            "content_type": ct,
+            "size_bytes":  len(resp.content),
+            "body_preview": resp.content[:500].decode("utf-8", errors="replace"),
+            "is_image":    "image" in ct,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e), "url": url})
+
 
 
 

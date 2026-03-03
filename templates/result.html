@@ -303,7 +303,7 @@
     }
     @keyframes drawPath { to{stroke-dashoffset:0} }
 
-    /* ── SKELETON LOADER ── */
+    /* SKELETON LOADER */
     .sat-skeleton {
       position:absolute; inset:0; z-index:5;
       background:linear-gradient(135deg,#0d111c 0%,#12162a 50%,#0d111c 100%);
@@ -311,7 +311,6 @@
       border-radius:20px; transition:opacity .8s ease, visibility .8s ease;
     }
     .sat-skeleton.hidden { opacity:0; visibility:hidden; pointer-events:none; }
-
     .sk-orbit {
       position:relative; width:56px; height:56px;
       display:flex; align-items:center; justify-content:center;
@@ -329,11 +328,8 @@
     @keyframes skSpin { to{transform:rotate(360deg)} }
     .sk-icon { font-size:1.6rem; position:relative; z-index:1; animation:skIconPulse 2s ease-in-out infinite; }
     @keyframes skIconPulse { 0%,100%{opacity:.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.1)} }
-
-    .sk-text { font-size:.7rem; color:rgba(255,255,255,.35); font-weight:700; text-transform:uppercase; letter-spacing:1px; }
-    .sk-year { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:900; color:rgba(255,153,51,.3); }
-
-    /* Shimmer bar */
+    .sk-text   { font-size:.7rem; color:rgba(255,255,255,.35); font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+    .sk-year   { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:900; color:rgba(255,153,51,.3); }
     .sk-shimmer {
       width:80px; height:4px; border-radius:4px;
       background:linear-gradient(90deg,rgba(255,153,51,.1),rgba(255,153,51,.35),rgba(255,153,51,.1));
@@ -387,7 +383,7 @@
     @keyframes srcPulse { 0%,100%{box-shadow:0 4px 14px rgba(0,0,0,.6)} 50%{box-shadow:0 4px 18px rgba(234,88,12,.55),0 0 28px rgba(234,88,12,.2)} }
 
     .sat-divider { flex-shrink:0; display:flex; align-items:center; gap:10px; }
-    .sat-divider-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(234,88,12,.3),transparent); }
+    .sat-divider-line  { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(234,88,12,.3),transparent); }
     .sat-divider-label {
       font-size:.65rem; font-weight:700; color:var(--text-tertiary);
       text-transform:uppercase; letter-spacing:1px;
@@ -421,7 +417,6 @@
   </div>
 
   <div id="page">
-
     <!-- ══ LEFT ══ -->
     <div class="left-column">
       <section class="hero-section">
@@ -509,7 +504,6 @@
 
           <!-- ── Birth Year Card ── -->
           <div class="sat-card">
-            <!-- Skeleton shown until image loads -->
             <div class="sat-skeleton" id="birthSkeleton">
               <div class="sk-orbit">
                 <div class="sk-ring"></div>
@@ -584,7 +578,7 @@
     </div>
   </div>
 
-    <script>
+  <script>
   // ═══ CONFIG FROM FLASK ═══
   const EVENTS     = {{ events | tojson }};
   const BASE_TL_MS = {{ tl_interval }};
@@ -617,8 +611,14 @@
   // ═══ WMS URL BUILDERS ═══
   const EOX_AVAIL = [2016,2017,2018,2019,2020,2021,2022,2023,2024];
 
+  // WMS 1.1.1 SRS:EPSG:4326 — axis order lng,lat
   function bboxParam() {
     return `${BBOX.minLng},${BBOX.minLat},${BBOX.maxLng},${BBOX.maxLat}`;
+  }
+
+  // WMS 1.3.0 CRS:EPSG:4326 — axis order lat,lng (RIDAM requirement)
+  function bboxParamLatLon() {
+    return `${BBOX.minLat},${BBOX.minLng},${BBOX.maxLat},${BBOX.maxLng}`;
   }
 
   function baseQuery() {
@@ -632,25 +632,48 @@
       : (EOX_AVAIL.includes(year) ? year : (EOX_AVAIL.filter(v => v <= year).pop() || LATEST));
     return {
       url:   `https://tiles.maps.eox.at/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=s2cloudless-${y}${baseQuery()}`,
-      label: `📡 Sentinel-2`
+      label: '📡 Sentinel-2'
     };
   }
 
   function getModisUrl(year) {
-    const y = Math.min(Math.max(year, 2000), 2023); // MODIS safe range
+    const y = Math.min(Math.max(year, 2000), 2023);
     return {
       url:   `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&TIME=${y}-03-15${baseQuery()}`,
       label: '📡 MODIS Terra'
     };
   }
 
-  // function getBirthSrc(year) {
-  //   return year >= 2016 ? getSentinelUrl(year) : getModisUrl(year);
-  // }
-function getBirthSrc(year) {
-  if (year >= 1997 && year <= 2016) return getRidamUrl(year);
-  return year >= 2016 ? getSentinelUrl(year) : getModisUrl(year);
-}
+  // ── NEW: RIDAM AWiFS (ISRO/SAC) — 1997 to 2016, Dec 31 of each year ──
+  function getRidamUrl(year) {
+    const date = `${year}1231`;
+    const args = [
+      `r_dataset_id:T0S1P11`, `g_dataset_id:T0S1P11`, `b_dataset_id:T0S1P11`,
+      `r_from_time:${date}`,   `r_to_time:${date}`,
+      `g_from_time:${date}`,   `g_to_time:${date}`,
+      `b_from_time:${date}`,   `b_to_time:${date}`,
+      `r_index:1`, `g_index:2`, `b_index:3`,
+      `r_max:50`,  `g_max:50`,  `b_max:50`
+    ].join(';');
+    return {
+      url: `https://vedas.sac.gov.in/ridam/wms`
+         + `?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap`
+         + `&FORMAT=image/png&TRANSPARENT=true`
+         + `&name=RIDAM_RGB&layers=T0S0M1&PROJECTION=EPSG:4326`
+         + `&ARGS=${encodeURIComponent(args)}`
+         + `&WIDTH=${W_RES}&HEIGHT=${H_RES}`
+         + `&CRS=EPSG:4326&STYLES=`
+         + `&BBOX=${bboxParamLatLon()}`,
+      label: `📡 RIDAM AWiFS ${year}`
+    };
+  }
+
+  // ── UPDATED: routes 1997–2016 to RIDAM ──
+  function getBirthSrc(year) {
+    if (year >= 1997 && year <= 2016) return getRidamUrl(year);
+    if (year >= 2016) return getSentinelUrl(year);
+    return getModisUrl(year); // pre-1997 fallback
+  }
 
   function getCurrentSrc() {
     return getSentinelUrl(2026); // clamps to s2cloudless-2024
@@ -661,16 +684,12 @@ function getBirthSrc(year) {
     const primary  = type === 'current' ? getCurrentSrc() : getBirthSrc(year);
     const fallback = getModisUrl(Math.min(Math.max(year, 2000), 2023));
 
-
-
     srcEl.textContent = primary.label;
 
     function tryLoad(urlObj, isFallback) {
-      // ─── KEY FIX: NO crossOrigin ───
-      // EOX + NASA GIBS don't send CORS headers.
+      // KEY FIX: NO crossOrigin — EOX + NASA GIBS + RIDAM don't send CORS headers.
       // Setting crossOrigin='anonymous' causes onload to never fire.
       const img = new Image();
-      // Do NOT set img.crossOrigin
 
       img.onload = () => {
         imgEl.src = img.src;
@@ -731,7 +750,7 @@ function getBirthSrc(year) {
       const cImg = document.getElementById('currentImg');
       const bSvg = document.getElementById('birthMapOverlay');
       const cSvg = document.getElementById('currentMapOverlay');
-      // ─── KEY FIX: check .loaded class, not .src ───
+      // KEY FIX: check .loaded class, not .src
       if (bImg.classList.contains('loaded')) drawOverlay(geoJsonData, bSvg, BBOX);
       if (cImg.classList.contains('loaded')) drawOverlay(geoJsonData, cSvg, BBOX);
     } catch(e) { console.warn('[GeoJSON]', e); }
@@ -835,35 +854,6 @@ function getBirthSrc(year) {
     }, 360);
   }
 
-  // For WMS 1.3.0 EPSG:4326 — axis order is minLat,minLng,maxLat,maxLng
-function bboxParamLatLon() {
-  return `${BBOX.minLat},${BBOX.minLng},${BBOX.maxLat},${BBOX.maxLng}`;
-}
-function getRidamUrl(year) {
-  const date = `${year}1231`; // always Dec 31
-  const args = [
-    `r_dataset_id:T0S1P11`, `g_dataset_id:T0S1P11`, `b_dataset_id:T0S1P11`,
-    `r_from_time:${date}`,   `r_to_time:${date}`,
-    `g_from_time:${date}`,   `g_to_time:${date}`,
-    `b_from_time:${date}`,   `b_to_time:${date}`,
-    `r_index:1`, `g_index:2`, `b_index:3`,
-    `r_max:50`,  `g_max:50`,  `b_max:50`
-  ].join(';');
-
-  return {
-    url: `https://vedas.sac.gov.in/ridam/wms?SERVICE=WMS&VERSION=1.3.0`
-       + `&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=true`
-       + `&name=RIDAM_RGB&layers=T0S0M1&PROJECTION=EPSG:4326`
-       + `&ARGS=${encodeURIComponent(args)}`
-       + `&WIDTH=${WRES}&HEIGHT=${HRES}`
-       + `&CRS=EPSG:4326&STYLES=`
-       + `&BBOX=${bboxParamLatLon()}`,
-    label: `RIDAM (ISRO/SAC) ${year}`
-  };
-}
-
-
-
   function resetProgress() {
     clearTimeout(autoTimer);
     const fill = document.getElementById('progressFill');
@@ -899,8 +889,7 @@ function getRidamUrl(year) {
       else if (e.key==='ArrowLeft')  { prevEvent(); }
     });
   }
-</script>
-
+  </script>
 
 </body>
 </html>

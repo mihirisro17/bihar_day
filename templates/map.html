@@ -38,14 +38,22 @@
     .step.done{background:rgba(255,215,0,.5);}
     .step.active{background:linear-gradient(90deg,#ff6b35,#ffd700);}
 
-    /* Breadcrumb bar */
-    #selBar{position:relative;z-index:10;flex-shrink:0;padding:6px 24px;background:rgba(0,0,0,.18);border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:32px;}
-    .sel-crumb{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:.68rem;font-weight:500;flex:1;min-width:0;}
-    .crumb-item{color:rgba(255,255,255,.3);}
-    .crumb-item.done{color:rgba(255,215,0,.65);cursor:pointer;text-decoration:underline dotted;}
+    /* Status bar */
+    #statusBar{position:relative;z-index:10;flex-shrink:0;padding:8px 24px;background:rgba(255,215,0,.04);border-bottom:1px solid rgba(255,215,0,.08);display:flex;align-items:center;gap:10px;min-height:36px;}
+    #statusDot{width:8px;height:8px;border-radius:50%;background:rgba(255,215,0,.3);flex-shrink:0;transition:all .3s;}
+    #statusBar.picked #statusDot{background:#ffd700;box-shadow:0 0 10px #ffd700;}
+    #statusTxt{font-size:.76rem;color:rgba(255,215,0,.6);letter-spacing:.5px;transition:color .3s;}
+    #statusBar.picked #statusTxt{color:#ffd700;}
+
+    /* Breadcrumb */
+    #selBar{position:relative;z-index:10;flex-shrink:0;padding:5px 24px;background:rgba(0,0,0,.18);border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:32px;}
+    .sel-crumb{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:.68rem;font-weight:500;}
+    .crumb-item{color:rgba(255,255,255,.28);}
+    .crumb-item.done{color:rgba(255,215,0,.6);cursor:pointer;}
+    .crumb-item.done:hover{color:#ffd700;text-decoration:underline dotted;}
     .crumb-item.active{color:#ffd700;font-weight:700;}
     .crumb-sep{color:rgba(255,255,255,.18);}
-    .skip-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);padding:3px 14px;border-radius:20px;font-size:.66rem;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;letter-spacing:.5px;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+    .skip-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.5);padding:3px 14px;border-radius:20px;font-size:.66rem;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;letter-spacing:.5px;transition:all .2s;white-space:nowrap;flex-shrink:0;}
     .skip-btn:hover{background:rgba(255,215,0,.1);border-color:rgba(255,215,0,.4);color:#ffd700;}
     .skip-btn.hidden{display:none!important;}
 
@@ -53,128 +61,65 @@
     #mapWrap{position:relative;flex:1;overflow:hidden;background:#06060f;cursor:crosshair;touch-action:none;-webkit-user-select:none;user-select:none;}
     #biharSvg{width:100%;height:100%;display:block;}
 
-    /* District paths */
-    .dp{fill:#12112e;stroke:rgba(255,215,0,.3);stroke-width:1;cursor:pointer;transition:fill .2s,stroke .2s,opacity .4s;}
-    .dp:hover{fill:#221d52;stroke:#ffd700;stroke-width:1.8;filter:drop-shadow(0 0 4px rgba(255,215,0,.35));}
-    .dp.active{fill:rgba(255,215,0,.15);stroke:#ffd700;stroke-width:2.2;filter:drop-shadow(0 0 8px rgba(255,215,0,.5));}
-    .dp.dim{fill:#09091c;stroke:rgba(255,215,0,.08);stroke-width:.6;opacity:.3;pointer-events:none;}
+    /* ─── District paths ─── */
+    .dp{
+      fill:#12112e;stroke:rgba(255,215,0,.3);stroke-width:1;
+      cursor:pointer;transition:fill .2s,stroke .2s,opacity .3s;
+    }
+    .dp:hover{fill:#221d52;stroke:#ffd700;stroke-width:1.8;filter:drop-shadow(0 0 4px rgba(255,215,0,.4));}
+    .dp.active{fill:rgba(255,215,0,.12);stroke:#ffd700;stroke-width:2;}
+    .dp.dim{fill:#090918;stroke:rgba(255,215,0,.07);stroke-width:.5;opacity:.25;pointer-events:none;}
 
-    /* Block overlay paths */
-    .bp{fill:rgba(14,165,233,.04);stroke:rgba(14,165,233,.5);stroke-width:.8;pointer-events:none;}
-    .bp.active-outline{fill:rgba(14,165,233,.15);stroke:#38bdf8;stroke-width:2;filter:drop-shadow(0 0 8px rgba(14,165,233,.5));}
+    /* ─── Block paths  (pointer-events:all so they're clickable) ─── */
+    .bp{
+      fill:rgba(14,165,233,.06);
+      stroke:rgba(14,165,233,.6);stroke-width:.9;
+      cursor:pointer;
+      pointer-events:all;
+      transition:fill .15s,stroke .15s,opacity .3s;
+    }
+    .bp:hover{fill:rgba(14,165,233,.22);stroke:#38bdf8;stroke-width:1.6;filter:drop-shadow(0 0 5px rgba(14,165,233,.5));}
+    .bp.active{fill:rgba(14,165,233,.2);stroke:#7dd3fc;stroke-width:2.2;filter:drop-shadow(0 0 12px rgba(14,165,233,.65));}
+    .bp.dim{fill:rgba(14,165,233,.02);stroke:rgba(14,165,233,.12);opacity:.25;pointer-events:none;}
 
-    /* Panchayat overlay paths */
-    .pp{fill:rgba(16,185,129,.04);stroke:rgba(16,185,129,.5);stroke-width:.6;pointer-events:none;}
-    .pp.active-outline{fill:rgba(16,185,129,.2);stroke:#34d399;stroke-width:1.8;filter:drop-shadow(0 0 8px rgba(16,185,129,.5));}
+    /* ─── Panchayat paths (pointer-events:all) ─── */
+    .pp{
+      fill:rgba(16,185,129,.05);
+      stroke:rgba(16,185,129,.65);stroke-width:.6;
+      cursor:pointer;
+      pointer-events:all;
+      transition:fill .15s,stroke .15s;
+    }
+    .pp:hover{fill:rgba(16,185,129,.24);stroke:#34d399;stroke-width:1.3;filter:drop-shadow(0 0 5px rgba(16,185,129,.5));}
+    .pp.active{fill:rgba(16,185,129,.28);stroke:#6ee7b7;stroke-width:1.8;filter:drop-shadow(0 0 10px rgba(16,185,129,.7));}
 
     /* Tooltip */
     #mapTip{position:absolute;display:none;background:rgba(8,8,32,.96);border:1px solid rgba(255,215,0,.6);border-radius:9px;color:#ffd700;font-size:.76rem;font-weight:700;padding:5px 13px;pointer-events:none;z-index:5;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.65);}
+    #mapTip.tip-block{border-color:rgba(14,165,233,.7);color:#38bdf8;}
+    #mapTip.tip-panch{border-color:rgba(16,185,129,.7);color:#34d399;}
 
     /* Mini loader */
-    #miniLoader{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:6;background:rgba(5,5,25,.92);border:1px solid rgba(255,215,0,.3);border-radius:20px;padding:5px 16px;display:flex;align-items:center;gap:8px;font-size:.72rem;color:rgba(255,215,0,.85);opacity:0;pointer-events:none;transition:opacity .3s;white-space:nowrap;}
+    #miniLoader{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:6;background:rgba(5,5,25,.92);border:1px solid rgba(255,215,0,.3);border-radius:20px;padding:6px 18px;display:flex;align-items:center;gap:8px;font-size:.72rem;color:rgba(255,215,0,.85);opacity:0;pointer-events:none;transition:opacity .3s;white-space:nowrap;}
     #miniLoader.show{opacity:1;}
-    #miniLoader .ms{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,215,0,.2);border-top-color:#ffd700;animation:spin .7s linear infinite;flex-shrink:0;}
+    #miniLoader .ms{width:13px;height:13px;border-radius:50%;border:2px solid rgba(255,215,0,.2);border-top-color:#ffd700;animation:spin .7s linear infinite;flex-shrink:0;}
+
+    /* Layer legend — bottom left */
+    #legend{position:absolute;left:14px;bottom:60px;z-index:4;display:flex;flex-direction:column;gap:5px;}
+    .leg{display:none;align-items:center;gap:7px;font-size:.64rem;font-weight:600;color:rgba(255,255,255,.5);background:rgba(5,5,20,.75);padding:4px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.07);}
+    .leg.show{display:flex;}
+    .leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
 
     /* Zoom */
     #mapZoom{position:absolute;right:14px;bottom:20px;display:flex;flex-direction:column;gap:4px;z-index:4;}
     .mzb{width:30px;height:30px;background:rgba(10,10,40,.9);border:1px solid rgba(255,215,0,.25);border-radius:8px;color:rgba(255,215,0,.8);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:monospace;touch-action:manipulation;}
     .mzb:hover{background:rgba(255,215,0,.15);border-color:#ffd700;color:#ffd700;}
 
-    /* Map loader */
+    /* Full-screen loader */
     #mapLoader{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#06060f;z-index:3;}
     #mapLoader .spin{width:36px;height:36px;border-radius:50%;border:3px solid rgba(255,215,0,.15);border-top-color:#ffd700;animation:spin .8s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg)}}
     #mapLoader p{color:rgba(255,215,0,.5);font-size:.78rem;letter-spacing:1px;}
     #mapLoader.hidden{display:none;}
-
-    /* ══════════════════════════════════════════════
-       BOTTOM SELECTION PANEL
-    ══════════════════════════════════════════════ */
-    #selPanel{
-      position:absolute;
-      bottom:0;left:0;right:0;
-      z-index:20;
-      background:rgba(6,6,22,.97);
-      backdrop-filter:blur(24px);
-      border-top:1px solid rgba(255,215,0,.18);
-      border-radius:18px 18px 0 0;
-      padding:0 0 env(safe-area-inset-bottom,0);
-      max-height:58vh;
-      display:flex;
-      flex-direction:column;
-      transform:translateY(110%);
-      transition:transform .45s cubic-bezier(.34,1.28,.64,1);
-      box-shadow:0 -10px 50px rgba(0,0,0,.6);
-    }
-    #selPanel.show{transform:translateY(0);}
-
-    /* drag handle */
-    .panel-handle{width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,.15);margin:10px auto 6px;}
-
-    .panel-header{display:flex;align-items:center;gap:10px;padding:0 16px 8px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06);}
-    .panel-back{background:none;border:none;color:rgba(255,215,0,.7);font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;padding:4px 0;display:flex;align-items:center;gap:4px;white-space:nowrap;flex-shrink:0;transition:color .2s;}
-    .panel-back:hover{color:#ffd700;}
-    .panel-back.hidden{display:none!important;}
-    .panel-title{flex:1;font-size:.82rem;font-weight:700;color:#ffd700;letter-spacing:.3px;}
-    .panel-count{font-size:.65rem;color:rgba(255,255,255,.3);white-space:nowrap;}
-
-    /* Search */
-    .panel-search{
-      flex-shrink:0;
-      margin:8px 14px 6px;
-      padding:8px 14px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.1);
-      border-radius:10px;
-      color:#fff;
-      font-size:.78rem;
-      font-family:'Poppins',sans-serif;
-      outline:none;
-      transition:border .2s;
-    }
-    .panel-search::placeholder{color:rgba(255,255,255,.25);}
-    .panel-search:focus{border-color:rgba(255,215,0,.4);}
-
-    /* Chips grid */
-    #panelList{
-      flex:1;
-      overflow-y:auto;
-      padding:6px 14px 14px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-content:flex-start;
-    }
-    #panelList::-webkit-scrollbar{width:4px;}
-    #panelList::-webkit-scrollbar-thumb{background:rgba(255,215,0,.2);border-radius:2px;}
-
-    .chip{
-      padding:7px 15px;
-      border-radius:20px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.04);
-      color:rgba(255,255,255,.75);
-      font-size:.73rem;
-      font-weight:600;
-      font-family:'Poppins',sans-serif;
-      cursor:pointer;
-      transition:all .2s;
-      white-space:nowrap;
-      letter-spacing:.2px;
-    }
-    .chip:hover{background:rgba(255,215,0,.12);border-color:rgba(255,215,0,.45);color:#ffd700;}
-    .chip.block-chip:hover{background:rgba(14,165,233,.15);border-color:rgba(14,165,233,.5);color:#38bdf8;}
-    .chip.panch-chip:hover{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.5);color:#34d399;}
-    .chip.selected{background:rgba(255,215,0,.2);border-color:#ffd700;color:#ffd700;}
-    .chip.block-chip.selected{background:rgba(14,165,233,.2);border-color:#38bdf8;color:#38bdf8;}
-    .chip.panch-chip.selected{background:rgba(16,185,129,.2);border-color:#34d399;color:#34d399;}
-
-    /* Empty state */
-    .panel-empty{width:100%;text-align:center;padding:24px;color:rgba(255,255,255,.25);font-size:.75rem;}
-
-    /* Panel loading state */
-    .panel-loading{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:24px;color:rgba(255,215,0,.5);font-size:.76rem;}
-    .panel-loading .ps{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,215,0,.2);border-top-color:#ffd700;animation:spin .7s linear infinite;}
 
     @media(max-width:768px){
       .mzb{width:44px;height:44px;font-size:1.2rem;border-radius:10px;}
@@ -182,590 +127,552 @@
       .top-title p{display:none;}
       #topBar{padding:10px 16px 8px;}
       #selBar{padding:4px 16px;}
-      #selPanel{max-height:62vh;}
     }
   </style>
 </head>
 <body>
-  <canvas id="stars"></canvas>
-  <div class="orb orb1"></div>
-  <div class="orb orb2"></div>
-  <div id="dS"></div><div id="dLt"></div><div id="dL"></div><div id="dR"></div>
+<canvas id="stars"></canvas>
+<div class="orb orb1"></div><div class="orb orb2"></div>
+<div id="dS"></div><div id="dLt"></div><div id="dL"></div><div id="dR"></div>
 
-  <!-- Hidden form -->
-  <form id="mapForm" action="/analyse" method="POST" style="display:none">
-    <input type="hidden" name="name"        value="{{ name }}"/>
-    <input type="hidden" name="birth_year"  value="{{ birth_year }}"/>
-    <input type="hidden" name="district"    id="distHidden"/>
-    <input type="hidden" name="block"       id="blockHidden"/>
-    <input type="hidden" name="panchayat"   id="panchHidden"/>
-    <input type="hidden" name="bbox"        id="bboxHidden"/>
-    <input type="hidden" name="block_bbox"  id="blockBboxHidden"/>
-    <input type="hidden" name="panch_bbox"  id="panchBboxHidden"/>
-  </form>
+<!-- Hidden form -->
+<form id="mapForm" action="/analyse" method="POST" style="display:none">
+  <input type="hidden" name="name"        value="{{ name }}"/>
+  <input type="hidden" name="birth_year"  value="{{ birth_year }}"/>
+  <input type="hidden" name="district"    id="fDistrict"/>
+  <input type="hidden" name="block"       id="fBlock"/>
+  <input type="hidden" name="panchayat"   id="fPanchayat"/>
+  <input type="hidden" name="bbox"        id="fBbox"/>
+  <input type="hidden" name="block_bbox"  id="fBlockBbox"/>
+  <input type="hidden" name="panch_bbox"  id="fPanchBbox"/>
+</form>
 
-  <!-- Top bar -->
-  <div id="topBar">
-    <a href="/" class="back-link">&#8592; Back</a>
-    <div class="top-title">
-      <h2>Hello {{ name }} &#x1F44B;</h2>
-      <p id="stepHint">Tap your district on the map</p>
+<!-- Top bar -->
+<div id="topBar">
+  <a href="/" class="back-link">&#8592; Back</a>
+  <div class="top-title">
+    <h2>Hello {{ name }} &#x1F44B;</h2>
+    <p id="stepHint">Tap your district on the map</p>
+  </div>
+  <div class="steps">
+    <div class="step active" id="s1"></div>
+    <div class="step"        id="s2"></div>
+    <div class="step"        id="s3"></div>
+  </div>
+</div>
+
+<!-- Status bar -->
+<div id="statusBar">
+  <div id="statusDot"></div>
+  <span id="statusTxt">Loading Bihar map…</span>
+</div>
+
+<!-- Breadcrumb + skip -->
+<div id="selBar">
+  <div class="sel-crumb" id="selCrumb">
+    <span class="crumb-item active">&#128506; District</span>
+  </div>
+  <button class="skip-btn hidden" id="skipBtn" onclick="skipSubmit()">Continue &#8594;</button>
+</div>
+
+<!-- Map -->
+<div id="mapWrap">
+  <svg id="biharSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div id="mapTip"></div>
+  <div id="miniLoader"><div class="ms"></div><span id="mlTxt">Loading…</span></div>
+
+  <!-- Layer legend -->
+  <div id="legend">
+    <div class="leg" id="legBlock">
+      <div class="leg-dot" style="background:rgba(14,165,233,.9)"></div>
+      Tap a block
     </div>
-    <div class="steps">
-      <div class="step active" id="s1"></div>
-      <div class="step"        id="s2"></div>
-      <div class="step"        id="s3"></div>
+    <div class="leg" id="legPanch">
+      <div class="leg-dot" style="background:rgba(16,185,129,.9)"></div>
+      Tap a panchayat
     </div>
   </div>
 
-  <!-- Status / breadcrumb bar -->
-  <div id="selBar">
-    <div class="sel-crumb" id="selCrumb">
-      <span class="crumb-item active">&#128506; District</span>
-    </div>
-    <button class="skip-btn hidden" id="skipBtn" onclick="skipToSubmit()">
-      Continue &#8594;
-    </button>
+  <div id="mapZoom">
+    <button class="mzb" id="zIn">+</button>
+    <button class="mzb" id="zRst">&#8962;</button>
+    <button class="mzb" id="zOut">&minus;</button>
   </div>
 
-  <!-- Map -->
-  <div id="mapWrap">
-    <svg id="biharSvg" xmlns="http://www.w3.org/2000/svg"></svg>
-    <div id="mapTip"></div>
-    <div id="miniLoader"><div class="ms"></div><span id="miniLoaderTxt">Loading…</span></div>
-    <div id="mapZoom">
-      <button class="mzb" id="zIn">+</button>
-      <button class="mzb" id="zRst">&#8962;</button>
-      <button class="mzb" id="zOut">&minus;</button>
-    </div>
-    <div id="mapLoader"><div class="spin"></div><p>Loading Bihar map…</p></div>
+  <div id="mapLoader"><div class="spin"></div><p>Loading Bihar map…</p></div>
+</div>
 
-    <!-- ══ Bottom slide-up selection panel ══ -->
-    <div id="selPanel">
-      <div class="panel-handle"></div>
-      <div class="panel-header">
-        <button class="panel-back hidden" id="panelBack" onclick="panelGoBack()">&#8592; Back</button>
-        <div class="panel-title" id="panelTitle">Select Block</div>
-        <div class="panel-count" id="panelCount"></div>
-      </div>
-      <input type="text" class="panel-search" id="panelSearch"
-             placeholder="Search…" oninput="filterChips(this.value)" autocomplete="off"/>
-      <div id="panelList"></div>
-    </div>
-  </div>
+<script>
+/* ── Stars ── */
+(function(){
+  const c=document.getElementById('stars'),x=c.getContext('2d');let s=[];
+  function r(){c.width=innerWidth;c.height=innerHeight;s=Array.from({length:160},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.4+.2,a:Math.random(),da:(Math.random()-.5)*.01}));}
+  function d(){x.clearRect(0,0,c.width,c.height);s.forEach(p=>{p.a=Math.max(.05,Math.min(1,p.a+p.da));if(p.a<=.05||p.a>=1)p.da*=-1;x.beginPath();x.arc(p.x,p.y,p.r,0,2*Math.PI);x.fillStyle=`rgba(255,215,0,${p.a})`;x.fill();});requestAnimationFrame(d);}
+  window.addEventListener('resize',r);r();d();
+})();
 
-  <script>
-  /* ── Stars ── */
-  (function(){
-    const c=document.getElementById('stars'),x=c.getContext('2d');let s=[];
-    function r(){c.width=innerWidth;c.height=innerHeight;s=Array.from({length:160},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.4+.2,a:Math.random(),da:(Math.random()-.5)*.01}));}
-    function d(){x.clearRect(0,0,c.width,c.height);s.forEach(p=>{p.a=Math.max(.05,Math.min(1,p.a+p.da));if(p.a<=.05||p.a>=1)p.da*=-1;x.beginPath();x.arc(p.x,p.y,p.r,0,2*Math.PI);x.fillStyle=`rgba(255,215,0,${p.a})`;x.fill();});requestAnimationFrame(d);}
-    window.addEventListener('resize',r);r();d();
-  })();
+/* ══════════════════════════════════════════════════
+   GLOBALS
+══════════════════════════════════════════════════ */
+const NS='http://www.w3.org/2000/svg';
+let svgEl,vbX=0,vbY=0,vbW=800,vbH=500,mapReady=false,projFn=null;
 
-  /* ══════════════════════════════════════════════════
-     GLOBALS
-  ══════════════════════════════════════════════════ */
-  const NS='http://www.w3.org/2000/svg';
-  let svgEl,vbX=0,vbY=0,vbW=800,vbH=500,mapReady=false,projFn=null;
+let step='district'; // 'district' | 'block' | 'panchayat'
+let selDistrict=null,selBlock=null,selPanchayat=null;
+let activeDistPath=null,activeBlockPath=null,activePanchPath=null;
 
-  let currentStep='district';
-  let selDistrict=null,selBlock=null,selPanchayat=null;
-  let activeDistPath=null;
-  const distFeatMap={},blockFeatMap={},panchFeatMap={};
-  let distGrp,blockGrp,panchGrp;
+const distFeatMap={},blockFeatMap={},panchFeatMap={};
+let distGrp,blockGrp,panchGrp;
 
-  // Currently displayed chips type: 'block' | 'panchayat'
-  let panelMode=null;
-  // All chips data (for filtering)
-  let allChips=[];
+/* ══════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════ */
+const $=id=>document.getElementById(id);
+const setStatus=(t,on=false)=>{$('statusTxt').innerHTML=t;$('statusBar').classList.toggle('picked',on);};
+const applyVB=()=>svgEl.setAttribute('viewBox',`${vbX} ${vbY} ${vbW} ${vbH}`);
+const showML=t=>{$('mlTxt').textContent=t;$('miniLoader').classList.add('show');};
+const hideML=()=>$('miniLoader').classList.remove('show');
 
-  /* ══════════════════════════════════════════════════
-     UTILITIES
-  ══════════════════════════════════════════════════ */
-  const $=id=>document.getElementById(id);
-  const setStatus=(t,picked=false)=>{ $('statusTxt').innerHTML=t; $('statusBar').classList.toggle('picked',picked); };
-  const applyVB=()=>svgEl.setAttribute('viewBox',`${vbX} ${vbY} ${vbW} ${vbH}`);
-  const showMiniLoader=t=>{ $('miniLoaderTxt').textContent=t; $('miniLoader').classList.add('show'); };
-  const hideMiniLoader=()=>$('miniLoader').classList.remove('show');
+function ringToD(ring,proj){
+  return ring.map(([lng,lat],i)=>{const[px,py]=proj(lng,lat);return(i?'L':'M')+px.toFixed(2)+' '+py.toFixed(2);}).join('')+'Z';
+}
+function geomToD(g,proj){
+  if(g.type==='Polygon')      return g.coordinates.map(r=>ringToD(r,proj)).join('');
+  if(g.type==='MultiPolygon') return g.coordinates.map(p=>p.map(r=>ringToD(r,proj)).join('')).join('');
+  return '';
+}
+function featBbox(feat){
+  let a=Infinity,b=-Infinity,c=Infinity,d=-Infinity;
+  const w=v=>{if(typeof v[0]==='number'){a=Math.min(a,v[0]);b=Math.max(b,v[0]);c=Math.min(c,v[1]);d=Math.max(d,v[1]);}else v.forEach(w);};
+  w(feat.geometry.coordinates);
+  return{minLng:a,maxLng:b,minLat:c,maxLat:d};
+}
+function propName(p){
+  return p.block_name||p.Block_Name||p.BLOCK_NAME||
+         p.panchayat_name||p.Panchayat_Name||p.PANCHAYAT_NAME||
+         p.village_name||p.name||p.NAME||'';
+}
 
-  function ringToD(ring,proj){
-    return ring.map(([lng,lat],i)=>{const[px,py]=proj(lng,lat);return(i?'L':'M')+px.toFixed(2)+' '+py.toFixed(2);}).join('')+'Z';
-  }
-  function geomToD(g,proj){
-    if(g.type==='Polygon')      return g.coordinates.map(r=>ringToD(r,proj)).join('');
-    if(g.type==='MultiPolygon') return g.coordinates.map(p=>p.map(r=>ringToD(r,proj)).join('')).join('');
-    return '';
-  }
-  function getFeatureBbox(feat){
-    let minLng=Infinity,maxLng=-Infinity,minLat=Infinity,maxLat=-Infinity;
-    const cc=c=>{
-      if(typeof c[0]==='number'){minLng=Math.min(minLng,c[0]);maxLng=Math.max(maxLng,c[0]);minLat=Math.min(minLat,c[1]);maxLat=Math.max(maxLat,c[1]);}
-      else c.forEach(cc);
-    };
-    cc(feat.geometry.coordinates);
-    return{minLng,maxLng,minLat,maxLat};
-  }
-  function getPropName(p){
-    return p.block_name||p.Block_Name||p.BLOCK_NAME||p.panchayat_name||p.Panchayat_Name||p.PANCHAYAT_NAME||p.village_name||p.name||p.NAME||'';
-  }
+/* Smooth zoom */
+function animZoom(tx,ty,tw,th,dur=600){
+  const sx=vbX,sy=vbY,sw=vbW,sh=vbH;
+  const pad=Math.min(tw,th)*.13;tx-=pad;ty-=pad;tw+=pad*2;th+=pad*2;
+  const t0=performance.now();
+  (function step(now){
+    const t=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-t,3);
+    vbX=sx+(tx-sx)*e;vbY=sy+(ty-sy)*e;vbW=sw+(tw-sw)*e;vbH=sh+(th-sh)*e;applyVB();
+    if(t<1)requestAnimationFrame(step);
+  })(t0);
+}
+function zoomBbox(bbox){
+  if(!projFn)return;
+  const[x0,y0]=projFn(bbox.minLng,bbox.maxLat);
+  const[x1,y1]=projFn(bbox.maxLng,bbox.minLat);
+  animZoom(x0,y0,x1-x0,y1-y0);
+}
 
-  /* Smooth animated zoom into SVG rect */
-  function animateZoom(tx,ty,tw,th,dur=600){
-    const sx=vbX,sy=vbY,sw=vbW,sh=vbH;
-    const pad=Math.min(tw,th)*.12;tx-=pad;ty-=pad;tw+=pad*2;th+=pad*2;
-    const t0=performance.now();
-    (function step(now){
-      const t=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-t,3);
-      vbX=sx+(tx-sx)*e;vbY=sy+(ty-sy)*e;vbW=sw+(tw-sw)*e;vbH=sh+(th-sh)*e;applyVB();
-      if(t<1)requestAnimationFrame(step);
-    })(t0);
-  }
-  function zoomToGeoBbox(bbox){
-    if(!projFn)return;
-    const[x0,y0]=projFn(bbox.minLng,bbox.maxLat);
-    const[x1,y1]=projFn(bbox.maxLng,bbox.minLat);
-    animateZoom(x0,y0,x1-x0,y1-y0);
-  }
+/* Step bar */
+function updSteps(){
+  const hints={district:'Tap your district on the map',block:'Tap your block on the map',panchayat:'Tap your panchayat on the map'};
+  $('stepHint').textContent=hints[step];
+  const map={district:['active','',''],block:['done','active',''],panchayat:['done','done','active']};
+  const cls=map[step];
+  ['s1','s2','s3'].forEach((id,i)=>$(id).className='step '+cls[i]);
+}
 
-  /* Steps */
-  function updateSteps(){
-    const hints={district:'Tap your district on the map',block:'Pick your block from the list (or tap map)',panchayat:'Pick your panchayat from the list (or tap map)'};
-    $('stepHint').textContent=hints[currentStep]||'';
-    const cfg={district:[['active'],[''],['']],block:[['done'],['active'],['']],panchayat:[['done'],['done'],['active']]};
-    const cls=cfg[currentStep];
-    ['s1','s2','s3'].forEach((id,i)=>$(id).className='step '+(cls[i][0]||''));
-  }
-
-  /* Breadcrumb */
-  function updateCrumb(){
-    let h='';
-    if(selDistrict){
-      h+=`<span class="crumb-item done" onclick="resetToDistrict()">&#128506; ${selDistrict}</span>`;
-      if(selBlock){
+/* Breadcrumb */
+function updCrumb(){
+  let h='';
+  if(selDistrict){
+    h+=`<span class="crumb-item done" onclick="backToDistrict()">&#128506; ${selDistrict}</span>`;
+    if(selBlock){
+      h+=`<span class="crumb-sep">›</span>`;
+      h+=`<span class="crumb-item done" onclick="backToBlock()">&#127968; ${selBlock}</span>`;
+      if(selPanchayat){
         h+=`<span class="crumb-sep">›</span>`;
-        h+=`<span class="crumb-item done" onclick="resetToBlock()">&#127968; ${selBlock}</span>`;
-        if(selPanchayat){
-          h+=`<span class="crumb-sep">›</span>`;
-          h+=`<span class="crumb-item active">&#127807; ${selPanchayat}</span>`;
-        } else {
-          h+=`<span class="crumb-sep">›</span>`;
-          h+=`<span class="crumb-item active">&#127807; Panchayat?</span>`;
-        }
+        h+=`<span class="crumb-item active">&#127807; ${selPanchayat}</span>`;
       } else {
         h+=`<span class="crumb-sep">›</span>`;
-        h+=`<span class="crumb-item active">&#127968; Block?</span>`;
+        h+=`<span class="crumb-item active">&#127807; tap panchayat</span>`;
       }
     } else {
-      h='<span class="crumb-item active">&#128506; District?</span>';
+      h+=`<span class="crumb-sep">›</span>`;
+      h+=`<span class="crumb-item active">&#127968; tap block</span>`;
     }
-    $('selCrumb').innerHTML=h;
+  } else {
+    h='<span class="crumb-item active">&#128506; tap district</span>';
   }
+  $('selCrumb').innerHTML=h;
+}
 
-  /* Door → submit */
-  function triggerSubmit(){
-    setTimeout(()=>$('dS').classList.add('v'),60);
-    setTimeout(()=>{$('dL').classList.add('v');$('dR').classList.add('v');requestAnimationFrame(()=>requestAnimationFrame(()=>{$('dL').classList.add('o');$('dR').classList.add('o');}));},160);
-    setTimeout(()=>$('dLt').classList.add('v'),300);
-    setTimeout(()=>$('mapForm').submit(),1000);
-  }
-  function skipToSubmit(){
-    if(!selDistrict)return;
-    setStatus('Opening result…',true);
-    triggerSubmit();
-  }
+/* Door → submit */
+function triggerSubmit(){
+  setTimeout(()=>$('dS').classList.add('v'),60);
+  setTimeout(()=>{$('dL').classList.add('v');$('dR').classList.add('v');requestAnimationFrame(()=>requestAnimationFrame(()=>{$('dL').classList.add('o');$('dR').classList.add('o');}));},160);
+  setTimeout(()=>$('dLt').classList.add('v'),300);
+  setTimeout(()=>$('mapForm').submit(),1000);
+}
+function skipSubmit(){if(selDistrict){setStatus('Opening…',true);triggerSubmit();}}
 
-  /* ══════════════════════════════════════════════════
-     BOTTOM PANEL
-  ══════════════════════════════════════════════════ */
-  function showPanel(title,count,mode,backVisible){
-    panelMode=mode;
-    $('panelTitle').textContent=title;
-    $('panelCount').textContent=count?`${count} found`:'';
-    $('panelBack').classList.toggle('hidden',!backVisible);
-    $('panelSearch').value='';
-    $('selPanel').classList.add('show');
-  }
-  function hidePanel(){ $('selPanel').classList.remove('show'); }
+/* ══════════════════════════════════════════════════
+   BACK NAVIGATION
+══════════════════════════════════════════════════ */
+function backToDistrict(){
+  selBlock=null;selPanchayat=null;step='block';
+  $('fBlock').value='';$('fPanchayat').value='';
+  $('fBlockBbox').value='';$('fPanchBbox').value='';
+  blockGrp.innerHTML='';panchGrp.innerHTML='';
+  Object.keys(blockFeatMap).forEach(k=>delete blockFeatMap[k]);
+  Object.keys(panchFeatMap).forEach(k=>delete panchFeatMap[k]);
+  activeBlockPath=null;activePanchPath=null;
+  $('legBlock').classList.remove('show');
+  $('legPanch').classList.remove('show');
+  $('skipBtn').textContent='Skip →';
+  updSteps();updCrumb();
+  // zoom back to district
+  if(selDistrict&&distFeatMap[selDistrict])zoomBbox(featBbox(distFeatMap[selDistrict]));
+  loadBlocks(selDistrict);
+}
+function backToBlock(){
+  selPanchayat=null;step='panchayat';
+  $('fPanchayat').value='';$('fPanchBbox').value='';
+  panchGrp.innerHTML='';
+  Object.keys(panchFeatMap).forEach(k=>delete panchFeatMap[k]);
+  activePanchPath=null;
+  $('legPanch').classList.remove('show');
+  updSteps();updCrumb();
+  if(selBlock&&blockFeatMap[selBlock])zoomBbox(featBbox(blockFeatMap[selBlock]));
+  loadPanchayats(selDistrict,selBlock);
+}
 
-  function filterChips(q){
-    const lq=q.toLowerCase().trim();
-    $('panelList').querySelectorAll('.chip').forEach(ch=>{
-      ch.style.display=(!lq||ch.dataset.name.toLowerCase().includes(lq))?'':'none';
+/* ══════════════════════════════════════════════════
+   STEP 1 — DISTRICT
+══════════════════════════════════════════════════ */
+function onDistrictClick(path,feat){
+  // Highlight selected, dim rest
+  distGrp.querySelectorAll('.dp').forEach(p=>p.setAttribute('class',p===path?'dp active':'dp dim'));
+  activeDistPath=path;path.parentNode.appendChild(path);
+
+  const name=feat.properties.name;
+  selDistrict=name;selBlock=null;selPanchayat=null;step='block';
+
+  $('fDistrict').value=name;$('fBlock').value='';$('fPanchayat').value='';
+  $('fPanchBbox').value='';
+  $('fBbox').value=JSON.stringify(featBbox(feat));
+  $('fBlockBbox').value='';
+  $('mapTip').style.display='none';
+
+  $('skipBtn').classList.remove('hidden');
+  $('skipBtn').textContent='Skip blocks →';
+  updSteps();updCrumb();
+
+  // Clear child layers
+  blockGrp.innerHTML='';panchGrp.innerHTML='';
+  Object.keys(blockFeatMap).forEach(k=>delete blockFeatMap[k]);
+  Object.keys(panchFeatMap).forEach(k=>delete panchFeatMap[k]);
+  $('legBlock').classList.remove('show');$('legPanch').classList.remove('show');
+
+  zoomBbox(featBbox(feat));
+  loadBlocks(name);
+}
+
+/* ══════════════════════════════════════════════════
+   STEP 2 — BLOCKS
+══════════════════════════════════════════════════ */
+async function loadBlocks(district){
+  showML('Loading blocks…');
+  try{
+    const r=await fetch(`/api/blocks?district=${encodeURIComponent(district)}`);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const gj=await r.json();
+    if(!gj.features?.length)throw new Error('empty');
+    drawBlocks(gj);
+    setStatus(`✓ <strong>${district}</strong> — ${gj.features.length} blocks. Tap yours.`,true);
+    $('legBlock').classList.add('show');
+  }catch(e){
+    console.warn('[blocks]',e);
+    setStatus(`✓ <strong>${district}</strong> — no block data. Tap Continue.`,true);
+  }finally{hideML();}
+}
+
+function drawBlocks(gj){
+  blockGrp.innerHTML='';
+  const tip=$('mapTip'),wrap=$('mapWrap');
+
+  gj.features.forEach(feat=>{
+    const name=propName(feat.properties)||feat.properties.dtname||'Block';
+    const d=geomToD(feat.geometry,projFn);
+    if(!d)return;
+
+    const path=document.createElementNS(NS,'path');
+    path.setAttribute('d',d);
+    path.setAttribute('class','bp');
+    path.setAttribute('data-name',name);
+    path.setAttribute('data-layer','block');
+    blockFeatMap[name]=feat;
+
+    path.addEventListener('mouseenter',()=>{
+      if(path!==activeBlockPath)path.setAttribute('class','bp hover');
+      tip.className='tip-block';tip.textContent=name;tip.style.display='block';
     });
-  }
-
-  /* Render chip list */
-  function renderChips(names, chipClass, onClick){
-    allChips=names;
-    const list=$('panelList');
-    list.innerHTML='';
-    if(!names.length){
-      list.innerHTML='<div class="panel-empty">No items found</div>';
-      return;
-    }
-    names.forEach(name=>{
-      const btn=document.createElement('button');
-      btn.className=`chip ${chipClass}`;
-      btn.textContent=name;
-      btn.dataset.name=name;
-      btn.onclick=()=>onClick(name,btn);
-      list.appendChild(btn);
+    path.addEventListener('mousemove',(e)=>{
+      const rc=wrap.getBoundingClientRect();
+      tip.style.left=(e.clientX-rc.left+14)+'px';
+      tip.style.top=(e.clientY-rc.top-44)+'px';
     });
-  }
-
-  function setLoadingPanel(){
-    $('panelList').innerHTML='<div class="panel-loading"><div class="ps"></div>Loading…</div>';
-  }
-
-  /* ══════════════════════════════════════════════════
-     NAVIGATION — go back
-  ══════════════════════════════════════════════════ */
-  function panelGoBack(){
-    if(panelMode==='panchayat') resetToBlock();
-    else resetToDistrict();
-  }
-  function resetToDistrict(){
-    selBlock=null;selPanchayat=null;currentStep='block';
-    document.getElementById('blockHidden').value='';
-    document.getElementById('panchHidden').value='';
-    document.getElementById('blockBboxHidden').value='';
-    document.getElementById('panchBboxHidden').value='';
-    blockGrp.innerHTML='';panchGrp.innerHTML='';
-    updateSteps();updateCrumb();
-    openBlockPanel(selDistrict);
-  }
-  function resetToBlock(){
-    selPanchayat=null;currentStep='panchayat';
-    document.getElementById('panchHidden').value='';
-    document.getElementById('panchBboxHidden').value='';
-    panchGrp.innerHTML='';
-    updateSteps();updateCrumb();
-    openPanchayatPanel(selDistrict,selBlock);
-  }
-
-  /* ══════════════════════════════════════════════════
-     STEP 1 — DISTRICT SELECTION (map click)
-  ══════════════════════════════════════════════════ */
-  function selectDistrict(path,feat){
-    distGrp.querySelectorAll('.dp').forEach(p=>{
-      p.setAttribute('class',p===path?'dp active':'dp dim');
+    path.addEventListener('mouseleave',()=>{
+      if(path!==activeBlockPath)path.setAttribute('class','bp');
+      tip.style.display='none';
     });
-    activeDistPath=path;
-    path.parentNode.appendChild(path);
+    path.addEventListener('click',()=>onBlockClick(path,feat,name));
+    blockGrp.appendChild(path);
+  });
+}
 
+function onBlockClick(path,feat,name){
+  // Highlight selected block, dim rest
+  blockGrp.querySelectorAll('.bp').forEach(p=>p.setAttribute('class',p===path?'bp active':'bp dim'));
+  activeBlockPath=path;path.parentNode.appendChild(path);
+
+  selBlock=name;selPanchayat=null;step='panchayat';
+
+  const bbox=featBbox(feat);
+  $('fBlock').value=name;$('fPanchayat').value='';
+  $('fBlockBbox').value=JSON.stringify(bbox);$('fPanchBbox').value='';
+  $('mapTip').style.display='none';
+
+  $('skipBtn').textContent='Skip panchayat →';
+  updSteps();updCrumb();
+
+  panchGrp.innerHTML='';
+  Object.keys(panchFeatMap).forEach(k=>delete panchFeatMap[k]);
+  $('legPanch').classList.remove('show');
+
+  zoomBbox(bbox);
+  loadPanchayats(selDistrict,name);
+}
+
+/* ══════════════════════════════════════════════════
+   STEP 3 — PANCHAYATS
+══════════════════════════════════════════════════ */
+async function loadPanchayats(district,block){
+  showML('Loading panchayats…');
+  try{
+    const r=await fetch(`/api/panchayats?district=${encodeURIComponent(district)}&block=${encodeURIComponent(block)}`);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const gj=await r.json();
+    if(!gj.features?.length)throw new Error('empty');
+    drawPanchayats(gj);
+    setStatus(`✓ <strong>${block}</strong> — ${gj.features.length} panchayats. Tap yours.`,true);
+    $('legPanch').classList.add('show');
+  }catch(e){
+    console.warn('[panchayats]',e);
+    setStatus(`✓ <strong>${block}</strong> — no panchayat data. Tap Continue.`,true);
+  }finally{hideML();}
+}
+
+function drawPanchayats(gj){
+  panchGrp.innerHTML='';
+  const tip=$('mapTip'),wrap=$('mapWrap');
+
+  gj.features.forEach(feat=>{
+    const name=propName(feat.properties)||'Panchayat';
+    const d=geomToD(feat.geometry,projFn);
+    if(!d)return;
+
+    const path=document.createElementNS(NS,'path');
+    path.setAttribute('d',d);
+    path.setAttribute('class','pp');
+    path.setAttribute('data-name',name);
+    path.setAttribute('data-layer','panchayat');
+    panchFeatMap[name]=feat;
+
+    path.addEventListener('mouseenter',()=>{
+      if(path!==activePanchPath)path.setAttribute('class','pp hover');
+      tip.className='tip-panch';tip.textContent=name;tip.style.display='block';
+    });
+    path.addEventListener('mousemove',(e)=>{
+      const rc=wrap.getBoundingClientRect();
+      tip.style.left=(e.clientX-rc.left+14)+'px';
+      tip.style.top=(e.clientY-rc.top-44)+'px';
+    });
+    path.addEventListener('mouseleave',()=>{
+      if(path!==activePanchPath)path.setAttribute('class','pp');
+      tip.style.display='none';
+    });
+    path.addEventListener('click',()=>onPanchayatClick(path,feat,name));
+    panchGrp.appendChild(path);
+  });
+}
+
+function onPanchayatClick(path,feat,name){
+  panchGrp.querySelectorAll('.pp').forEach(p=>p.setAttribute('class',p===path?'pp active':'pp'));
+  activePanchPath=path;
+
+  selPanchayat=name;
+  const bbox=featBbox(feat);
+  $('fPanchayat').value=name;
+  $('fPanchBbox').value=JSON.stringify(bbox);
+  $('mapTip').style.display='none';
+
+  updCrumb();
+  setStatus(`✓ <strong>${name}</strong> — opening result…`,true);
+  zoomBbox(bbox);
+  setTimeout(triggerSubmit,450);
+}
+
+/* ══════════════════════════════════════════════════
+   INIT MAP
+══════════════════════════════════════════════════ */
+async function initMap(){
+  const wrap=$('mapWrap');
+  svgEl=$('biharSvg');
+  vbW=wrap.clientWidth||800;vbH=wrap.clientHeight||500;
+  svgEl.setAttribute('viewBox',`0 0 ${vbW} ${vbH}`);
+
+  let data;
+  try{
+    const res=await fetch('/bihar_dist_ready.geojson');
+    data=await res.json();
+  }catch(e){
+    setStatus('⚠ '+e.message);
+    $('mapLoader').innerHTML='<p style="color:#FF6B35">⚠ Failed to load map</p>';
+    return;
+  }
+
+  // Compute overall bounding box for projection
+  let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
+  const bb=c=>{
+    if(typeof c[0]==='number'){x0=Math.min(x0,c[0]);x1=Math.max(x1,c[0]);y0=Math.min(y0,c[1]);y1=Math.max(y1,c[1]);}
+    else c.forEach(bb);
+  };
+  data.features.forEach(f=>bb(f.geometry.coordinates));
+
+  const pad=28,sx=(vbW-2*pad)/(x1-x0),sy=(vbH-2*pad)/(y1-y0),sc=Math.min(sx,sy);
+  const ox=(vbW-sc*(x1-x0))/2,oy=(vbH-sc*(y1-y0))/2;
+  projFn=(lng,lat)=>[ox+(lng-x0)*sc, vbH-oy-(lat-y0)*sc];
+
+  // 3 stacked SVG groups
+  distGrp=document.createElementNS(NS,'g');distGrp.id='dg';
+  blockGrp=document.createElementNS(NS,'g');blockGrp.id='bg';
+  panchGrp=document.createElementNS(NS,'g');panchGrp.id='pg';
+
+  const tip=$('mapTip');
+
+  data.features.forEach(feat=>{
     const name=feat.properties.name;
-    selDistrict=name;selBlock=null;selPanchayat=null;currentStep='block';
+    const d=geomToD(feat.geometry,projFn);
+    if(!d)return;
 
-    $('distHidden').value=name;
-    $('blockHidden').value='';$('panchHidden').value='';
-    $('panchBboxHidden').value='';
-    const bbox=getFeatureBbox(feat);
-    $('bboxHidden').value=JSON.stringify(bbox);
-    $('blockBboxHidden').value='';
+    const path=document.createElementNS(NS,'path');
+    path.setAttribute('d',d);
+    path.setAttribute('class','dp');
+    path.setAttribute('data-name',name);
+    path.setAttribute('data-layer','district');
+    distFeatMap[name]=feat;
 
-    $('mapTip').style.display='none';
-    updateSteps();updateCrumb();
-    $('skipBtn').classList.remove('hidden');
-    $('skipBtn').textContent='Skip →';
-
-    blockGrp.innerHTML='';panchGrp.innerHTML='';
-    zoomToGeoBbox(bbox);
-
-    openBlockPanel(name);
-  }
-
-  /* ══════════════════════════════════════════════════
-     STEP 2 — BLOCK PANEL
-  ══════════════════════════════════════════════════ */
-  async function openBlockPanel(district){
-    showPanel(`${district} — Select Block`,null,'block',false);
-    setLoadingPanel();
-    try{
-      const r=await fetch(`/api/block_names?district=${encodeURIComponent(district)}`);
-      if(!r.ok)throw new Error('HTTP '+r.status);
-      const data=await r.json();
-      const blocks=data.blocks||[];
-      $('panelCount').textContent=`${blocks.length} blocks`;
-      renderChips(blocks,'block-chip',(name,btn)=>onBlockChipClick(name,btn));
-      setStatus(`✓ <strong>${district}</strong> — select your block`,true);
-
-      /* Also try to draw block outlines on map */
-      tryDrawBlockOutlines(district);
-    }catch(e){
-      console.warn('[block_names]',e);
-      $('panelList').innerHTML='<div class="panel-empty">Could not load blocks</div>';
-    }
-  }
-
-  /* Try to overlay block outlines on map — purely visual, non-blocking */
-  async function tryDrawBlockOutlines(district){
-    try{
-      const r=await fetch(`/api/blocks?district=${encodeURIComponent(district)}`);
-      if(!r.ok)return;
-      const gj=await r.json();
-      if(!gj.features?.length)return;
-      blockGrp.innerHTML='';
-      gj.features.forEach(feat=>{
-        const name=getPropName(feat.properties);
-        const d=geomToD(feat.geometry,projFn);
-        if(!d)return;
-        const path=document.createElementNS(NS,'path');
-        path.setAttribute('d',d);path.setAttribute('class','bp');
-        path.setAttribute('data-name',name);path.setAttribute('data-layer','block');
-        blockFeatMap[name]=feat;
-        blockGrp.appendChild(path);
-      });
-    }catch(e){ /* silent — list is primary */ }
-  }
-
-  /* Called when user clicks a block chip */
-  function onBlockChipClick(name,btn){
-    // Highlight chip
-    $('panelList').querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
-    btn.classList.add('selected');
-
-    selBlock=name;
-    $('blockHidden').value=name;
-
-    // Highlight block outline on map if available
-    const feat=blockFeatMap[name];
-    if(feat){
-      blockGrp.querySelectorAll('.bp').forEach(p=>p.setAttribute('class','bp'));
-      const el=blockGrp.querySelector(`[data-name="${name}"]`);
-      if(el){ el.setAttribute('class','bp active-outline'); el.parentNode.appendChild(el); }
-      const bbox=getFeatureBbox(feat);
-      $('blockBboxHidden').value=JSON.stringify(bbox);
-      zoomToGeoBbox(bbox);
-    }
-
-    // Small delay then open panchayat panel
-    setTimeout(()=>openPanchayatPanel(selDistrict,name),300);
-  }
-
-  /* ══════════════════════════════════════════════════
-     STEP 3 — PANCHAYAT PANEL
-  ══════════════════════════════════════════════════ */
-  async function openPanchayatPanel(district,block){
-    currentStep='panchayat';
-    updateSteps();updateCrumb();
-    showPanel(`${block} — Select Panchayat`,null,'panchayat',true);
-    setLoadingPanel();
-    try{
-      const r=await fetch(`/api/panchayat_names?district=${encodeURIComponent(district)}&block=${encodeURIComponent(block)}`);
-      if(!r.ok)throw new Error('HTTP '+r.status);
-      const data=await r.json();
-      const panchs=data.panchayats||[];
-      $('panelCount').textContent=`${panchs.length} panchayats`;
-      renderChips(panchs,'panch-chip',(name,btn)=>onPanchayatChipClick(name,btn));
-      setStatus(`✓ <strong>${block}</strong> — select your panchayat`,true);
-
-      /* Try to draw panchayat outlines on map */
-      tryDrawPanchayatOutlines(district,block);
-    }catch(e){
-      console.warn('[panchayat_names]',e);
-      $('panelList').innerHTML='<div class="panel-empty">Could not load panchayats</div>';
-    }
-  }
-
-  async function tryDrawPanchayatOutlines(district,block){
-    try{
-      const r=await fetch(`/api/panchayats?district=${encodeURIComponent(district)}&block=${encodeURIComponent(block)}`);
-      if(!r.ok)return;
-      const gj=await r.json();
-      if(!gj.features?.length)return;
-      panchGrp.innerHTML='';
-      gj.features.forEach(feat=>{
-        const name=getPropName(feat.properties);
-        const d=geomToD(feat.geometry,projFn);
-        if(!d)return;
-        const path=document.createElementNS(NS,'path');
-        path.setAttribute('d',d);path.setAttribute('class','pp');
-        path.setAttribute('data-name',name);path.setAttribute('data-layer','panchayat');
-        panchFeatMap[name]=feat;
-        panchGrp.appendChild(path);
-      });
-    }catch(e){ /* silent */ }
-  }
-
-  function onPanchayatChipClick(name,btn){
-    $('panelList').querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
-    btn.classList.add('selected');
-
-    selPanchayat=name;
-    $('panchHidden').value=name;
-
-    const feat=panchFeatMap[name];
-    if(feat){
-      panchGrp.querySelectorAll('.pp').forEach(p=>p.setAttribute('class','pp'));
-      const el=panchGrp.querySelector(`[data-name="${name}"]`);
-      if(el){el.setAttribute('class','pp active-outline');el.parentNode.appendChild(el);}
-      const bbox=getFeatureBbox(feat);
-      $('panchBboxHidden').value=JSON.stringify(bbox);
-      zoomToGeoBbox(bbox);
-    }
-
-    updateCrumb();
-    setStatus(`✓ <strong>${name}</strong> — opening result…`,true);
-    hidePanel();
-    setTimeout(triggerSubmit,400);
-  }
-
-  /* ══════════════════════════════════════════════════
-     INIT MAP — draw district layer
-  ══════════════════════════════════════════════════ */
-  async function initMap(){
-    const wrap=$('mapWrap');
-    svgEl=$('biharSvg');
-    vbW=wrap.clientWidth||800;vbH=wrap.clientHeight||500;
-    svgEl.setAttribute('viewBox',`0 0 ${vbW} ${vbH}`);
-
-    let data;
-    try{
-      const res=await fetch('/bihar_dist_ready.geojson');
-      data=await res.json();
-    }catch(e){
-      setStatus('⚠ '+e.message);
-      $('mapLoader').innerHTML='<p style="color:#FF6B35">⚠ Failed to load map</p>';
-      return;
-    }
-
-    let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
-    const bb=c=>{
-      if(typeof c[0]==='number'){x0=Math.min(x0,c[0]);x1=Math.max(x1,c[0]);y0=Math.min(y0,c[1]);y1=Math.max(y1,c[1]);}
-      else c.forEach(bb);
-    };
-    data.features.forEach(f=>bb(f.geometry.coordinates));
-
-    const pad=28,sx=(vbW-2*pad)/(x1-x0),sy=(vbH-2*pad)/(y1-y0),s=Math.min(sx,sy);
-    const ox=(vbW-s*(x1-x0))/2,oy=(vbH-s*(y1-y0))/2;
-    projFn=(lng,lat)=>[ox+(lng-x0)*s,vbH-oy-(lat-y0)*s];
-
-    distGrp=document.createElementNS(NS,'g');distGrp.id='dg';
-    blockGrp=document.createElementNS(NS,'g');blockGrp.id='bg';
-    panchGrp=document.createElementNS(NS,'g');panchGrp.id='pg';
-
-    const tip=$('mapTip');
-
-    data.features.forEach(feat=>{
-      const name=feat.properties.name;
-      const d=geomToD(feat.geometry,projFn);
-      if(!d)return;
-      const path=document.createElementNS(NS,'path');
-      path.setAttribute('d',d);
-      path.setAttribute('class','dp');
-      path.setAttribute('data-name',name);
-      path.setAttribute('data-layer','district');
-      distFeatMap[name]=feat;
-
-      path.addEventListener('mouseenter',()=>{
-        if(path!==activeDistPath)path.setAttribute('class','dp hover');
-        tip.textContent=name;tip.style.display='block';
-        setStatus('📍 '+name,path===activeDistPath);
-      });
-      path.addEventListener('mousemove',(e)=>{
-        const r=wrap.getBoundingClientRect();
-        tip.style.left=(e.clientX-r.left+14)+'px';
-        tip.style.top=(e.clientY-r.top-44)+'px';
-      });
-      path.addEventListener('mouseleave',()=>{
-        if(path!==activeDistPath)path.setAttribute('class','dp');
-        tip.style.display='none';
-      });
-      path.addEventListener('click',()=>selectDistrict(path,feat));
-      distGrp.appendChild(path);
+    path.addEventListener('mouseenter',()=>{
+      if(path!==activeDistPath)path.setAttribute('class','dp hover');
+      tip.className='';tip.textContent=name;tip.style.display='block';
+      setStatus('📍 '+name,path===activeDistPath);
     });
-
-    svgEl.appendChild(distGrp);
-    svgEl.appendChild(blockGrp);
-    svgEl.appendChild(panchGrp);
-
-    $('mapLoader').classList.add('hidden');
-    setStatus('Tap your district to begin');
-    mapReady=true;
-  }
-
-  /* ══════════════════════════════════════════════════
-     ZOOM & PAN — MOUSE
-  ══════════════════════════════════════════════════ */
-  function doZoom(f,cx,cy){
-    cx=cx??vbX+vbW/2;cy=cy??vbY+vbH/2;
-    vbX=cx-(cx-vbX)*f;vbY=cy-(cy-vbY)*f;vbW*=f;vbH*=f;applyVB();
-  }
-  function resetZoom(){
-    const w=$('mapWrap');vbX=0;vbY=0;vbW=w.clientWidth||800;vbH=w.clientHeight||500;applyVB();
-  }
-  $('zIn').addEventListener('click',()=>doZoom(.72));
-  $('zOut').addEventListener('click',()=>doZoom(1.35));
-  $('zRst').addEventListener('click',resetZoom);
-
-  const mw=$('mapWrap');
-  mw.addEventListener('wheel',(e)=>{
-    if(!mapReady)return;e.preventDefault();
-    const r=mw.getBoundingClientRect();
-    doZoom(e.deltaY>0?1.15:.87,vbX+((e.clientX-r.left)/r.width)*vbW,vbY+((e.clientY-r.top)/r.height)*vbH);
-  },{passive:false});
-
-  let isDrag=false,dSX=0,dSY=0,dVX=0,dVY=0;
-  mw.addEventListener('mousedown',(e)=>{
-    const cls=e.target.classList;
-    if(cls.contains('dp')||cls.contains('mzb')||e.target.closest('#selPanel'))return;
-    isDrag=true;dSX=e.clientX;dSY=e.clientY;dVX=vbX;dVY=vbY;mw.style.cursor='grabbing';
+    path.addEventListener('mousemove',(e)=>{
+      const rc=wrap.getBoundingClientRect();
+      tip.style.left=(e.clientX-rc.left+14)+'px';
+      tip.style.top=(e.clientY-rc.top-44)+'px';
+    });
+    path.addEventListener('mouseleave',()=>{
+      if(path!==activeDistPath)path.setAttribute('class','dp');
+      tip.style.display='none';
+    });
+    path.addEventListener('click',()=>onDistrictClick(path,feat));
+    distGrp.appendChild(path);
   });
-  window.addEventListener('mousemove',(e)=>{
-    if(!isDrag)return;
+
+  svgEl.appendChild(distGrp);
+  svgEl.appendChild(blockGrp);  // renders above districts
+  svgEl.appendChild(panchGrp);  // renders above blocks
+
+  $('mapLoader').classList.add('hidden');
+  setStatus('Tap your district to begin');
+  mapReady=true;
+}
+
+/* ══════════════════════════════════════════════════
+   ZOOM & PAN
+══════════════════════════════════════════════════ */
+function doZoom(f,cx,cy){
+  cx=cx??vbX+vbW/2;cy=cy??vbY+vbH/2;
+  vbX=cx-(cx-vbX)*f;vbY=cy-(cy-vbY)*f;vbW*=f;vbH*=f;applyVB();
+}
+function resetZoom(){
+  const w=$('mapWrap');vbX=0;vbY=0;vbW=w.clientWidth||800;vbH=w.clientHeight||500;applyVB();
+}
+$('zIn').addEventListener('click',()=>doZoom(.72));
+$('zOut').addEventListener('click',()=>doZoom(1.35));
+$('zRst').addEventListener('click',resetZoom);
+
+const mw=$('mapWrap');
+mw.addEventListener('wheel',(e)=>{
+  if(!mapReady)return;e.preventDefault();
+  const r=mw.getBoundingClientRect();
+  doZoom(e.deltaY>0?1.15:.87,vbX+((e.clientX-r.left)/r.width)*vbW,vbY+((e.clientY-r.top)/r.height)*vbH);
+},{passive:false});
+
+let isDrag=false,dSX=0,dSY=0,dVX=0,dVY=0;
+mw.addEventListener('mousedown',(e)=>{
+  const cl=e.target.classList;
+  if(cl.contains('dp')||cl.contains('bp')||cl.contains('pp')||cl.contains('mzb'))return;
+  isDrag=true;dSX=e.clientX;dSY=e.clientY;dVX=vbX;dVY=vbY;mw.style.cursor='grabbing';
+});
+window.addEventListener('mousemove',(e)=>{
+  if(!isDrag)return;
+  const r=mw.getBoundingClientRect();
+  vbX=dVX-((e.clientX-dSX)/r.width)*vbW;vbY=dVY-((e.clientY-dSY)/r.height)*vbH;applyVB();
+});
+window.addEventListener('mouseup',()=>{isDrag=false;mw.style.cursor='crosshair';});
+
+/* TOUCH */
+let tX=0,tY=0,tVX=0,tVY=0,pD0=0,pW0=0,pH0=0,pVX0=0,pVY0=0,tMoved=false;
+const ptD=(a,b)=>Math.sqrt((a.clientX-b.clientX)**2+(a.clientY-b.clientY)**2);
+const ptM=(a,b)=>({x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2});
+
+mw.addEventListener('touchstart',(e)=>{
+  if(!mapReady)return;e.preventDefault();tMoved=false;
+  if(e.touches.length===1){tX=e.touches[0].clientX;tY=e.touches[0].clientY;tVX=vbX;tVY=vbY;}
+  else if(e.touches.length===2){pD0=ptD(e.touches[0],e.touches[1]);pW0=vbW;pH0=vbH;pVX0=vbX;pVY0=vbY;}
+},{passive:false});
+
+mw.addEventListener('touchmove',(e)=>{
+  if(!mapReady)return;e.preventDefault();
+  if(e.touches.length===1){
+    const dx=e.touches[0].clientX-tX,dy=e.touches[0].clientY-tY;
+    if(Math.sqrt(dx*dx+dy*dy)>8)tMoved=true;
     const r=mw.getBoundingClientRect();
-    vbX=dVX-((e.clientX-dSX)/r.width)*vbW;vbY=dVY-((e.clientY-dSY)/r.height)*vbH;applyVB();
-  });
-  window.addEventListener('mouseup',()=>{isDrag=false;mw.style.cursor='crosshair';});
+    vbX=tVX-(dx/r.width)*vbW;vbY=tVY-(dy/r.height)*vbH;applyVB();
+  }else if(e.touches.length===2){
+    tMoved=true;
+    const d=ptD(e.touches[0],e.touches[1]),sc=pD0/d;
+    const m=ptM(e.touches[0],e.touches[1]),r=mw.getBoundingClientRect();
+    const cx=pVX0+((m.x-r.left)/r.width)*pW0,cy=pVY0+((m.y-r.top)/r.height)*pH0;
+    vbW=pW0*sc;vbH=pH0*sc;vbX=cx-((m.x-r.left)/r.width)*vbW;vbY=cy-((m.y-r.top)/r.height)*vbH;applyVB();
+  }
+},{passive:false});
 
-  /* ══════════════════════════════════════════════════
-     TOUCH
-  ══════════════════════════════════════════════════ */
-  let tpX=0,tpY=0,tpVX=0,tpVY=0,pinchD0=0,pinchW0=0,pinchH0=0,pinchVX0=0,pinchVY0=0,touchMoved=false;
-  const ptDist=(a,b)=>{const dx=a.clientX-b.clientX,dy=a.clientY-b.clientY;return Math.sqrt(dx*dx+dy*dy);};
-  const ptMid=(a,b)=>({x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2});
+mw.addEventListener('touchend',(e)=>{
+  if(!mapReady||e.changedTouches.length!==1||tMoved)return;
+  const t=e.changedTouches[0];
+  const el=document.elementFromPoint(t.clientX,t.clientY);
+  if(!el)return;
+  e.preventDefault();
+  const layer=el.getAttribute('data-layer');
+  const name=el.getAttribute('data-name');
+  if(layer==='district'){const f=distFeatMap[name];if(f)onDistrictClick(el,f);}
+  else if(layer==='block'){const f=blockFeatMap[name];if(f)onBlockClick(el,f,name);}
+  else if(layer==='panchayat'){const f=panchFeatMap[name];if(f)onPanchayatClick(el,f,name);}
+},{passive:false});
 
-  mw.addEventListener('touchstart',(e)=>{
-    if(e.target.closest('#selPanel'))return; // let panel scroll
-    if(!mapReady)return;e.preventDefault();touchMoved=false;
-    if(e.touches.length===1){tpX=e.touches[0].clientX;tpY=e.touches[0].clientY;tpVX=vbX;tpVY=vbY;}
-    else if(e.touches.length===2){pinchD0=ptDist(e.touches[0],e.touches[1]);pinchW0=vbW;pinchH0=vbH;pinchVX0=vbX;pinchVY0=vbY;}
-  },{passive:false});
-
-  mw.addEventListener('touchmove',(e)=>{
-    if(e.target.closest('#selPanel'))return;
-    if(!mapReady)return;e.preventDefault();
-    if(e.touches.length===1){
-      const dx=e.touches[0].clientX-tpX,dy=e.touches[0].clientY-tpY;
-      if(Math.sqrt(dx*dx+dy*dy)>8)touchMoved=true;
-      const r=mw.getBoundingClientRect();
-      vbX=tpVX-(dx/r.width)*vbW;vbY=tpVY-(dy/r.height)*vbH;applyVB();
-    }else if(e.touches.length===2){
-      touchMoved=true;
-      const d=ptDist(e.touches[0],e.touches[1]),scale=pinchD0/d;
-      const mid=ptMid(e.touches[0],e.touches[1]),r=mw.getBoundingClientRect();
-      const cx=pinchVX0+((mid.x-r.left)/r.width)*pinchW0;
-      const cy=pinchVY0+((mid.y-r.top)/r.height)*pinchH0;
-      vbW=pinchW0*scale;vbH=pinchH0*scale;
-      vbX=cx-((mid.x-r.left)/r.width)*vbW;vbY=cy-((mid.y-r.top)/r.height)*vbH;applyVB();
-    }
-  },{passive:false});
-
-  mw.addEventListener('touchend',(e)=>{
-    if(e.target.closest('#selPanel'))return;
-    if(!mapReady||e.changedTouches.length!==1||touchMoved)return;
-    const touch=e.changedTouches[0];
-    const el=document.elementFromPoint(touch.clientX,touch.clientY);
-    if(!el)return;
-    e.preventDefault();
-    if(el.getAttribute('data-layer')==='district'){
-      const f=distFeatMap[el.getAttribute('data-name')];
-      if(f)selectDistrict(el,f);
-    }
-  },{passive:false});
-
-  initMap();
-  </script>
+initMap();
+</script>
 </body>
 </html>

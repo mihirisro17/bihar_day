@@ -1064,6 +1064,71 @@ ALL_EVENTS = load_events()
 
 
 # ══════════════════════════════════════════════════
+# API: block names — scans panchayats/ filenames
+# GET /api/block_names?district=PURBI%20CHAMPARAN
+# Returns {"blocks": ["Adapur", "Areraj", ...]}
+# ══════════════════════════════════════════════════
+@app.route("/api/block_names")
+def api_block_names():
+    district = request.args.get("district", "").strip()
+    if not district:
+        return jsonify({"error": "district required"}), 400
+
+    panch_dir = Path(PUBLIC_DIR) / "panchayats"
+    norm_dist = norm_name(district)
+    blocks = set()
+
+    # Primary: exact prefix match  DISTRICT__BLOCK.geojson
+    for f in panch_dir.glob(f"{norm_dist}__*.geojson"):
+        block_raw = f.stem.split("__", 1)[1]          # e.g. "ADAPUR"
+        blocks.add(block_raw.replace("_", " ").title())
+
+    # Fallback: case-insensitive scan
+    if not blocks:
+        for f in panch_dir.glob("*.geojson"):
+            if "__" not in f.stem:
+                continue
+            d_part, b_part = f.stem.split("__", 1)
+            if d_part.lower() == norm_dist.lower():
+                blocks.add(b_part.replace("_", " ").title())
+
+    return jsonify({"district": district, "blocks": sorted(blocks)})
+
+
+# ══════════════════════════════════════════════════
+# API: panchayat names — reads features from GeoJSON
+# GET /api/panchayat_names?district=X&block=Y
+# Returns {"panchayats": ["Aam Tola", ...]}
+# ══════════════════════════════════════════════════
+@app.route("/api/panchayat_names")
+def api_panchayat_names():
+    district = request.args.get("district", "").strip()
+    block    = request.args.get("block",    "").strip()
+    if not district or not block:
+        return jsonify({"error": "district and block required"}), 400
+
+    panch_dir = Path(PUBLIC_DIR) / "panchayats"
+    stem      = f"{norm_name(district)}__{norm_name(block)}"
+    geo_path  = find_geojson(panch_dir, stem)
+
+    if not geo_path:
+        return jsonify({"panchayats": [], "error": f"{stem}.geojson not found"}), 404
+
+    try:
+        gj    = json.loads(geo_path.read_text(encoding="utf-8"))
+        names = []
+        for feat in gj.get("features", []):
+            p = feat.get("properties", {})
+            name = (p.get("panchayat_name") or p.get("Panchayat_Name") or
+                    p.get("PANCHAYAT_NAME") or p.get("village_name") or
+                    p.get("name") or p.get("NAME") or "")
+            if name:
+                names.append(name)
+        return jsonify({"panchayats": sorted(set(names))})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ══════════════════════════════════════════════════
 # Routes
 # ══════════════════════════════════════════════════
 

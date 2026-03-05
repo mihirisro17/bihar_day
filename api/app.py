@@ -487,6 +487,30 @@ app = Flask(
     static_folder=os.path.join(BASE_DIR, "static")
 )
 
+
+# ── District name aliases (GeoJSON display name → filename stem) ──
+DISTRICT_ALIASES = {
+    "PURBI CHAMPARAN":        "EAST_CHAMPARAN",
+    "PURBI_CHAMPARAN":        "EAST_CHAMPARAN",
+    "EAST CHAMPARAN":         "EAST_CHAMPARAN",
+    "PASHCHIM CHAMPARAN":     "WEST_CHAMPARAN",
+    "PASHCHIM_CHAMPARAN":     "WEST_CHAMPARAN",
+    "WEST CHAMPARAN":         "WEST_CHAMPARAN",
+    "KAIMUR BHABUA":          "KAIMUR_(BHABUA)",
+    "KAIMUR (BHABUA)":        "KAIMUR_(BHABUA)",
+}
+
+def resolve_district_stem(district: str) -> str:
+    """Map any display name → actual filename stem."""
+    upper = district.strip().upper()
+    # Direct alias lookup
+    if upper in DISTRICT_ALIASES:
+        return DISTRICT_ALIASES[upper]
+    # Norm fallback
+    return norm_name(district)
+
+
+
 # ── Cache ──
 IS_VERCEL     = bool(os.environ.get("VERCEL", ""))
 SAT_CACHE_DIR = Path("/tmp/sat_cache") if IS_VERCEL else Path(BASE_DIR) / "static" / "sat_cache"
@@ -860,10 +884,6 @@ def serve_panchayat_file(filename):
     return send_from_directory(os.path.join(PUBLIC_DIR, "panchayats"), filename)
 
 
-# ══════════════════════════════════════════════════
-# API: blocks  →  public/blocks/DISTRICT.geojson
-# ══════════════════════════════════════════════════
-
 @app.route("/api/blocks")
 def api_blocks():
     district = request.args.get("district", "").strip()
@@ -871,25 +891,16 @@ def api_blocks():
         return jsonify({"error": "district required"}), 400
 
     blocks_dir = Path(PUBLIC_DIR) / "blocks"
-    geo_path   = find_geojson(blocks_dir, norm_name(district))
+    stem       = resolve_district_stem(district)   # ← changed
+    geo_path   = find_geojson(blocks_dir, stem)
 
     if not geo_path:
-        print(f"[blocks] not found: {norm_name(district)}.geojson in {blocks_dir}")
+        print(f"[blocks] not found: {stem}.geojson  (input: {district})")
         return jsonify({"error": "not found", "features": []}), 404
 
-    try:
-        return app.response_class(
-            response=geo_path.read_bytes(),
-            status=200,
-            mimetype="application/json"
-        )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return app.response_class(response=geo_path.read_bytes(),
+                              status=200, mimetype="application/json")
 
-
-# ══════════════════════════════════════════════════
-# API: panchayats  →  public/panchayats/DISTRICT__BLOCK.geojson
-# ══════════════════════════════════════════════════
 
 @app.route("/api/panchayats")
 def api_panchayats():
@@ -899,21 +910,17 @@ def api_panchayats():
         return jsonify({"error": "district and block required"}), 400
 
     panch_dir = Path(PUBLIC_DIR) / "panchayats"
-    stem      = f"{norm_name(district)}__{norm_name(block)}"
+    d_stem    = resolve_district_stem(district)    # ← changed
+    stem      = f"{d_stem}__{norm_name(block)}"
     geo_path  = find_geojson(panch_dir, stem)
 
     if not geo_path:
-        print(f"[panchayats] not found: {stem}.geojson in {panch_dir}")
+        print(f"[panchayats] not found: {stem}.geojson")
         return jsonify({"error": "not found", "features": []}), 404
 
-    try:
-        return app.response_class(
-            response=geo_path.read_bytes(),
-            status=200,
-            mimetype="application/json"
-        )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return app.response_class(response=geo_path.read_bytes(),
+                              status=200, mimetype="application/json")
+
 
 
 # ══════════════════════════════════════════════════

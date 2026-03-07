@@ -531,13 +531,32 @@ def norm_name(s: str) -> str:
 
 
 def find_geojson(directory: Path, filename_stem: str) -> Path | None:
+    """
+    1. Exact match
+    2. Case-insensitive match
+    3. Fuzzy: strip underscores/spaces/hyphens
+       Fixes BABU_BARHI → BABUBARHI, Bhagwanpur → BHAGWANPUR, etc.
+    """
     exact = directory / f"{filename_stem}.geojson"
     if exact.exists():
         return exact
+
     stem_lower = filename_stem.lower()
+
+    # Pass 1: case-insensitive exact
     for f in directory.glob("*.geojson"):
         if f.stem.lower() == stem_lower:
             return f
+
+    # Pass 2: fuzzy — strip underscores, spaces, hyphens
+    def _f(s: str) -> str:
+        return s.lower().replace("_", "").replace(" ", "").replace("-", "")
+
+    stem_fuzzy = _f(filename_stem)
+    for f in directory.glob("*.geojson"):
+        if _f(f.stem) == stem_fuzzy:
+            return f
+
     return None
 
 
@@ -912,7 +931,7 @@ def api_panchayats():
                               status=200, mimetype="application/json")
 
 
-# ── CHANGED: use resolve_district_stem + BLK_NAME property ──
+# ── CHANGED: use resolve_district_stem (was norm_name) ──
 @app.route("/api/block_geojson")
 def api_block_geojson():
     district = request.args.get("district", "").strip()
@@ -921,7 +940,7 @@ def api_block_geojson():
         return jsonify({"error": "district and block required"}), 400
 
     blocks_dir = Path(PUBLIC_DIR) / "blocks"
-    geo_path   = find_geojson(blocks_dir, resolve_district_stem(district))
+    geo_path   = find_geojson(blocks_dir, resolve_district_stem(district))  # ← fixed
 
     if not geo_path:
         return jsonify({"error": "not found", "features": []}), 404
@@ -942,6 +961,7 @@ def api_block_geojson():
         return jsonify({"type": "FeatureCollection", "features": feats})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 # ── CHANGED: use resolve_district_stem (was norm_name) ──
 @app.route("/api/panchayat_geojson")
@@ -966,8 +986,10 @@ def api_panchayat_geojson():
         feats = [
             f for f in gj.get("features", [])
             if norm(
+                f.get("properties", {}).get("GPNAME_1", "") or
                 f.get("properties", {}).get("panchayat_name", "") or
                 f.get("properties", {}).get("Panchayat_Name", "") or
+                f.get("properties", {}).get("PANCHAYAT_NAME", "") or
                 f.get("properties", {}).get("name", "")
             ) == norm(panchayat)
         ]
@@ -1091,9 +1113,9 @@ def api_panchayat_names():
         names = []
         for feat in gj.get("features", []):
             p = feat.get("properties", {})
-            name = (p.get("panchayat_name") or p.get("Panchayat_Name") or
-                    p.get("PANCHAYAT_NAME") or p.get("village_name") or
-                    p.get("name") or p.get("NAME") or "")
+            name = (p.get("GPNAME_1") or p.get("panchayat_name") or
+                    p.get("Panchayat_Name") or p.get("PANCHAYAT_NAME") or
+                    p.get("village_name") or p.get("name") or p.get("NAME") or "")
             if name:
                 names.append(name)
         return jsonify({"panchayats": sorted(set(names))})

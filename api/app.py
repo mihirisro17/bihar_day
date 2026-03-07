@@ -468,7 +468,6 @@
 #         current_year=today.year, app_title=C.APP_TITLE,
 #     )
 
-
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
 from datetime import date
 import csv, os, sys, json, hashlib, requests, base64, io
@@ -476,10 +475,12 @@ import concurrent.futures
 from pathlib import Path
 from PIL import Image
 
+
 BASE_DIR   = os.getcwd()
-PUBLIC_DIR = os.path.join(BASE_DIR, "public")   # ← all GeoJSON lives here
+PUBLIC_DIR = os.path.join(BASE_DIR, "public")
 sys.path.insert(0, BASE_DIR)
 import config as C
+
 
 app = Flask(
     __name__,
@@ -490,25 +491,22 @@ app = Flask(
 
 # ── District name aliases (GeoJSON display name → filename stem) ──
 DISTRICT_ALIASES = {
-    "PURBI CHAMPARAN":        "EAST_CHAMPARAN",
-    "PURBI_CHAMPARAN":        "EAST_CHAMPARAN",
-    "EAST CHAMPARAN":         "EAST_CHAMPARAN",
-    "PASHCHIM CHAMPARAN":     "WEST_CHAMPARAN",
-    "PASHCHIM_CHAMPARAN":     "WEST_CHAMPARAN",
-    "WEST CHAMPARAN":         "WEST_CHAMPARAN",
-    "KAIMUR BHABUA":          "KAIMUR_(BHABUA)",
-    "KAIMUR (BHABUA)":        "KAIMUR_(BHABUA)",
+    "PURBI CHAMPARAN":    "EAST_CHAMPARAN",
+    "PURBI_CHAMPARAN":    "EAST_CHAMPARAN",
+    "EAST CHAMPARAN":     "EAST_CHAMPARAN",
+    "PASHCHIM CHAMPARAN": "WEST_CHAMPARAN",
+    "PASHCHIM_CHAMPARAN": "WEST_CHAMPARAN",
+    "WEST CHAMPARAN":     "WEST_CHAMPARAN",
+    "KAIMUR BHABUA":      "KAIMUR_(BHABUA)",
+    "KAIMUR (BHABUA)":    "KAIMUR_(BHABUA)",
 }
 
+
 def resolve_district_stem(district: str) -> str:
-    """Map any display name → actual filename stem."""
     upper = district.strip().upper()
-    # Direct alias lookup
     if upper in DISTRICT_ALIASES:
         return DISTRICT_ALIASES[upper]
-    # Norm fallback
     return norm_name(district)
-
 
 
 # ── Cache ──
@@ -516,6 +514,7 @@ IS_VERCEL     = bool(os.environ.get("VERCEL", ""))
 SAT_CACHE_DIR = Path("/tmp/sat_cache") if IS_VERCEL else Path(BASE_DIR) / "static" / "sat_cache"
 SAT_CACHE_URL = "/sat_cache"           if IS_VERCEL else "/static/sat_cache"
 SAT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
 
 EOX_AVAIL    = [2016,2017,2018,2019,2020,2021,2022,2023,2024]
 SAT_W, SAT_H = 1600, 900
@@ -527,40 +526,20 @@ RIDAM_COLS = 4
 RIDAM_ROWS = 3
 
 
-# ══════════════════════════════════════════════════
-# GeoJSON name normalizer
-# Converts any input → UPPERCASE_WITH_UNDERSCORES
-# matching the actual filenames on disk
-# ══════════════════════════════════════════════════
-
 def norm_name(s: str) -> str:
-    """
-    'East Champaran' → 'EAST_CHAMPARAN'
-    'Kaimur (Bhabua)' → 'KAIMUR_(BHABUA)'
-    'Patna Sadar'     → 'PATNA_SADAR'
-    """
     return s.strip().upper().replace(" ", "_")
 
 
 def find_geojson(directory: Path, filename_stem: str) -> Path | None:
-    """
-    Try exact match first, then case-insensitive scan of directory.
-    Returns Path if found, else None.
-    """
     exact = directory / f"{filename_stem}.geojson"
     if exact.exists():
         return exact
-    # Case-insensitive fallback
     stem_lower = filename_stem.lower()
     for f in directory.glob("*.geojson"):
         if f.stem.lower() == stem_lower:
             return f
     return None
 
-
-# ══════════════════════════════════════════════════
-# BBox helpers
-# ══════════════════════════════════════════════════
 
 def compute_padded_bbox(raw_bbox, pad_factor=1.5):
     if not raw_bbox or not isinstance(raw_bbox, dict):
@@ -594,10 +573,6 @@ def parse_bbox(raw_str):
         pass
     return None
 
-
-# ══════════════════════════════════════════════════
-# WMS URL builders
-# ══════════════════════════════════════════════════
 
 def _bq(bbox):
     b = f"{bbox['minLng']},{bbox['minLat']},{bbox['maxLng']},{bbox['maxLat']}"
@@ -718,10 +693,6 @@ def fetch_ridam_tiled(year, bbox):
     return buf.getvalue(), "jpg"
 
 
-# ══════════════════════════════════════════════════
-# Cache / fetch helpers
-# ══════════════════════════════════════════════════
-
 def _image_to_url(img_bytes, cache_key, ext):
     if not IS_VERCEL:
         filename   = hashlib.md5(cache_key.encode()).hexdigest() + f".{ext}"
@@ -768,9 +739,7 @@ def fetch_and_cache(url, cache_key, ext="jpg"):
         return None, False
 
 
-# ══════════════════════════════════════════════════
-# Sat cache static routes
-# ══════════════════════════════════════════════════
+# ══ Sat cache static routes ══
 
 @app.route("/sat_cache/<filename>")
 def sat_cache_vercel(filename):
@@ -781,9 +750,7 @@ def sat_cache_local(filename):
     return send_from_directory(str(SAT_CACHE_DIR), filename)
 
 
-# ══════════════════════════════════════════════════
-# API: satellite image
-# ══════════════════════════════════════════════════
+# ══ API: satellite image ══
 
 @app.route("/api/sat_image")
 def api_sat_image():
@@ -862,26 +829,49 @@ def api_sat_image():
     return jsonify({"url": local or "", "src_label": f"📡 {src}", "bbox": bbox})
 
 
-# ══════════════════════════════════════════════════
-# Static GeoJSON routes  (served from public/)
-# ══════════════════════════════════════════════════
+# ══ Static GeoJSON routes (served from public/) ══
 
 @app.route("/bihar_dist_ready.geojson")
 def bihar_geojson():
-    """public/bihar_dist_ready.geojson"""
     return send_from_directory(PUBLIC_DIR, "bihar_dist_ready.geojson")
 
 
+# ── CHANGED: resolve aliases before serving the static block file ──
 @app.route("/blocks/<path:filename>")
 def serve_block_file(filename):
-    """public/blocks/DISTRICT.geojson"""
-    return send_from_directory(os.path.join(PUBLIC_DIR, "blocks"), filename)
+    """
+    Resolves district aliases so /blocks/PURBI_CHAMPARAN.geojson
+    transparently serves EAST_CHAMPARAN.geojson from disk.
+    """
+    blocks_dir = Path(PUBLIC_DIR) / "blocks"
+    stem = Path(filename).stem                     # strip .geojson
+    resolved = resolve_district_stem(stem)         # alias lookup
+    geo_path = find_geojson(blocks_dir, resolved)  # case-insensitive scan
+    if not geo_path:
+        return jsonify({"error": f"{resolved}.geojson not found"}), 404
+    return send_from_directory(str(blocks_dir), geo_path.name)
 
 
+# ── CHANGED: resolve district alias in panchayat filename ──
 @app.route("/panchayats/<path:filename>")
 def serve_panchayat_file(filename):
-    """public/panchayats/DISTRICT__BLOCK.geojson"""
-    return send_from_directory(os.path.join(PUBLIC_DIR, "panchayats"), filename)
+    """
+    Resolves district part of DISTRICT__BLOCK.geojson via aliases.
+    e.g. /panchayats/PURBI_CHAMPARAN__ADAPUR.geojson
+         → serves EAST_CHAMPARAN__ADAPUR.geojson from disk.
+    """
+    panch_dir = Path(PUBLIC_DIR) / "panchayats"
+    stem = Path(filename).stem                     # strip .geojson
+    if "__" in stem:
+        d_part, b_part = stem.split("__", 1)
+        resolved_d = resolve_district_stem(d_part)
+        resolved   = f"{resolved_d}__{b_part}"
+    else:
+        resolved = resolve_district_stem(stem)
+    geo_path = find_geojson(panch_dir, resolved)
+    if not geo_path:
+        return jsonify({"error": f"{resolved}.geojson not found"}), 404
+    return send_from_directory(str(panch_dir), geo_path.name)
 
 
 @app.route("/api/blocks")
@@ -891,7 +881,7 @@ def api_blocks():
         return jsonify({"error": "district required"}), 400
 
     blocks_dir = Path(PUBLIC_DIR) / "blocks"
-    stem       = resolve_district_stem(district)   # ← changed
+    stem       = resolve_district_stem(district)
     geo_path   = find_geojson(blocks_dir, stem)
 
     if not geo_path:
@@ -910,7 +900,7 @@ def api_panchayats():
         return jsonify({"error": "district and block required"}), 400
 
     panch_dir = Path(PUBLIC_DIR) / "panchayats"
-    d_stem    = resolve_district_stem(district)    # ← changed
+    d_stem    = resolve_district_stem(district)
     stem      = f"{d_stem}__{norm_name(block)}"
     geo_path  = find_geojson(panch_dir, stem)
 
@@ -922,12 +912,7 @@ def api_panchayats():
                               status=200, mimetype="application/json")
 
 
-
-# ══════════════════════════════════════════════════
-# API: single block boundary for satellite overlay
-# Filters one block feature from the district file
-# ══════════════════════════════════════════════════
-
+# ── CHANGED: use resolve_district_stem (was norm_name) ──
 @app.route("/api/block_geojson")
 def api_block_geojson():
     district = request.args.get("district", "").strip()
@@ -936,7 +921,7 @@ def api_block_geojson():
         return jsonify({"error": "district and block required"}), 400
 
     blocks_dir = Path(PUBLIC_DIR) / "blocks"
-    geo_path   = find_geojson(blocks_dir, norm_name(district))
+    geo_path   = find_geojson(blocks_dir, resolve_district_stem(district))  # ← fixed
 
     if not geo_path:
         return jsonify({"error": "not found", "features": []}), 404
@@ -957,11 +942,7 @@ def api_block_geojson():
         return jsonify({"error": str(e)}), 500
 
 
-# ══════════════════════════════════════════════════
-# API: single panchayat boundary for satellite overlay
-# Loads DISTRICT__BLOCK.geojson and filters one panchayat
-# ══════════════════════════════════════════════════
-
+# ── CHANGED: use resolve_district_stem (was norm_name) ──
 @app.route("/api/panchayat_geojson")
 def api_panchayat_geojson():
     district  = request.args.get("district",  "").strip()
@@ -971,7 +952,7 @@ def api_panchayat_geojson():
         return jsonify({"error": "district, block and panchayat required"}), 400
 
     panch_dir = Path(PUBLIC_DIR) / "panchayats"
-    stem      = f"{norm_name(district)}__{norm_name(block)}"
+    stem      = f"{resolve_district_stem(district)}__{norm_name(block)}"  # ← fixed
     geo_path  = find_geojson(panch_dir, stem)
 
     if not geo_path:
@@ -994,9 +975,7 @@ def api_panchayat_geojson():
         return jsonify({"error": str(e)}), 500
 
 
-# ══════════════════════════════════════════════════
-# Debug endpoint
-# ══════════════════════════════════════════════════
+# ══ Debug endpoints ══
 
 @app.route("/api/debug_ridam")
 def debug_ridam():
@@ -1005,29 +984,26 @@ def debug_ridam():
     img_bytes, _ = fetch_ridam_tiled(year, bbox)
     if img_bytes:
         b64 = base64.b64encode(img_bytes).decode("utf-8")
-        return f'<img src="data:image/jpeg;base64,{b64}" style="max-width:100%;"/>'
+        return f'<img src="data:image/jpeg;base64,{b64}" style="max-width:100%;"/>' 
     return "RIDAM tiled fetch failed — check server logs", 500
 
 
 @app.route("/api/debug_paths")
 def debug_paths():
-    """Quick sanity check — visit this URL to verify all paths exist."""
     blocks_dir = Path(PUBLIC_DIR) / "blocks"
     panch_dir  = Path(PUBLIC_DIR) / "panchayats"
     return jsonify({
-        "public_dir":       PUBLIC_DIR,
-        "public_exists":    os.path.isdir(PUBLIC_DIR),
-        "blocks_exists":    blocks_dir.exists(),
-        "panchayats_exists":panch_dir.exists(),
-        "blocks_count":     len(list(blocks_dir.glob("*.geojson"))) if blocks_dir.exists() else 0,
-        "panchayats_count": len(list(panch_dir.glob("*.geojson"))) if panch_dir.exists() else 0,
-        "dist_geojson":     os.path.exists(os.path.join(PUBLIC_DIR, "bihar_dist_ready.geojson")),
+        "public_dir":        PUBLIC_DIR,
+        "public_exists":     os.path.isdir(PUBLIC_DIR),
+        "blocks_exists":     blocks_dir.exists(),
+        "panchayats_exists": panch_dir.exists(),
+        "blocks_count":      len(list(blocks_dir.glob("*.geojson"))) if blocks_dir.exists() else 0,
+        "panchayats_count":  len(list(panch_dir.glob("*.geojson"))) if panch_dir.exists() else 0,
+        "dist_geojson":      os.path.exists(os.path.join(PUBLIC_DIR, "bihar_dist_ready.geojson")),
     })
 
 
-# ══════════════════════════════════════════════════
-# Load Events
-# ══════════════════════════════════════════════════
+# ══ Load Events ══
 
 def load_events():
     events   = []
@@ -1070,11 +1046,6 @@ def load_events():
 ALL_EVENTS = load_events()
 
 
-# ══════════════════════════════════════════════════
-# API: block names — scans panchayats/ filenames
-# GET /api/block_names?district=PURBI%20CHAMPARAN
-# Returns {"blocks": ["Adapur", "Areraj", ...]}
-# ══════════════════════════════════════════════════
 @app.route("/api/block_names")
 def api_block_names():
     district = request.args.get("district", "").strip()
@@ -1082,15 +1053,13 @@ def api_block_names():
         return jsonify({"error": "district required"}), 400
 
     panch_dir = Path(PUBLIC_DIR) / "panchayats"
-    norm_dist = norm_name(district)
+    norm_dist = resolve_district_stem(district)  # ← uses alias resolution
     blocks = set()
 
-    # Primary: exact prefix match  DISTRICT__BLOCK.geojson
     for f in panch_dir.glob(f"{norm_dist}__*.geojson"):
-        block_raw = f.stem.split("__", 1)[1]          # e.g. "ADAPUR"
+        block_raw = f.stem.split("__", 1)[1]
         blocks.add(block_raw.replace("_", " ").title())
 
-    # Fallback: case-insensitive scan
     if not blocks:
         for f in panch_dir.glob("*.geojson"):
             if "__" not in f.stem:
@@ -1102,11 +1071,6 @@ def api_block_names():
     return jsonify({"district": district, "blocks": sorted(blocks)})
 
 
-# ══════════════════════════════════════════════════
-# API: panchayat names — reads features from GeoJSON
-# GET /api/panchayat_names?district=X&block=Y
-# Returns {"panchayats": ["Aam Tola", ...]}
-# ══════════════════════════════════════════════════
 @app.route("/api/panchayat_names")
 def api_panchayat_names():
     district = request.args.get("district", "").strip()
@@ -1115,7 +1079,7 @@ def api_panchayat_names():
         return jsonify({"error": "district and block required"}), 400
 
     panch_dir = Path(PUBLIC_DIR) / "panchayats"
-    stem      = f"{norm_name(district)}__{norm_name(block)}"
+    stem      = f"{resolve_district_stem(district)}__{norm_name(block)}"  # ← fixed
     geo_path  = find_geojson(panch_dir, stem)
 
     if not geo_path:
@@ -1135,9 +1099,8 @@ def api_panchayat_names():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ══════════════════════════════════════════════════
-# Routes
-# ══════════════════════════════════════════════════
+
+# ══ Routes ══
 
 @app.route("/")
 def index():
@@ -1183,7 +1146,6 @@ def analyse():
     block_bbox = parse_bbox(request.form.get("block_bbox", "{}"))
     panch_bbox = parse_bbox(request.form.get("panch_bbox", "{}"))
 
-    # Fallback: if block selected but no specific block bbox, use district bbox
     if block and not block_bbox and bbox:
         block_bbox = bbox
 
@@ -1206,5 +1168,3 @@ def analyse():
         current_year = today.year,
         app_title    = C.APP_TITLE,
     )
-
-

@@ -912,7 +912,7 @@ def api_panchayats():
                               status=200, mimetype="application/json")
 
 
-# ── CHANGED: use resolve_district_stem (was norm_name) ──
+# ── CHANGED: use resolve_district_stem + BLK_NAME property ──
 @app.route("/api/block_geojson")
 def api_block_geojson():
     district = request.args.get("district", "").strip()
@@ -921,7 +921,7 @@ def api_block_geojson():
         return jsonify({"error": "district and block required"}), 400
 
     blocks_dir = Path(PUBLIC_DIR) / "blocks"
-    geo_path   = find_geojson(blocks_dir, resolve_district_stem(district))  # ← fixed
+    geo_path   = find_geojson(blocks_dir, resolve_district_stem(district))
 
     if not geo_path:
         return jsonify({"error": "not found", "features": []}), 404
@@ -932,15 +932,16 @@ def api_block_geojson():
         feats = [
             f for f in gj.get("features", [])
             if norm(
+                f.get("properties", {}).get("BLK_NAME", "") or
                 f.get("properties", {}).get("block_name", "") or
                 f.get("properties", {}).get("Block_Name", "") or
+                f.get("properties", {}).get("BLOCK_NAME", "") or
                 f.get("properties", {}).get("name", "")
             ) == norm(block)
         ]
         return jsonify({"type": "FeatureCollection", "features": feats})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 # ── CHANGED: use resolve_district_stem (was norm_name) ──
 @app.route("/api/panchayat_geojson")

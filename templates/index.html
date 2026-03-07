@@ -3779,7 +3779,7 @@
             blockGroup.setAttribute("id", "blockGroup");
 
             data.features.forEach((feat) => {
-              const name = feat.properties.BLK_NAME || feat.properties.block_name || ... || "Unknown";
+              const name = feat.properties.BLK_NAME || feat.properties.block_name || "Unknown";
               const d = gToD(feat.geometry, biharProj);
               if (!d) return;
 
@@ -3909,7 +3909,7 @@
             panchGroup.setAttribute("id", "panchGroup");
 
             data.features.forEach((feat) => {
-              const name = feat.properties.GPNAME_1 || feat.properties.panchayat_name || ... || "Unknown";
+              const name = feat.properties.GPNAME_1 || feat.properties.panchayat_name  || "Unknown";
               const d = gToD(feat.geometry, biharProj);
               if (!d) return;
 

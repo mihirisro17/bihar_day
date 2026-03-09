@@ -693,7 +693,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      filter: drop-shadow(0 0 50px var(--accent-gold-glow));
       animation: numPop 1.2s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
@@ -1483,18 +1482,18 @@
     }
 
     .dp:hover {
-      fill: var(--dist-hover-fill);
-      stroke: var(--dist-hover-stroke);
-      stroke-width: 2;
-      filter: drop-shadow(0 0 10px var(--accent-gold-glow)) drop-shadow(0 0 22px var(--accent-gold-light));
-    }
+  fill: var(--dist-hover-fill);
+  stroke: var(--dist-hover-stroke);
+  stroke-width: 2.5;
+  /* NO filter */
+}
+
 
     .dp.active {
       fill: var(--dist-active-fill);
       stroke: var(--dist-active-stroke);
-      stroke-width: 2.5;
-      filter: drop-shadow(0 0 16px var(--accent-gold-glow)) drop-shadow(0 0 40px var(--accent-gold-light));
-      animation: distSelectGlow 2.2s ease-in-out infinite;
+      stroke-width: 3;
+      /* NO filter, NO animation — fill/stroke-width can't be composited */
     }
 
     .dp.pop {
@@ -1503,22 +1502,19 @@
 
     @keyframes distPopIn {
       0% {
-        stroke-width: 2.5;
-        filter: drop-shadow(0 0 16px var(--accent-gold-glow));
+        stroke-width: 1;
       }
 
-      40% {
-        stroke-width: 4;
-        filter: drop-shadow(0 0 35px var(--accent-gold)) drop-shadow(0 0 70px var(--accent-gold-glow));
+      45% {
+        stroke-width: 5;
       }
 
       100% {
-        stroke-width: 2.5;
-        filter: drop-shadow(0 0 16px var(--accent-gold-glow)) drop-shadow(0 0 40px var(--accent-gold-light));
+        stroke-width: 3;
       }
     }
 
-    @keyframes distSelectGlow {
+    /* @keyframes distSelectGlow {
       0% {
         fill: var(--dist-active-fill);
         stroke-width: 2.5;
@@ -1539,7 +1535,7 @@
         fill: var(--dist-active-fill);
         stroke-width: 2.5;
       }
-    }
+    } */
 
     .dist-lbl {
       font-family: "Poppins", sans-serif;
@@ -2247,12 +2243,12 @@
         filter 0.4s; */
     }
 
-    .dp-block:hover {
-      fill: rgba(14, 165, 233, 0.18);
-      stroke: rgba(14, 165, 233, 0.9);
-      stroke-width: 2;
-      filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.5));
-    }
+   .dp-block:hover {
+  fill: rgba(14,165,233,0.22);
+  stroke: rgba(14,165,233,0.95);
+  stroke-width: 2.5;
+}
+
 
     .dp-block.active {
       fill: rgba(14, 165, 233, 0.25) !important;
@@ -2296,12 +2292,12 @@
         filter 0.4s; */
     }
 
-    .dp-panchayat:hover {
-      fill: rgba(34, 197, 94, 0.2);
-      stroke: rgba(34, 197, 94, 0.9);
-      stroke-width: 2;
-      filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));
-    }
+   .dp-panchayat:hover {
+  fill: rgba(34,197,94,0.24);
+  stroke: rgba(34,197,94,0.95);
+  stroke-width: 2.5;
+}
+
 
     .dp-panchayat.active {
       fill: rgba(16, 185, 129, 0.3) !important;
@@ -2913,6 +2909,7 @@
       transform: translate(-50%, -50%);
       transition: width .4s, height .4s;
     }
+    
   </style>
 </head>
 
@@ -3744,10 +3741,10 @@
       if (mapLevel !== 1) return;
       distGroup.querySelectorAll(".dp.active").forEach((p) => p.setAttribute("class", "dp"));
       path.setAttribute("class", "dp active");
-      setTimeout(() => {
-        path.setAttribute("class", "dp active pop");
-        setTimeout(() => path.setAttribute("class", "dp active"), 520);
-      }, 0);
+     setTimeout(() => {
+      path.setAttribute('class', 'dp active');
+      path.style.willChange = 'auto'; // release GPU layer after animation
+    }, 520);
 
       const bb = geoBBox(feat.geometry.coordinates);
       selectedDistrict = { name, path, bb, feat };

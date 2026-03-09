@@ -899,24 +899,16 @@ def serve_panchayat_file(filename):
         return jsonify({"error": f"{resolved}.geojson not found"}), 404
     return send_from_directory(str(panch_dir), geo_path.name)
 
-
 @app.route("/api/blocks")
 def api_blocks():
     district = request.args.get("district", "").strip()
     if not district:
         return jsonify({"error": "district required"}), 400
-
-    blocks_dir = Path(PUBLIC_DIR) / "blocks"
-    stem       = resolve_district_stem(district)
-    geo_path   = find_geojson(blocks_dir, stem)
-
-    if not geo_path:
-        print(f"[blocks] not found: {stem}.geojson  (input: {district})")
+    stem = resolve_district_stem(district)
+    gj   = read_geojson(f"/blocks/{stem}.geojson")
+    if not gj:
         return jsonify({"error": "not found", "features": []}), 404
-
-    return app.response_class(response=geo_path.read_bytes(),
-                              status=200, mimetype="application/json")
-
+    return jsonify(gj)
 
 @app.route("/api/panchayats")
 def api_panchayats():
@@ -924,18 +916,11 @@ def api_panchayats():
     block    = request.args.get("block",    "").strip()
     if not district or not block:
         return jsonify({"error": "district and block required"}), 400
-
-    panch_dir = Path(PUBLIC_DIR) / "panchayats"
-    d_stem    = resolve_district_stem(district)
-    stem      = f"{d_stem}__{norm_name(block)}"
-    geo_path  = find_geojson(panch_dir, stem)
-
-    if not geo_path:
-        print(f"[panchayats] not found: {stem}.geojson")
+    stem = f"{resolve_district_stem(district)}__{norm_name(block)}"
+    gj   = read_geojson(f"/panchayats/{stem}.geojson")
+    if not gj:
         return jsonify({"error": "not found", "features": []}), 404
-
-    return app.response_class(response=geo_path.read_bytes(),
-                              status=200, mimetype="application/json")
+    return jsonify(gj)
 
 
 # ── CHANGED: use resolve_district_stem (was norm_name) ──
@@ -973,6 +958,25 @@ def api_block_geojson():
 
 
 # ── CHANGED: use resolve_district_stem (was norm_name) ──
+@app.route("/api/block_geojson")
+def api_block_geojson():
+    district = request.args.get("district", "").strip()
+    block    = request.args.get("block",    "").strip()
+    if not district or not block:
+        return jsonify({"error": "district and block required"}), 400
+
+    stem = resolve_district_stem(district)
+    gj   = read_geojson(f"/blocks/{stem}.geojson")
+    if not gj:
+        return jsonify({"type": "FeatureCollection", "features": []}), 200
+
+    norm  = lambda s: str(s).lower().replace(" ","").replace("_","").replace("-","")
+    feats = [f for f in gj.get("features", [])
+             if norm(f.get("properties",{}).get("BLK_NAME","") or
+                     f.get("properties",{}).get("block_name","") or
+                     f.get("properties",{}).get("name","")) == norm(block)]
+    return jsonify({"type": "FeatureCollection", "features": feats})
+
 @app.route("/api/panchayat_geojson")
 def api_panchayat_geojson():
     district  = request.args.get("district",  "").strip()
@@ -981,31 +985,17 @@ def api_panchayat_geojson():
     if not district or not block or not panchayat:
         return jsonify({"error": "district, block and panchayat required"}), 400
 
-    panch_dir = Path(PUBLIC_DIR) / "panchayats"
-    stem      = f"{resolve_district_stem(district)}__{norm_name(block)}"  # ← fixed
-    geo_path  = find_geojson(panch_dir, stem)
-
-    if not geo_path:
-        print(f"[panchayat_geojson] not found: {stem}.geojson")
+    stem = f"{resolve_district_stem(district)}__{norm_name(block)}"
+    gj   = read_geojson(f"/panchayats/{stem}.geojson")
+    if not gj:
         return jsonify({"error": "not found", "features": []}), 404
 
-    try:
-        gj   = json.loads(geo_path.read_text(encoding="utf-8"))
-        norm = lambda s: str(s).lower().replace(" ", "").replace("_", "").replace("-", "")
-        feats = [
-            f for f in gj.get("features", [])
-            if norm(
-                f.get("properties", {}).get("GPNAME_1", "") or
-                f.get("properties", {}).get("panchayat_name", "") or
-                f.get("properties", {}).get("Panchayat_Name", "") or
-                f.get("properties", {}).get("PANCHAYAT_NAME", "") or
-                f.get("properties", {}).get("name", "")
-            ) == norm(panchayat)
-        ]
-        return jsonify({"type": "FeatureCollection", "features": feats})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+    norm  = lambda s: str(s).lower().replace(" ","").replace("_","").replace("-","")
+    feats = [f for f in gj.get("features", [])
+             if norm(f.get("properties",{}).get("GPNAME_1","") or
+                     f.get("properties",{}).get("panchayat_name","") or
+                     f.get("properties",{}).get("name","")) == norm(panchayat)]
+    return jsonify({"type": "FeatureCollection", "features": feats})
 
 # ══ Debug endpoints ══
 
@@ -1036,6 +1026,31 @@ def debug_paths():
         "cwd":               os.getcwd(),         # ← compare with base_dir
         "file_path":         __file__,            # ← confirm resolution
     })
+
+
+def read_geojson(url_path: str):
+    """
+    On Vercel: fetch GeoJSON from static URL (files not on disk).
+    Locally: read from disk.
+    """
+    if IS_VERCEL:
+        base = os.environ.get("VERCEL_URL", "")
+        if not base:
+            return None
+        try:
+            r = requests.get(f"https://{base}{url_path}", timeout=15,
+                             headers={"User-Agent": "BiharDiwas/1.0"})
+            if r.status_code == 200:
+                return r.json()
+        except Exception as e:
+            print(f"[read_geojson] {url_path} → {e}")
+        return None
+    else:
+        # Local: resolve path relative to PUBLIC_DIR
+        local = Path(PUBLIC_DIR) / url_path.lstrip("/")
+        if local.exists():
+            return json.loads(local.read_text(encoding="utf-8"))
+        return None
 
 
 # ══ Load Events ══

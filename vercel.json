@@ -1,15 +1,13 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "api/app.py",
-      "use": "@vercel/python",
-      "config": {
-        "includeFiles": ["public/**"]
-      }
-    }
+    { "src": "api/app.py",  "use": "@vercel/python" },
+    { "src": "public/**",   "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "api/app.py" }
+    { "src": "/blocks/(.*\\.geojson)",     "dest": "/public/blocks/$1" },
+    { "src": "/panchayats/(.*\\.geojson)", "dest": "/public/panchayats/$1" },
+    { "src": "/bihar_dist_ready\\.geojson","dest": "/public/bihar_dist_ready.geojson" },
+    { "src": "/(.*)",                       "dest": "api/app.py" }
   ]
 }

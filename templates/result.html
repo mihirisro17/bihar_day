@@ -1738,26 +1738,32 @@
     const BLOCK = "{{ block or '' }}";
     const PANCHAYAT = "{{ panchayat or '' }}";
     const BIRTH_YEAR = {{ birth_year }};
+    const CURRENT_YEAR = 2026;
+
+    /* ── Satellite-safe birth year: RIDAM archive starts at 1997 ── */
+    const SAT_BIRTH_YEAR = BIRTH_YEAR < 1997 ? 1997 : BIRTH_YEAR;
+    const BIRTH_YEAR_CLAMPED = BIRTH_YEAR < 1997;
+
     const NS = 'http://www.w3.org/2000/svg';
     const W_RES = 1600, H_RES = 900;
 
     /* Raw bboxes passed from backend */
     const RAW_DIST_BBOX = {{ (bbox or { "minLng": 83.3, "minLat": 24.3, "maxLng": 88.2, "maxLat": 27.5 }) | tojson }};
-    const RAW_PANCH_BBOX = {{ (panch_bbox or { }) | tojson }};   /* {} if not available */
-    const RAW_BLOCK_BBOX = {{ (block_bbox or { })  | tojson }};  /* {} if not available */
+    const RAW_PANCH_BBOX = {{ (panch_bbox or { }) | tojson }};
+    const RAW_BLOCK_BBOX = {{ (block_bbox  or { }) | tojson }};
 
-    /* Determine the "focus" bbox — panchayat > block > district */
-    const RAW_FOCUS_BBOX = (RAW_PANCH_BBOX && RAW_PANCH_BBOX.minLng != null)
-      ? RAW_PANCH_BBOX
-      : (RAW_BLOCK_BBOX && RAW_BLOCK_BBOX.minLng != null)
-        ? RAW_BLOCK_BBOX
-        : RAW_DIST_BBOX;
+    /* Focus bbox: panchayat > block > district */
+    const RAW_FOCUS_BBOX =
+      (RAW_PANCH_BBOX && RAW_PANCH_BBOX.minLng != null) ? RAW_PANCH_BBOX :
+        (RAW_BLOCK_BBOX && RAW_BLOCK_BBOX.minLng != null) ? RAW_BLOCK_BBOX :
+          RAW_DIST_BBOX;
 
-    /* ── Current view scope: 'panchayat' or 'district' ── */
+    /* ── View scope state ── */
     let currentScope = (RAW_FOCUS_BBOX !== RAW_DIST_BBOX) ? 'panchayat' : 'district';
     let currentBbox = computePaddedBbox(RAW_FOCUS_BBOX);
     let geoJsonData = null;
-    let panchGeoData = null;  /* panchayat/block geojson for overlay */
+    let panchGeoData = null;
+    let computedPanchBbox = null;   /* ← NEW: derived from loaded GeoJSON coords */
 
     /* ══════════════════════════════════════════════════
        BBOX HELPERS
@@ -1777,7 +1783,12 @@
     }
 
     function computeDistrictBbox() { return computePaddedBbox(RAW_DIST_BBOX, 16 / 9); }
-    function computeFocusBbox() { return computePaddedBbox(RAW_FOCUS_BBOX, 16 / 9); }
+
+    /* ── FIX 2: prefer bbox computed from actual loaded GeoJSON ── */
+    function computeFocusBbox() {
+      if (computedPanchBbox) return computePaddedBbox(computedPanchBbox, 16 / 9);
+      return computePaddedBbox(RAW_FOCUS_BBOX, 16 / 9);
+    }
 
     /* ══════════════════════════════════════════════════
        MOUSE GLOW
@@ -1803,7 +1814,7 @@
     }
 
     /* ══════════════════════════════════════════════════
-       SCOPE TOGGLE (District ↔ Panchayat/Block view)
+       SCOPE TOGGLE (District ↔ Panchayat/Block)
     ══════════════════════════════════════════════════ */
     function setScope(scope) {
       currentScope = scope;
@@ -1814,21 +1825,20 @@
         panchBtn.classList.toggle('active', scope === 'panchayat');
       }
 
-      /* Update scope indicators */
       ['birthScopeInd', 'currentScopeInd'].forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
+        const el = document.getElementById(id); if (!el) return;
         el.className = 'scope-indicator ' + (scope === 'panchayat' ? 'panch' : 'dist');
       });
       ['birthScopeLabel', 'currentScopeLabel'].forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        if (scope === 'panchayat') el.textContent = PANCHAYAT ? 'Panchayat' : 'Block';
-        else el.textContent = 'District';
+        const el = document.getElementById(id); if (!el) return;
+        el.textContent = scope === 'panchayat' ? (PANCHAYAT ? 'Panchayat' : 'Block') : 'District';
       });
 
-      /* Reload satellite images with new bbox */
-      currentBbox = scope === 'panchayat' ? computeFocusBbox() : computeDistrictBbox();
+      /* ── FIX 2: Use computedPanchBbox for accurate zoom ── */
+      currentBbox = scope === 'panchayat'
+        ? (computedPanchBbox ? computePaddedBbox(computedPanchBbox) : computeFocusBbox())
+        : computeDistrictBbox();
+
       reloadSatImages();
     }
 
@@ -1836,7 +1846,7 @@
        SATELLITE IMAGE LOAD
     ══════════════════════════════════════════════════ */
     function reloadSatImages() {
-      /* Reset images */
+      /* Reset both cards */
       ['birthImg', 'currentImg'].forEach(id => {
         const img = document.getElementById(id);
         img.classList.remove('loaded'); img.src = '';
@@ -1848,23 +1858,39 @@
         document.getElementById(id).innerHTML = ''
       );
 
-      loadSatImage('birth', BIRTH_YEAR,
+      /* Update currentBbox for active scope */
+      currentBbox = (currentScope === 'panchayat')
+        ? (computedPanchBbox ? computePaddedBbox(computedPanchBbox) : computeFocusBbox())
+        : computeDistrictBbox();
+
+      /* ── FIX 1: use SAT_BIRTH_YEAR (never < 1997) ── */
+      loadSatImage('birth', SAT_BIRTH_YEAR,
         document.getElementById('birthSkeleton'),
         document.getElementById('birthImg'),
         document.getElementById('birthMapOverlay'),
-        document.getElementById('birthSrc'));
-      loadSatImage('current', 2026,
+        document.getElementById('birthSrc')
+      );
+
+      /* Load present-day image */
+      loadSatImage('current', CURRENT_YEAR,
         document.getElementById('currentSkeleton'),
         document.getElementById('currentImg'),
         document.getElementById('currentMapOverlay'),
-        document.getElementById('currentSrc'));
+        document.getElementById('currentSrc')
+      );
     }
 
     async function loadSatImage(type, year, skEl, imgEl, svgEl, srcEl) {
       srcEl.textContent = '📡 Loading…';
       try {
-        /* Pass the active bbox to the API */
-        const bboxForApi = currentScope === 'panchayat' ? RAW_FOCUS_BBOX : RAW_DIST_BBOX;
+        /* ── FIX 2: use computedPanchBbox when available ── */
+        let bboxForApi;
+        if (currentScope === 'panchayat') {
+          bboxForApi = computedPanchBbox || RAW_FOCUS_BBOX;
+        } else {
+          bboxForApi = RAW_DIST_BBOX;
+        }
+
         const p = new URLSearchParams({ type, year, bbox: JSON.stringify(bboxForApi) });
         const resp = await fetch(`/api/sat_image?${p}`);
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
@@ -1876,7 +1902,6 @@
             imgEl.classList.add('loaded');
             skEl.classList.add('hidden');
             srcEl.textContent = data.src_label || '📡 Loaded';
-            /* Draw overlay once image is ready */
             drawAllOverlays(svgEl, currentBbox || computeDistrictBbox());
           };
           img.onerror = () => { skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Unavailable'; };
@@ -1893,10 +1918,9 @@
     ══════════════════════════════════════════════════ */
     async function loadGeoJson() {
       try {
-        const r = await fetch('/bihar_dist_ready.geojson');  // ✓ already correct
+        const r = await fetch('/bihar_dist_ready.geojson');
         if (!r.ok) return;
         geoJsonData = await r.json();
-        /* Redraw overlays if images already loaded */
         ['birthImg', 'currentImg'].forEach((imgId, i) => {
           const img = document.getElementById(imgId);
           if (img.classList.contains('loaded')) {
@@ -1915,39 +1939,67 @@
       try {
         let url;
         if (PANCHAYAT) {
-          // → /api/panchayat_geojson?district=PATNA&block=BARH&panchayat=SOME_PANCH
           url = `/api/panchayat_geojson`
             + `?district=${encodeURIComponent(DISTRICT)}`
             + `&block=${encodeURIComponent(BLOCK)}`
             + `&panchayat=${encodeURIComponent(PANCHAYAT)}`;
         } else {
-          // → /api/block_geojson?district=PATNA&block=BARH
           url = `/api/block_geojson`
             + `?district=${encodeURIComponent(DISTRICT)}`
             + `&block=${encodeURIComponent(BLOCK)}`;
         }
 
-        const r = await fetch(url);
-        if (!r.ok) { console.warn('[PanchGeoJSON] HTTP', r.status, url); return; }
+        let r = await fetch(url);
+
+        /* ── FIX 3: 404 fallback — try block geojson if panchayat missing ── */
+        if (r.status === 404 && PANCHAYAT) {
+          console.warn('[PanchGeoJSON] panchayat 404, falling back to block');
+          r = await fetch(`/api/block_geojson?district=${encodeURIComponent(DISTRICT)}&block=${encodeURIComponent(BLOCK)}`);
+          if (!r.ok) { console.warn('[PanchGeoJSON] block fallback also failed'); return; }
+        } else if (!r.ok) {
+          console.warn('[PanchGeoJSON] HTTP', r.status, url); return;
+        }
+
         panchGeoData = await r.json();
 
-        /* Redraw overlays on both cards if images already loaded */
+        /* ── FIX 2: Compute bbox from actual GeoJSON coordinates ── */
+        if (panchGeoData && panchGeoData.features && panchGeoData.features.length > 0) {
+          let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
+          panchGeoData.features.forEach(feat => {
+            const geom = feat.geometry;
+            const allCoords = [];
+            if (geom.type === 'Polygon')
+              geom.coordinates.forEach(ring => ring.forEach(c => allCoords.push(c)));
+            else if (geom.type === 'MultiPolygon')
+              geom.coordinates.forEach(poly => poly.forEach(ring => ring.forEach(c => allCoords.push(c))));
+            allCoords.forEach(([ln, lt]) => {
+              if (ln < minLng) minLng = ln; if (ln > maxLng) maxLng = ln;
+              if (lt < minLat) minLat = lt; if (lt > maxLat) maxLat = lt;
+            });
+          });
+          computedPanchBbox = { minLng, maxLng, minLat, maxLat };
+          console.log('[PanchGeoJSON] computed bbox:', computedPanchBbox);
+
+          /* If in panchayat scope, reload images now with correct bbox */
+          if (currentScope === 'panchayat') {
+            currentBbox = computePaddedBbox(computedPanchBbox);
+            reloadSatImages();
+          }
+        }
+
+        /* Redraw overlays if images already loaded */
         ['birthImg', 'currentImg'].forEach((imgId, i) => {
           const img = document.getElementById(imgId);
           if (img.classList.contains('loaded')) {
             const svgId = i === 0 ? 'birthMapOverlay' : 'currentMapOverlay';
-            drawAllOverlays(
-              document.getElementById(svgId),
-              currentBbox || computeDistrictBbox()
-            );
+            drawAllOverlays(document.getElementById(svgId), currentBbox || computeDistrictBbox());
           }
         });
       } catch (e) { console.warn('[PanchGeoJSON]', e); }
     }
 
-
     /* ══════════════════════════════════════════════════
-       DRAW OVERLAYS — district + panchayat/block layers
+       DRAW OVERLAYS
     ══════════════════════════════════════════════════ */
     function drawAllOverlays(svgEl, bbox) {
       if (!bbox) return;
@@ -1974,7 +2026,7 @@
       }
       const norm = s => String(s).toLowerCase().replace(/[\s\-()+]/g, '');
 
-      /* ── Layer 1: All districts (faint) ── */
+      /* Layer 1: All districts (faint) */
       if (geoJsonData) {
         const distGrp = document.createElementNS(NS, 'g');
         distGrp.setAttribute('id', 'ovDistAll');
@@ -1984,7 +2036,6 @@
           path.setAttribute('d', d);
           const isActive = norm(feat.properties.name) === norm(DISTRICT);
           if (isActive) {
-            /* Active district — orange animated border */
             path.setAttribute('stroke', '#f97316');
             path.setAttribute('stroke-width', currentScope === 'panchayat' ? '2' : '4');
             path.setAttribute('fill', 'rgba(249,115,22,0.05)');
@@ -2003,21 +2054,19 @@
         svgEl.appendChild(distGrp);
       }
 
-      /* ── Layer 2: Panchayat/Block boundary (green glowing) ── */
+      /* Layer 2: Panchayat/Block boundary (green glowing) */
       if (panchGeoData && panchGeoData.features && panchGeoData.features.length > 0) {
         const panchGrp = document.createElementNS(NS, 'g');
         panchGrp.setAttribute('id', 'ovPanch');
         panchGeoData.features.forEach(feat => {
           const d = gD(feat.geometry); if (!d) return;
 
-          /* Filled glow region */
           const fillPath = document.createElementNS(NS, 'path');
           fillPath.setAttribute('d', d);
           fillPath.setAttribute('fill', 'rgba(16,185,129,0.12)');
           fillPath.setAttribute('stroke', 'none');
           panchGrp.appendChild(fillPath);
 
-          /* Animated border */
           const borderPath = document.createElementNS(NS, 'path');
           borderPath.setAttribute('d', d);
           borderPath.setAttribute('stroke', '#10b981');
@@ -2028,7 +2077,6 @@
           borderPath.classList.add('animated-boundary-panch', 'panch-boundary-glow');
           panchGrp.appendChild(borderPath);
 
-          /* Outer glow trace */
           const glowPath = document.createElementNS(NS, 'path');
           glowPath.setAttribute('d', d);
           glowPath.setAttribute('stroke', 'rgba(16,185,129,0.35)');
@@ -2039,16 +2087,12 @@
           panchGrp.insertBefore(glowPath, borderPath);
         });
         svgEl.appendChild(panchGrp);
-
-        /* Panchayat centroid marker */
         drawPanchayatMarker(svgEl, panchGeoData, proj);
       } else if (RAW_FOCUS_BBOX && RAW_FOCUS_BBOX !== RAW_DIST_BBOX) {
-        /* Fallback: draw bbox rectangle if no geojson */
         drawBboxRect(svgEl, RAW_FOCUS_BBOX, proj);
       }
     }
 
-    /* ── Centroid marker for panchayat ── */
     function drawPanchayatMarker(svgEl, gj, proj) {
       try {
         let tx = 0, ty = 0, n = 0;
@@ -2059,7 +2103,6 @@
         coords.forEach(([ln, lt]) => { tx += ln; ty += lt; n++; });
         const [cx, cy] = proj(tx / n, ty / n);
 
-        /* Outer pulse ring */
         const pulse = document.createElementNS(NS, 'circle');
         pulse.setAttribute('cx', cx.toFixed(1)); pulse.setAttribute('cy', cy.toFixed(1));
         pulse.setAttribute('r', '18'); pulse.setAttribute('fill', 'none');
@@ -2067,14 +2110,12 @@
         pulse.style.animation = 'drawPath 1s ease forwards .5s, panchGlowPulse 2s infinite 1.5s';
         svgEl.appendChild(pulse);
 
-        /* Inner dot */
         const dot = document.createElementNS(NS, 'circle');
         dot.setAttribute('cx', cx.toFixed(1)); dot.setAttribute('cy', cy.toFixed(1));
         dot.setAttribute('r', '5'); dot.setAttribute('fill', '#10b981');
         dot.setAttribute('filter', 'drop-shadow(0 0 6px #10b981)');
         svgEl.appendChild(dot);
 
-        /* Label */
         if (PANCHAYAT || BLOCK) {
           const label = document.createElementNS(NS, 'text');
           label.setAttribute('x', (cx + 12).toFixed(1)); label.setAttribute('y', (cy - 10).toFixed(1));
@@ -2089,7 +2130,6 @@
       } catch (e) { console.warn('[Marker]', e); }
     }
 
-    /* ── Fallback bbox rectangle ── */
     function drawBboxRect(svgEl, raw, proj) {
       try {
         const corners = [
@@ -2102,7 +2142,8 @@
         }).join('') + 'Z';
 
         const fill = document.createElementNS(NS, 'path');
-        fill.setAttribute('d', d); fill.setAttribute('fill', 'rgba(16,185,129,0.09)'); fill.setAttribute('stroke', 'none');
+        fill.setAttribute('d', d); fill.setAttribute('fill', 'rgba(16,185,129,0.09)');
+        fill.setAttribute('stroke', 'none');
         svgEl.appendChild(fill);
 
         const border = document.createElementNS(NS, 'path');
@@ -2119,37 +2160,39 @@
        INIT — on page load
     ══════════════════════════════════════════════════ */
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Start satellite image fetches
-      loadSatImage(
-        'birth', BIRTH_YEAR,
-        document.getElementById('birthSkeleton'),
-        document.getElementById('birthImg'),
-        document.getElementById('birthMapOverlay'),
-        document.getElementById('birthSrc')
-      );
-      loadSatImage(
-        'current', 2026,
-        document.getElementById('currentSkeleton'),
-        document.getElementById('currentImg'),
-        document.getElementById('currentMapOverlay'),
-        document.getElementById('currentSrc')
-      );
 
-      // 2. Load district GeoJSON for border overlay
+      /* ── FIX 1: Birth year clamp UI (runs ONCE here, not in reloadSatImages) ── */
+      if (BIRTH_YEAR_CLAMPED) {
+        const skYear = document.querySelector('.birth-card .sk-year');
+        if (skYear) skYear.textContent = '1997';
+
+        const pillBirth = document.querySelector('.sat-pill.birth');
+        if (pillBirth) pillBirth.innerHTML =
+          '◆ 1997 <span style="font-size:.6rem;opacity:.6">(born ' + BIRTH_YEAR + ')</span>';
+
+        const labelYear = document.querySelector('.birth-card .sat-label-year');
+        if (labelYear) labelYear.textContent = '1997';
+
+        const labelDesc = document.querySelector('.birth-card .sat-label-desc');
+        if (labelDesc) labelDesc.textContent = 'Earliest Archive (Born ' + BIRTH_YEAR + ')';
+      }
+
+      /* ── Initial satellite image load ── */
+      reloadSatImages();
+
+      /* ── District GeoJSON for border overlays ── */
       loadGeoJson();
 
-      // 3. Load block/panchayat GeoJSON for green highlight overlay
-      loadPanchGeoJson();   // ← ADD THIS if not already present
+      /* ── Panchayat/block GeoJSON for green highlight ── */
+      loadPanchGeoJson();
 
-      // 4. Set initial scope indicator labels
+      /* ── Hide scope controls if no panchayat/block ── */
       const hasFocus = (RAW_FOCUS_BBOX !== RAW_DIST_BBOX);
       if (!hasFocus) {
-        // No panchayat/block selected — hide scope toggle & indicators
         document.querySelectorAll('.scope-btns, .scope-indicator, .panch-pin')
           .forEach(el => el.style.display = 'none');
       }
     });
-
 
     /* ══════════════════════════════════════════════════
        TIMELINE
@@ -2221,6 +2264,7 @@
       });
     }
   </script>
+
 </body>
 
 </html>

@@ -1450,7 +1450,7 @@
     }
 
     /* ═══ RESPONSIVE ═══ */
-    @media(max-width:1024px) {
+    @media (max-width: 1024px) {
 
       html,
       body {
@@ -1459,15 +1459,57 @@
         overflow-x: hidden;
       }
 
-      #page {
+      .page {
         grid-template-columns: 1fr;
         height: auto;
         padding: 18px;
         padding-top: 65px;
       }
 
+      /* FIX 1: left-column must not clip its children on mobile */
+      .left-column {
+        height: auto;
+        /* was: height: 100% → collapses flex children */
+        overflow: visible;
+        /* was: overflow: hidden → clips sat-section */
+      }
 
+      /* FIX 2: sat-section must not flex-grow into a zero-height parent */
+      .sat-section {
+        flex: none;
+        /* was: flex: 1 1 0 → collapses to 0 */
+        height: auto;
+        min-height: auto;
+      }
 
+      /* FIX 3: sat-grid needs explicit height (stacked vertically on mobile) */
+      .sat-grid {
+        flex: none;
+        height: auto;
+        grid-template-columns: 1fr;
+        /* stack cards vertically */
+        grid-template-rows: 260px 36px 260px;
+        /* card | divider | card */
+      }
+
+      /* FIX 4: divider becomes horizontal between stacked cards */
+      .sat-divider {
+        flex-direction: row;
+        width: 100%;
+        height: 36px;
+      }
+
+      .sat-div-line {
+        flex: 1;
+        width: auto;
+        height: 1px;
+      }
+
+      .sat-div-label {
+        writing-mode: horizontal-tb;
+      }
+
+      /* Timeline */
       .tl-section,
       .tl-card-outer,
       .tl-card {
@@ -1480,13 +1522,14 @@
       }
 
       .sat-card {
-        min-height: 230px;
+        min-height: 260px;
       }
 
-      #mouseGlow {
+      .mouseGlow {
         display: none;
       }
     }
+
 
     .zoom-btns {
       display: flex;
@@ -1511,6 +1554,57 @@
       border-color: var(--teal);
       color: var(--teal);
       box-shadow: 0 0 10px var(--glow-t);
+    }
+
+    .sat-nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .sat-nav-row {
+      display: flex;
+      gap: 5px;
+    }
+
+    .sat-nav-dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 30px);
+      grid-template-rows: repeat(3, 30px);
+      gap: 3px;
+    }
+
+    .sat-nav-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      background: var(--card2);
+      color: var(--txt2);
+      font-size: .75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
+      font-family: 'Space Grotesk', sans-serif;
+      padding: 0;
+    }
+
+    .sat-nav-btn:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+      background: rgba(14, 165, 233, .12);
+      box-shadow: 0 0 10px var(--glow-t);
+    }
+
+    .sat-nav-btn-center {
+      border-color: var(--border);
+      color: var(--txt3);
+      font-size: .6rem;
     }
   </style>
 </head>
@@ -1635,10 +1729,27 @@
             </button>
           </div>
           {% endif %}
-          <div class="zoom-btns">
-            <button class="zoom-btn" onclick="zoomSat(1/1.5)">−</button>
-            <button class="zoom-btn" onclick="zoomSat(1.5)">＋</button>
+          <div class="sat-nav-controls">
+            <!-- Zoom -->
+            <div class="sat-nav-row">
+              <button class="sat-nav-btn" onclick="zoomSat(1.5)" title="Zoom In">＋</button>
+              <button class="sat-nav-btn" onclick="zoomSat(1/1.5)" title="Zoom Out">－</button>
+              <button class="sat-nav-btn" onclick="resetSatView()" title="Reset">⌂</button>
+            </div>
+            <!-- Pan -->
+            <div class="sat-nav-dpad">
+              <div></div>
+              <button class="sat-nav-btn" onclick="panSat(0,  1)">↑</button>
+              <div></div>
+              <button class="sat-nav-btn" onclick="panSat(-1, 0)">←</button>
+              <button class="sat-nav-btn sat-nav-btn-center" onclick="resetSatView()">◎</button>
+              <button class="sat-nav-btn" onclick="panSat( 1, 0)">→</button>
+              <div></div>
+              <button class="sat-nav-btn" onclick="panSat(0, -1)">↓</button>
+              <div></div>
+            </div>
           </div>
+
 
         </div>
 
@@ -2085,6 +2196,29 @@
       } catch (e) { console.warn('[PanchGeoJSON]', e); }
     }
 
+    /* ── Pan: dx/dy are -1/0/1 direction multipliers ── */
+    function panSat(dx, dy) {
+      if (!currentBbox) return;
+      // Step = 25% of current bbox size per click
+      const stepLng = (currentBbox.maxLng - currentBbox.minLng) * 0.25;
+      const stepLat = (currentBbox.maxLat - currentBbox.minLat) * 0.25;
+
+      currentBbox = {
+        minLng: currentBbox.minLng + dx * stepLng,
+        maxLng: currentBbox.maxLng + dx * stepLng,
+        minLat: currentBbox.minLat + dy * stepLat,
+        maxLat: currentBbox.maxLat + dy * stepLat
+      };
+
+      reloadSatImages(true); // keepBbox=true → don't recalculate from scope
+    }
+
+    /* ── Reset view back to scope default ── */
+    function resetSatView() {
+      reloadSatImages(false); // keepBbox=false → recalculates bbox from scope
+    }
+
+    /* ── Zoom: factor >1 = zoom in, <1 = zoom out ── */
     function zoomSat(factor) {
       if (!currentBbox) return;
       const cx = (currentBbox.minLng + currentBbox.maxLng) / 2;
@@ -2099,8 +2233,9 @@
         maxLat: cy + h / 2
       };
 
-      reloadSatImages(true); /* keepBbox=true → image reloads for new zoomed bbox */
+      reloadSatImages(true);
     }
+
 
 
 
@@ -2300,7 +2435,8 @@
         border.setAttribute('stroke-dasharray', '10,6');
         /* ── FIX: style.filter not setAttribute ── */
         border.style.filter = 'drop-shadow(0 0 8px rgba(16,185,129,0.8))';
-        border.classList.add('animated-boundary-panch');
+        glowPath.style.opacity = '0.5';
+        glowPath.classList.add('animated-boundary-panch');
         svgEl.appendChild(border);
       } catch (e) { console.warn('[BboxRect]', e); }
     }

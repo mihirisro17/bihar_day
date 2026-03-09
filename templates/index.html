@@ -2454,9 +2454,20 @@
       }
 
       50% {
-        opacity: 0.3;
+        opacity: .4;
       }
     }
+
+    .animated-boundary,
+    .animated-boundary-panch,
+    .animated-boundary-block {
+      will-change: opacity;
+    }
+
+    .badge-dot {
+      will-change: opacity;
+    }
+
 
     /* ══ FALLBACK INPUT OVERLAY ══ */
     #fallbackInput {

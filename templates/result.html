@@ -163,7 +163,8 @@
       width: 100%;
       height: 100%;
       display: grid;
-      grid-template-columns: 1fr 1.2fr;
+      grid-template-columns: 1.5fr 1fr;
+      /* ← was 1fr 1.2fr */
       gap: 24px;
       padding: 60px 32px 18px 32px;
     }
@@ -171,7 +172,7 @@
     .left-column {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
       height: 100%;
       overflow: hidden;
     }
@@ -183,14 +184,11 @@
       min-height: 0;
     }
 
-    /* ═══ HERO ═══ */
+    /* Hero shrinks to fit — no flex:1 so satellite gets the remaining space */
     .hero-section {
       flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      animation: fadeSlideUp .7s cubic-bezier(.22, 1, .36, 1);
     }
+
 
     @keyframes fadeSlideUp {
       from {
@@ -236,17 +234,11 @@
     }
 
     .hero-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.8rem;
-      font-weight: 900;
-      line-height: 1.05;
-      letter-spacing: -.5px;
+      font-size: 2.2rem;
     }
 
     .hero-name .namaste {
-      font-family: 'Yatra One', cursive;
-      color: var(--txt2);
-      font-size: 2.2rem;
+      font-size: 1.75rem;
     }
 
     .hero-name .name-val {
@@ -258,9 +250,10 @@
 
     /* ═══ INFO CHIPS ═══ */
     .info-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
     }
 
     .info-chip {
@@ -280,6 +273,19 @@
     .info-chip:nth-child(1) {
       animation-delay: .1s;
       --chip-accent: var(--purple);
+    }
+
+    .info-chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .info-chip {
+      flex-shrink: 0;
+    }
+
+
+    .sat-header-title {
+      font-size: 1.05rem;
     }
 
     .info-chip:nth-child(2) {
@@ -392,7 +398,11 @@
       font-size: .9rem;
     }
 
-    /* ═══ TIMELINE ═══ */
+    .sat-card.birth-card {
+      opacity: .92;
+    }
+
+    /* Timeline fills entire right column */
     .tl-section {
       flex: 1 1 0;
       min-height: 0;
@@ -817,8 +827,8 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      animation: fadeSlideRight .8s cubic-bezier(.22, 1, .36, 1) .2s both;
+      gap: 8px;
+      animation: fadeSlideUp .8s cubic-bezier(.22, 1, .36, 1) .2s both;
     }
 
     @keyframes fadeSlideRight {
@@ -937,9 +947,10 @@
     .sat-grid {
       flex: 1 1 0;
       min-height: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      grid-template-rows: 1fr;
+      gap: 0;
     }
 
     /* ═══ SAT CARD ═══ */
@@ -1386,29 +1397,30 @@
     }
 
     /* ── Divider ── */
+    /* Vertical divider between the two sat cards */
     .sat-divider {
-      flex-shrink: 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
+      gap: 6px;
+      width: 28px;
+      flex-shrink: 0;
     }
 
     .sat-div-line {
       flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border2), transparent);
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--border2), transparent);
     }
 
     .sat-div-label {
       font-size: .62rem;
       font-weight: 800;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
       color: var(--txt3);
-      padding: 3px 12px;
-      border-radius: 10px;
-      background: var(--card);
-      border: 1px solid var(--border);
+      letter-spacing: 1px;
+      writing-mode: vertical-lr;
+      text-transform: uppercase;
       font-family: 'Space Grotesk', sans-serif;
     }
 
@@ -1445,10 +1457,6 @@
         min-height: 200px;
       }
 
-      .sat-grid {
-        min-height: 480px;
-      }
-
       .sat-card {
         min-height: 230px;
       }
@@ -1471,8 +1479,11 @@
   </div>
 
   <div id="page">
-    <!-- ══ LEFT ══ -->
+
+    <!-- ══ LEFT COLUMN: Hero + Satellite ══ -->
     <div class="left-column">
+
+      <!-- ── Hero ── -->
       <section class="hero-section">
         <div class="welcome-tag">
           <span class="tag-hindi">बिहार दिवस प्रदर्शनी</span>
@@ -1534,7 +1545,7 @@
           {% endif %}
         </div>
 
-        <!-- Location Breadcrumb -->
+        <!-- Location breadcrumb -->
         <div class="location-bc">
           <span class="bc-icon">📍</span>
           <span class="bc-item">{{ district }}</span>
@@ -1549,54 +1560,7 @@
         </div>
       </section>
 
-      <!-- Timeline -->
-      <section class="tl-section">
-        <div class="section-header">
-          <h2><span class="sh-hindi">आपका सफर</span> &nbsp;📜 Historical Journey</h2>
-          <p>Events that shaped Bihar since {{ birth_year }}</p>
-        </div>
-        {% if events %}
-        <div class="tl-card-outer">
-          <div class="tl-arrow left" onclick="prevEvent()">‹</div>
-          <div class="tl-arrow right" onclick="nextEvent()">›</div>
-          <div class="tl-card" id="tlCard">
-            <div class="tl-era-tag" id="tlEra"><span class="tl-era-dot"></span><span id="tlEraText"></span></div>
-            <div class="tl-year-block">
-              <div class="tl-year" id="tlYear"></div>
-              <div class="tl-year-bar">
-                <div class="tl-year-line"></div>
-                <div class="tl-year-bar-dot"></div>
-              </div>
-            </div>
-            <div class="tl-body">
-              <div class="tl-icon-wrap" id="tlIcon"></div>
-              <div class="tl-title" id="tlTitle"></div>
-            </div>
-            <div class="tl-dots" id="tlDots"></div>
-          </div>
-        </div>
-        <div class="tl-playbar">
-          <button class="ctrl-btn" id="playBtn">⏸</button>
-          <button class="ctrl-btn" id="speedBtn"
-            style="font-size:.72rem;font-family:'Space Grotesk',sans-serif;">1×</button>
-          <div class="tl-progress-track">
-            <div class="tl-progress-fill" id="progressFill"></div>
-          </div>
-          <div class="counter-txt" id="counterTxt">1 / {{ events|length }}</div>
-        </div>
-        <div class="keyboard-hints">
-          <kbd>Space</kbd> Play/Pause &nbsp;|&nbsp; <kbd>←</kbd> <kbd>→</kbd> Navigate
-        </div>
-        {% else %}
-        <div class="tl-card" style="justify-content:center;align-items:center;">
-          <p style="opacity:.4;text-align:center;font-size:.85rem;">No events recorded.</p>
-        </div>
-        {% endif %}
-      </section>
-    </div>
-
-    <!-- ══ RIGHT ══ -->
-    <div class="right-column">
+      <!-- ── Satellite (now in left column) ── -->
       <section class="sat-section">
         <div class="sat-header-wrap">
           <div class="sat-header-title">
@@ -1616,19 +1580,20 @@
             {% endif %}
           </div>
 
-          <!-- Scope toggle: District view vs Panchayat/Block view -->
           {% if panchayat or block %}
           <div class="scope-btns">
-            <button class="scope-btn" id="scopeDistBtn" onclick="setScope('district')">🗺️ District View</button>
+            <button class="scope-btn" id="scopeDistBtn" onclick="setScope('district')">🗺️ District</button>
             <button class="scope-btn active" id="scopePanchBtn" onclick="setScope('panchayat')">
-              {% if panchayat %}🌾 Panchayat View{% else %}🏘️ Block View{% endif %}
+              {% if panchayat %}🌾 Panchayat{% else %}🏘️ Block{% endif %}
             </button>
           </div>
           {% endif %}
         </div>
 
+        <!-- Side-by-side satellite grid -->
         <div class="sat-grid">
-          <!-- Birth Year Card -->
+
+          <!-- ── Birth Year Card (smaller, left) ── -->
           <div class="sat-card birth-card">
             <div class="sat-skeleton" id="birthSkeleton">
               <div class="sk-orbit">
@@ -1667,19 +1632,20 @@
             <div class="sat-label">
               <div class="sat-label-left">
                 <div class="sat-label-year">{{ birth_year }}</div>
-                <div class="sat-label-desc">Birth Year View</div>
+                <div class="sat-label-desc">Birth Year</div>
               </div>
               <div class="sat-src" id="birthSrc">📡 Loading…</div>
             </div>
           </div>
 
+          <!-- ── Vertical divider ── -->
           <div class="sat-divider">
             <div class="sat-div-line"></div>
             <div class="sat-div-label">vs</div>
             <div class="sat-div-line"></div>
           </div>
 
-          <!-- Present Card -->
+          <!-- ── Present Card (larger, right) ── -->
           <div class="sat-card now-card">
             <div class="sat-skeleton" id="currentSkeleton">
               <div class="sk-orbit">
@@ -1718,15 +1684,74 @@
             <div class="sat-label">
               <div class="sat-label-left">
                 <div class="sat-label-year">2026</div>
-                <div class="sat-label-desc">Present Day View</div>
+                <div class="sat-label-desc">Present Day</div>
               </div>
               <div class="sat-src" id="currentSrc">📡 Loading…</div>
             </div>
           </div>
-        </div>
+
+        </div><!-- /sat-grid -->
       </section>
-    </div>
-  </div>
+
+    </div><!-- /left-column -->
+
+
+    <!-- ══ RIGHT COLUMN: Timeline only ══ -->
+    <div class="right-column">
+      <section class="tl-section">
+        <div class="section-header">
+          <h2><span class="sh-hindi">आपका सफर</span> &nbsp;📜 Historical Journey</h2>
+          <p>Events that shaped Bihar since {{ birth_year }}</p>
+        </div>
+
+        {% if events %}
+        <div class="tl-card-outer">
+          <div class="tl-arrow left" onclick="prevEvent()">‹</div>
+          <div class="tl-arrow right" onclick="nextEvent()">›</div>
+          <div class="tl-card" id="tlCard">
+            <div class="tl-era-tag" id="tlEra">
+              <span class="tl-era-dot"></span>
+              <span id="tlEraText"></span>
+            </div>
+            <div class="tl-year-block">
+              <div class="tl-year" id="tlYear"></div>
+              <div class="tl-year-bar">
+                <div class="tl-year-line"></div>
+                <div class="tl-year-bar-dot"></div>
+              </div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-icon-wrap" id="tlIcon"></div>
+              <div class="tl-title" id="tlTitle"></div>
+            </div>
+            <div class="tl-dots" id="tlDots"></div>
+          </div>
+        </div>
+
+        <div class="tl-playbar">
+          <button class="ctrl-btn" id="playBtn">⏸</button>
+          <button class="ctrl-btn" id="speedBtn"
+            style="font-size:.72rem;font-family:'Space Grotesk',sans-serif;">1×</button>
+          <div class="tl-progress-track">
+            <div class="tl-progress-fill" id="progressFill"></div>
+          </div>
+          <div class="counter-txt" id="counterTxt">1 / {{ events|length }}</div>
+        </div>
+
+        <div class="keyboard-hints">
+          <kbd>Space</kbd> Play/Pause &nbsp;|&nbsp; <kbd>←</kbd> <kbd>→</kbd> Navigate
+        </div>
+
+        {% else %}
+        <div class="tl-card" style="justify-content:center;align-items:center;flex:1;">
+          <p style="opacity:.4;text-align:center;font-size:.85rem;">No events recorded.</p>
+        </div>
+        {% endif %}
+
+      </section>
+    </div><!-- /right-column -->
+
+  </div><!-- /page -->
 
   <script>
     /* ══════════════════════════════════════════════════
@@ -1937,66 +1962,54 @@
     async function loadPanchGeoJson() {
       if (!PANCHAYAT && !BLOCK) return;
       try {
-        let url;
+        // ── Fetch the whole block's panchayat file directly from static URL ──
+        // This completely bypasses /api/panchayat_geojson and works on Vercel
+        const normStr = s => String(s || '').trim().toUpperCase().replace(/ /g, '_');
+        const stem = normStr(DISTRICT) + '__' + normStr(BLOCK);
+        const url = `/panchayats/${stem}.geojson`;
+
+        const r = await fetch(url);
+        if (!r.ok) { console.warn('[PanchGeoJSON] HTTP', r.status, url); return; }
+        const fullGj = await r.json();
+
+        const norm = s => String(s || '').toLowerCase().replace(/[\s_\-]/g, '');
+
         if (PANCHAYAT) {
-          url = `/api/panchayat_geojson`
-            + `?district=${encodeURIComponent(DISTRICT)}`
-            + `&block=${encodeURIComponent(BLOCK)}`
-            + `&panchayat=${encodeURIComponent(PANCHAYAT)}`;
-        } else {
-          url = `/api/block_geojson`
-            + `?district=${encodeURIComponent(DISTRICT)}`
-            + `&block=${encodeURIComponent(BLOCK)}`;
-        }
-
-        let r = await fetch(url);
-
-        /* ── FIX 3: 404 fallback — try block geojson if panchayat missing ── */
-        if (r.status === 404 && PANCHAYAT) {
-          console.warn('[PanchGeoJSON] panchayat 404, falling back to block');
-          r = await fetch(`/api/block_geojson?district=${encodeURIComponent(DISTRICT)}&block=${encodeURIComponent(BLOCK)}`);
-          if (!r.ok) { console.warn('[PanchGeoJSON] block fallback also failed'); return; }
-        } else if (!r.ok) {
-          console.warn('[PanchGeoJSON] HTTP', r.status, url); return;
-        }
-
-        panchGeoData = await r.json();
-
-        /* ── FIX 2: Compute bbox from actual GeoJSON coordinates ── */
-        if (panchGeoData && panchGeoData.features && panchGeoData.features.length > 0) {
-          let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
-          panchGeoData.features.forEach(feat => {
-            const geom = feat.geometry;
-            const allCoords = [];
-            if (geom.type === 'Polygon')
-              geom.coordinates.forEach(ring => ring.forEach(c => allCoords.push(c)));
-            else if (geom.type === 'MultiPolygon')
-              geom.coordinates.forEach(poly => poly.forEach(ring => ring.forEach(c => allCoords.push(c))));
-            allCoords.forEach(([ln, lt]) => {
-              if (ln < minLng) minLng = ln; if (ln > maxLng) maxLng = ln;
-              if (lt < minLat) minLat = lt; if (lt > maxLat) maxLat = lt;
-            });
+          // Filter features for this panchayat client-side
+          const target = norm(PANCHAYAT);
+          const feats = (fullGj.features || []).filter(f => {
+            const p = f.properties || {};
+            return norm(p.GPNAME_1 || p.panchayat_name || p.Panchayat_Name ||
+              p.PANCHAYAT_NAME || p.name || '') === target;
           });
-          computedPanchBbox = { minLng, maxLng, minLat, maxLat };
-          console.log('[PanchGeoJSON] computed bbox:', computedPanchBbox);
-
-          /* If in panchayat scope, reload images now with correct bbox */
-          if (currentScope === 'panchayat') {
-            currentBbox = computePaddedBbox(computedPanchBbox);
-            reloadSatImages();
-          }
+          panchGeoData = { type: 'FeatureCollection', features: feats };
+        } else {
+          // Filter for just this block when no panchayat selected
+          const target = norm(BLOCK);
+          const feats = (fullGj.features || []).filter(f => {
+            const p = f.properties || {};
+            return norm(p.BLK_NAME || p.block_name || p.Block_Name ||
+              p.BLOCK_NAME || p.name || '') === target;
+          });
+          panchGeoData = feats.length
+            ? { type: 'FeatureCollection', features: feats }
+            : fullGj;
         }
 
-        /* Redraw overlays if images already loaded */
+        // Redraw overlays on both cards if images already loaded
         ['birthImg', 'currentImg'].forEach((imgId, i) => {
           const img = document.getElementById(imgId);
           if (img.classList.contains('loaded')) {
             const svgId = i === 0 ? 'birthMapOverlay' : 'currentMapOverlay';
-            drawAllOverlays(document.getElementById(svgId), currentBbox || computeDistrictBbox());
+            drawAllOverlays(
+              document.getElementById(svgId),
+              currentBbox || computeDistrictBbox()
+            );
           }
         });
       } catch (e) { console.warn('[PanchGeoJSON]', e); }
     }
+
 
     /* ══════════════════════════════════════════════════
        DRAW OVERLAYS

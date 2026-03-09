@@ -1327,26 +1327,27 @@ def find_geojson(directory: Path, filename_stem: str) -> Path | None:
 # ══ FIX 2: read_geojson defined EARLY — before any route uses it ══
 def read_geojson(url_path: str):
     """
-    On Vercel: fetch GeoJSON via HTTP from its own static URL.
+    On Vercel: fetch GeoJSON via HTTP using same host as incoming request.
     Locally:   read from disk.
     """
     if IS_VERCEL:
-        base = os.environ.get("VERCEL_URL", "")
-        if not base:
-            return None
         try:
-            r = requests.get(f"https://{base}{url_path}", timeout=15,
+            from flask import request as _req
+            base = _req.host_url.rstrip('/')          # ← uses actual request host, no VERCEL_URL needed
+            r = requests.get(f"{base}{url_path}", timeout=15,
                              headers={"User-Agent": "BiharDiwas/1.0"})
+            print(f"[read_geojson] {url_path} → {r.status_code}")
             if r.status_code == 200:
                 return r.json()
         except Exception as e:
-            print(f"[read_geojson] {url_path} → {e}")
+            print(f"[read_geojson] {url_path} error → {e}")
         return None
     else:
         local = Path(PUBLIC_DIR) / url_path.lstrip("/")
         if local.exists():
             return json.loads(local.read_text(encoding="utf-8"))
         return None
+
 
 
 def compute_padded_bbox(raw_bbox, pad_factor=1.5):
@@ -1792,27 +1793,34 @@ def api_block_names():
     district = request.args.get("district", "").strip()
     if not district:
         return jsonify({"error": "district required"}), 400
+
     norm_dist = resolve_district_stem(district)
 
     if IS_VERCEL:
-        # On Vercel: fetch the blocks GeoJSON and extract BLK_NAME values
+        # On Vercel: parse block names from the district's blocks GeoJSON
         gj = read_geojson(f"/blocks/{norm_dist}.geojson")
         if not gj:
-            return jsonify({"district": district, "blocks": []})
+            return jsonify({"district": district, "blocks": []}), 200
         blocks = set()
         for feat in gj.get("features", []):
             p = feat.get("properties", {})
             name = (p.get("BLK_NAME") or p.get("block_name") or
                     p.get("Block_Name") or p.get("BLOCK_NAME") or p.get("name") or "")
             if name:
-                blocks.add(name.strip())
+                blocks.add(str(name).strip().title())
         return jsonify({"district": district, "blocks": sorted(blocks)})
     else:
         panch_dir = Path(PUBLIC_DIR) / "panchayats"
-        blocks    = set()
+        blocks = set()
         for f in panch_dir.glob(f"{norm_dist}__*.geojson"):
             block_raw = f.stem.split("__", 1)[1]
             blocks.add(block_raw.replace("_", " ").title())
+        if not blocks:
+            for f in panch_dir.glob("*.geojson"):
+                if "__" not in f.stem: continue
+                d_part, b_part = f.stem.split("__", 1)
+                if d_part.lower() == norm_dist.lower():
+                    blocks.add(b_part.replace("_", " ").title())
         return jsonify({"district": district, "blocks": sorted(blocks)})
 
 
@@ -1822,20 +1830,40 @@ def api_panchayat_names():
     block    = request.args.get("block",    "").strip()
     if not district or not block:
         return jsonify({"error": "district and block required"}), 400
-    stem = f"{resolve_district_stem(district)}__{norm_name(block)}"
-    gj   = read_geojson(f"/panchayats/{stem}.geojson")
-    if not gj:
-        return jsonify({"panchayats": [], "error": f"{stem}.geojson not found"}), 404
-    names = []
-    for feat in gj.get("features", []):
-        p    = feat.get("properties", {})
-        name = (p.get("GPNAME_1") or p.get("panchayat_name") or
-                p.get("Panchayat_Name") or p.get("PANCHAYAT_NAME") or
-                p.get("village_name") or p.get("name") or p.get("NAME") or "")
-        if name:
-            names.append(name)
-    return jsonify({"panchayats": sorted(set(names))})
 
+    stem = f"{resolve_district_stem(district)}__{norm_name(block)}"
+
+    if IS_VERCEL:
+        gj = read_geojson(f"/panchayats/{stem}.geojson")
+        if not gj:
+            return jsonify({"panchayats": [], "error": f"{stem}.geojson not found"}), 404
+        names = []
+        for feat in gj.get("features", []):
+            p = feat.get("properties", {})
+            name = (p.get("GPNAME_1") or p.get("panchayat_name") or
+                    p.get("Panchayat_Name") or p.get("PANCHAYAT_NAME") or
+                    p.get("village_name") or p.get("name") or p.get("NAME") or "")
+            if name:
+                names.append(name)
+        return jsonify({"panchayats": sorted(set(names))})
+    else:
+        panch_dir = Path(PUBLIC_DIR) / "panchayats"
+        geo_path  = find_geojson(panch_dir, stem)
+        if not geo_path:
+            return jsonify({"panchayats": [], "error": f"{stem}.geojson not found"}), 404
+        try:
+            gj    = json.loads(geo_path.read_text(encoding="utf-8"))
+            names = []
+            for feat in gj.get("features", []):
+                p = feat.get("properties", {})
+                name = (p.get("GPNAME_1") or p.get("panchayat_name") or
+                        p.get("Panchayat_Name") or p.get("PANCHAYAT_NAME") or
+                        p.get("village_name") or p.get("name") or p.get("NAME") or "")
+                if name:
+                    names.append(name)
+            return jsonify({"panchayats": sorted(set(names))})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
 # ══ Load Events ══
 

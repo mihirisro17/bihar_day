@@ -476,10 +476,10 @@ from pathlib import Path
 from PIL import Image
 
 
-# BASE_DIR   = os.getcwd()
-_here = Path(__file__).resolve().parent   # /var/task/api  (Vercel) OR project root (local)
-BASE_DIR   = str(_here.parent if _here.name == "api" else _here)PUBLIC_DIR = os.path.join(BASE_DIR, "public")
-# PUBLIC_DIR = os.path.join(BASE_DIR, "public")
+
+BASE_DIR   = os.getcwd()
+PUBLIC_DIR = os.path.join(BASE_DIR, "public")
+
 sys.path.insert(0, BASE_DIR)
 import config as C
 

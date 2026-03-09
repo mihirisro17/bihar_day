@@ -943,7 +943,9 @@ def api_block_geojson():
     geo_path   = find_geojson(blocks_dir, resolve_district_stem(district))  # ← fixed
 
     if not geo_path:
-        return jsonify({"error": "not found", "features": []}), 404
+        print(f"[block_geojson] no file for district={district} block={block}")
+        return jsonify({"type": "FeatureCollection", "features": []}), 200
+        
 
     try:
         gj   = json.loads(geo_path.read_text(encoding="utf-8"))
@@ -1142,6 +1144,25 @@ def map_page():
     if not name or not birth_year:
         return redirect(url_for("index"))
     return render_template("map.html", name=name, birth_year=birth_year, app_title=C.APP_TITLE)
+
+
+@app.route("/api/debug_district")
+def debug_district():
+    district = request.args.get("district", "AURANGABAD")
+    block    = request.args.get("block", "NABINAGAR")
+    blocks_dir = Path(PUBLIC_DIR) / "blocks"
+    panch_dir  = Path(PUBLIC_DIR) / "panchayats"
+    stem_d = resolve_district_stem(district)
+    stem_p = f"{stem_d}__{norm_name(block)}"
+    return jsonify({
+        "district_stem":   stem_d,
+        "block_file":      str(find_geojson(blocks_dir, stem_d)),
+        "panchayat_stem":  stem_p,
+        "panchayat_file":  str(find_geojson(panch_dir, stem_p)),
+        "all_block_files": [f.name for f in blocks_dir.glob("AURANGABAD*")],
+        "all_panch_files": [f.name for f in panch_dir.glob("AURANGABAD*")],
+    })
+
 
 
 @app.route("/analyse", methods=["GET", "POST"])

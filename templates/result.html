@@ -178,13 +178,13 @@
     }
 
     .right-column {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  padding-top: 8px;
-  gap: 0;
-}
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+      padding-top: 8px;
+      gap: 0;
+    }
 
     /* Hero shrinks to fit — no flex:1 so satellite gets the remaining space */
     .hero-section {
@@ -252,10 +252,13 @@
 
     /* ═══ INFO CHIPS ═══ */
     .info-chips {
+      display: flex;
+      /* ← THIS WAS MISSING */
       flex-wrap: nowrap;
       overflow-x: auto;
       padding-bottom: 2px;
       scrollbar-width: none;
+      gap: 8px;
     }
 
     .info-chip {
@@ -405,12 +408,13 @@
     }
 
     /* Timeline fills entire right column */
-   .tl-section {
-  flex: 0 0 auto;          /* ← was "flex: 1 1 0" — this was the root cause */
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+    .tl-section {
+      flex: 0 0 auto;
+      /* ← was "flex: 1 1 0" — this was the root cause */
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
     .section-header h2 {
       font-size: 1.1rem;
@@ -437,12 +441,14 @@
     }
 
     .tl-card-outer {
-  flex: 0 0 auto;          /* ← was "flex: 1 1 0" */
-  height: 290px;           /* fixed height — card no longer balloons */
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
+      flex: 0 0 auto;
+      /* ← was "flex: 1 1 0" */
+      height: 290px;
+      /* fixed height — card no longer balloons */
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
 
     .tl-card {
       flex: 1 1 0;
@@ -945,14 +951,15 @@
       color: var(--teal);
     }
 
-.sat-grid {
-  flex: 1 1 0;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 2fr 28px 3fr;  /* ← 3 columns: birth | divider | now */
-  grid-template-rows: 1fr;
-  gap: 0;
-}
+    .sat-grid {
+      flex: 1 1 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 2fr 28px 3fr;
+      /* ← must be 3 columns */
+      grid-template-rows: 1fr;
+      gap: 0;
+    }
 
 
     /* ═══ SAT CARD ═══ */
@@ -1945,6 +1952,9 @@
         const r = await fetch('/bihar_dist_ready.geojson');
         if (!r.ok) return;
         geoJsonData = await r.json();
+        if (geoJsonData.features && geoJsonData.features[0]) {
+          console.log('[GeoJSON] Feature properties:', geoJsonData.features[0].properties);
+        }
         ['birthImg', 'currentImg'].forEach((imgId, i) => {
           const img = document.getElementById(imgId);
           if (img.classList.contains('loaded')) {
@@ -2039,14 +2049,23 @@
       const norm = s => String(s).toLowerCase().replace(/[\s\-()+]/g, '');
 
       /* Layer 1: All districts (faint) */
+      /* Layer 1: All districts (faint) */
       if (geoJsonData) {
         const distGrp = document.createElementNS(NS, 'g');
         distGrp.setAttribute('id', 'ovDistAll');
+
         geoJsonData.features.forEach(feat => {
           const d = gD(feat.geometry); if (!d) return;
           const path = document.createElementNS(NS, 'path');
           path.setAttribute('d', d);
-          const isActive = norm(feat.properties.name) === norm(DISTRICT);
+
+          // ← FIX: try ALL common property keys, not just 'name'
+          const p = feat.properties || {};
+          const featName = p.name || p.NAME || p.DISTRICT || p.district ||
+            p.dist_name || p.DIST_NAME || p.DT_NAME ||
+            p.dtname || p.Dist_Name || '';
+          const isActive = norm(featName) === norm(DISTRICT);
+
           if (isActive) {
             path.setAttribute('stroke', '#f97316');
             path.setAttribute('stroke-width', currentScope === 'panchayat' ? '2' : '4');
@@ -2065,6 +2084,7 @@
         });
         svgEl.appendChild(distGrp);
       }
+
 
       /* Layer 2: Panchayat/Block boundary (green glowing) */
       if (panchGeoData && panchGeoData.features && panchGeoData.features.length > 0) {

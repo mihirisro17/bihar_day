@@ -2254,12 +2254,12 @@
       filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.5));
     }
 
-  .dp-block.active {
-  fill: rgba(14, 165, 233, 0.25) !important;
-  stroke: #0ea5e9 !important;
-  stroke-width: 2px !important;
-  /* no animation here */
-}
+    .dp-block.active {
+      fill: rgba(14, 165, 233, 0.25) !important;
+      stroke: #0ea5e9 !important;
+      stroke-width: 2px !important;
+      /* no animation here */
+    }
 
     .dp-block.faded-bg {
       fill: transparent;
@@ -2303,12 +2303,12 @@
       filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));
     }
 
-.dp-panchayat.active {
-  fill: rgba(16, 185, 129, 0.3) !important;
-  stroke: #10b981 !important;
-  stroke-width: 2px !important;
-  /* no animation here */
-}
+    .dp-panchayat.active {
+      fill: rgba(16, 185, 129, 0.3) !important;
+      stroke: #10b981 !important;
+      stroke-width: 2px !important;
+      /* no animation here */
+    }
 
     .dp-panchayat.faded-bg {
       fill: transparent;
@@ -2935,15 +2935,15 @@
     <input type="hidden" id="fBbox" name="bbox" />
   </form> -->
   <form id="subForm" method="POST" action="/analyse">
-    <input type="hidden" name="name"        id="fName">
-    <input type="hidden" name="birth_year"  id="fYear">
-    <input type="hidden" name="district"    id="fDist">
-    <input type="hidden" name="bbox"        id="fBbox">
-    <input type="hidden" name="block"       id="fBlock">
-    <input type="hidden" name="panchayat"   id="fPanch">
+    <input type="hidden" name="name" id="fName">
+    <input type="hidden" name="birth_year" id="fYear">
+    <input type="hidden" name="district" id="fDist">
+    <input type="hidden" name="bbox" id="fBbox">
+    <input type="hidden" name="block" id="fBlock">
+    <input type="hidden" name="panchayat" id="fPanch">
     <!-- ↓↓ ADD THESE TWO ↓↓ -->
-    <input type="hidden" name="block_bbox"  id="fBlockBbox">
-    <input type="hidden" name="panch_bbox"  id="fPanchBbox">
+    <input type="hidden" name="block_bbox" id="fBlockBbox">
+    <input type="hidden" name="panch_bbox" id="fPanchBbox">
   </form>
 
 
@@ -3841,8 +3841,8 @@
       selectedBlock = { name, path, bb, feat };
       document.getElementById("fBlock").value = name;
       document.getElementById("fBlockBbox").value = JSON.stringify({
-      minLng: bb.x0, minLat: bb.y0, maxLng: bb.x1, maxLat: bb.y1
-    });
+        minLng: bb.x0, minLat: bb.y0, maxLng: bb.x1, maxLat: bb.y1
+      });
 
       hideTip();
       setSt("✔ <b>" + name + "</b> — पंचायत लोड हो रहा है…", true);
@@ -3940,8 +3940,8 @@
       selectedPanchayat = { name, path, bb, feat };
       document.getElementById("fPanch").value = name;
       document.getElementById("fPanchBbox").value = JSON.stringify({
-      minLng: bb.x0, minLat: bb.y0, maxLng: bb.x1, maxLat: bb.y1
-    });
+        minLng: bb.x0, minLat: bb.y0, maxLng: bb.x1, maxLat: bb.y1
+      });
 
       hideTip();
       const rect = path.getBoundingClientRect();

@@ -477,8 +477,13 @@ from PIL import Image
 
 
 
-BASE_DIR   = os.getcwd()
+# BASE_DIR   = os.getcwd()
+# PUBLIC_DIR = os.path.join(BASE_DIR, "public")
+# Replace BASE_DIR logic with this — works for both local and Vercel
+_file_dir = os.path.dirname(os.path.abspath(__file__))   # /var/task/api  on Vercel
+BASE_DIR   = os.path.dirname(_file_dir) if os.path.basename(_file_dir) == "api" else _file_dir
 PUBLIC_DIR = os.path.join(BASE_DIR, "public")
+
 
 sys.path.insert(0, BASE_DIR)
 import config as C

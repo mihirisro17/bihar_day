@@ -476,8 +476,10 @@ from pathlib import Path
 from PIL import Image
 
 
-BASE_DIR   = os.getcwd()
+# BASE_DIR   = os.getcwd()
+BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
 PUBLIC_DIR = os.path.join(BASE_DIR, "public")
+# PUBLIC_DIR = os.path.join(BASE_DIR, "public")
 sys.path.insert(0, BASE_DIR)
 import config as C
 

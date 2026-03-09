@@ -2928,14 +2928,26 @@
 
 
   <!-- Hidden submit form — includes block + panchayat -->
-  <form id="subForm" action="/analyse" method="POST" style="display: none">
+  <!-- <form id="subForm" action="/analyse" method="POST" style="display: none">
     <input type="hidden" id="fName" name="name" />
     <input type="hidden" id="fYear" name="birth_year" />
     <input type="hidden" id="fDist" name="district" />
     <input type="hidden" id="fBlock" name="block" />
     <input type="hidden" id="fPanch" name="panchayat" />
     <input type="hidden" id="fBbox" name="bbox" />
+  </form> -->
+  <form id="subForm" method="POST" action="/analyse">
+    <input type="hidden" name="name"        id="fName">
+    <input type="hidden" name="birth_year"  id="fYear">
+    <input type="hidden" name="district"    id="fDist">
+    <input type="hidden" name="bbox"        id="fBbox">
+    <input type="hidden" name="block"       id="fBlock">
+    <input type="hidden" name="panchayat"   id="fPanch">
+    <!-- ↓↓ ADD THESE TWO ↓↓ -->
+    <input type="hidden" name="block_bbox"  id="fBlockBbox">
+    <input type="hidden" name="panch_bbox"  id="fPanchBbox">
   </form>
+
 
   <!-- ══ STEP 1: MAIN PAGE ══ -->
   <div id="step1">
@@ -3830,6 +3842,9 @@
       const bb = geoBBox(feat.geometry.coordinates);
       selectedBlock = { name, path, bb, feat };
       document.getElementById("fBlock").value = name;
+      document.getElementById("fBlockBbox").value = JSON.stringify({
+      minLng: bb.x0, minLat: bb.y0, maxLng: bb.x1, maxLat: bb.y1
+    });
 
       hideTip();
       setSt("✔ <b>" + name + "</b> — पंचायत लोड हो रहा है…", true);
@@ -3926,6 +3941,9 @@
       const bb = geoBBox(feat.geometry.coordinates);
       selectedPanchayat = { name, path, bb, feat };
       document.getElementById("fPanch").value = name;
+      document.getElementById("fPanchBbox").value = JSON.stringify({
+      minLng: bb.x0, minLat: bb.y0, maxLng: bb.x1, maxLat: bb.y1
+    });
 
       hideTip();
       const rect = path.getBoundingClientRect();
@@ -4020,6 +4038,12 @@
         if (type === "block") {
           selectedBlock = { name: val, path: null, bb: selectedDistrict?.bb, feat: null };
           document.getElementById("fBlock").value = val;
+          if (selectedDistrict?.bb) {
+            const b = selectedDistrict.bb;
+            document.getElementById("fBlockBbox").value = JSON.stringify({
+              minLng: b.x0, minLat: b.y0, maxLng: b.x1, maxLat: b.y1
+            });
+          }
           setFpStep(4); setWinSteps(2); setLevelBadge(3);
           updateBarTitle("🌾 " + val + " — पंचायत चुनें", "Panchayat — Click/tap or type");
           setSt("✔ ब्लॉक: <b>" + val + "</b> — पंचायत लोड हो रहा है…", true);
@@ -4029,6 +4053,12 @@
         } else {
           selectedPanchayat = { name: val, path: null, bb: selectedBlock?.bb, feat: null };
           document.getElementById("fPanch").value = val;
+          if (selectedBlock?.bb) {
+            const b = selectedBlock.bb;
+            document.getElementById("fPanchBbox").value = JSON.stringify({
+              minLng: b.x0, minLat: b.y0, maxLng: b.x1, maxLat: b.y1
+            });
+          }
           showToast("🌾 " + val + " — यात्रा शुरू करें!");
           sparkBurst(innerWidth / 2, innerHeight / 2, "green");
           setTimeout(() => openConfirmPanel(), 400);

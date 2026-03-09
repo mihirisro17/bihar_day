@@ -1074,6 +1074,18 @@ def load_events():
 ALL_EVENTS = load_events()
 
 
+@app.route("/api/debug_list")
+def debug_list():
+    blocks_dir = Path(PUBLIC_DIR) / "blocks"
+    panch_dir  = Path(PUBLIC_DIR) / "panchayats"
+    return jsonify({
+        "all_blocks":     sorted([f.name for f in blocks_dir.glob("*.geojson")]) if blocks_dir.exists() else [],
+        "sample_panchs":  sorted([f.name for f in panch_dir.glob("*.geojson")])[:30] if panch_dir.exists() else [],
+        "total_blocks":   len(list(blocks_dir.glob("*.geojson"))) if blocks_dir.exists() else 0,
+        "total_panchs":   len(list(panch_dir.glob("*.geojson"))) if panch_dir.exists() else 0,
+    })
+
+
 @app.route("/api/block_names")
 def api_block_names():
     district = request.args.get("district", "").strip()

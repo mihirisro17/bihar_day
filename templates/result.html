@@ -1098,9 +1098,10 @@
     }
 
     /* Panchayat glow pulse */
-    .panch-boundary-glow {
-      animation: drawPath 2.5s cubic-bezier(.4, 0, .2, 1) forwards .9s, panchGlowPulse 3s ease-in-out infinite 3.5s;
-    }
+   .panch-boundary-glow {
+  animation: drawPath 2.5s cubic-bezier(.4, 0, .2, 1) forwards .9s;
+  filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.85));
+}
 
     @keyframes panchGlowPulse {
 
@@ -1980,8 +1981,9 @@
         const r = await fetch(url);
         if (!r.ok) { console.warn('[PanchGeoJSON] HTTP', r.status, url); return; }
         const fullGj = await r.json();
+        
+        const norm = s => String(s || '').toLowerCase().replace(/[\s_\-()+]/g, '');
 
-        const norm = s => String(s || '').toLowerCase().replace(/[\s_\-]/g, '');
 
         if (PANCHAYAT) {
           // Filter features for this panchayat client-side
@@ -1992,6 +1994,19 @@
               p.PANCHAYAT_NAME || p.name || '') === target;
           });
           panchGeoData = { type: 'FeatureCollection', features: feats };
+          if (panchGeoData.features.length > 0) {
+            let minLng=Infinity, maxLng=-Infinity, minLat=Infinity, maxLat=-Infinity;
+            panchGeoData.features.forEach(f => {
+              function scan(c) {
+                if (typeof c[0] === 'number') {
+                  minLng = Math.min(minLng, c[0]); maxLng = Math.max(maxLng, c[0]);
+                  minLat = Math.min(minLat, c[1]); maxLat = Math.max(maxLat, c[1]);
+                } else c.forEach(scan);
+              }
+              scan(f.geometry.coordinates);
+            });
+            computedPanchBbox = { minLng, maxLng, minLat, maxLat };
+          }
         } else {
           // Filter for just this block when no panchayat selected
           const target = norm(BLOCK);
@@ -2139,7 +2154,9 @@
         pulse.setAttribute('cx', cx.toFixed(1)); pulse.setAttribute('cy', cy.toFixed(1));
         pulse.setAttribute('r', '18'); pulse.setAttribute('fill', 'none');
         pulse.setAttribute('stroke', 'rgba(16,185,129,0.5)'); pulse.setAttribute('stroke-width', '2');
-        pulse.style.animation = 'drawPath 1s ease forwards .5s, panchGlowPulse 2s infinite 1.5s';
+        pulse.style.animation = 'drawPath 1s ease forwards .5s';
+        pulse.style.filter = 'drop-shadow(0 0 6px rgba(16,185,129,0.6))';
+
         svgEl.appendChild(pulse);
 
         const dot = document.createElementNS(NS, 'circle');

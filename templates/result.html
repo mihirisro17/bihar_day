@@ -178,11 +178,13 @@
     }
 
     .right-column {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      min-height: 0;
-    }
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding-top: 8px;
+  gap: 0;
+}
 
     /* Hero shrinks to fit — no flex:1 so satellite gets the remaining space */
     .hero-section {
@@ -403,13 +405,12 @@
     }
 
     /* Timeline fills entire right column */
-    .tl-section {
-      flex: 1 1 0;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+   .tl-section {
+  flex: 0 0 auto;          /* ← was "flex: 1 1 0" — this was the root cause */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
     .section-header h2 {
       font-size: 1.1rem;
@@ -436,12 +437,12 @@
     }
 
     .tl-card-outer {
-      flex: 1 1 0;
-      min-height: 0;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
+  flex: 0 0 auto;          /* ← was "flex: 1 1 0" */
+  height: 290px;           /* fixed height — card no longer balloons */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
 
     .tl-card {
       flex: 1 1 0;
@@ -520,10 +521,10 @@
 
     .tl-year {
       font-family: 'Playfair Display', serif;
-      font-size: 4rem;
+      font-size: 2.8rem;
       font-weight: 900;
       line-height: .95;
-      letter-spacing: -2px;
+      letter-spacing: -1px;
       background: linear-gradient(135deg, var(--saffron), var(--gold));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -1441,10 +1442,7 @@
         padding-top: 65px;
       }
 
-      .left-column,
-      .right-column {
-        height: auto;
-      }
+
 
       .tl-section,
       .tl-card-outer,

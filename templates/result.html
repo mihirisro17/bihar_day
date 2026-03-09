@@ -945,14 +945,15 @@
       color: var(--teal);
     }
 
-    .sat-grid {
-      flex: 1 1 0;
-      min-height: 0;
-      display: grid;
-      grid-template-columns: 2fr 3fr;
-      grid-template-rows: 1fr;
-      gap: 0;
-    }
+.sat-grid {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 2fr 28px 3fr;  /* ← 3 columns: birth | divider | now */
+  grid-template-rows: 1fr;
+  gap: 0;
+}
+
 
     /* ═══ SAT CARD ═══ */
     .sat-card {

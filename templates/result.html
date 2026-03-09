@@ -1074,26 +1074,36 @@
 
     /* Animated paths */
     /* FIND & REPLACE all three: */
+    /* REPLACE .animated-boundary with this: */
     .animated-boundary {
-      stroke-dasharray: 150000;
-      /* was 4000 */
-      stroke-dashoffset: 150000;
-      animation: drawPath 3s cubic-bezier(.4, 0, .2, 1) forwards .3s;
+      opacity: 0;
+      animation: fadeInBoundary 1.2s ease forwards 0.2s;
     }
 
+    /* KEEP these two as-is (panchayat still uses dash draw): */
     .animated-boundary-panch {
       stroke-dasharray: 50000;
-      /* was 2000 */
       stroke-dashoffset: 50000;
       animation: drawPath 2.5s cubic-bezier(.4, 0, .2, 1) forwards .8s;
     }
 
     .animated-boundary-block {
       stroke-dasharray: 80000;
-      /* was 3000 */
       stroke-dashoffset: 80000;
       animation: drawPath 2.8s cubic-bezier(.4, 0, .2, 1) forwards .5s;
     }
+
+    /* ADD this new keyframe: */
+    @keyframes fadeInBoundary {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
 
 
     @keyframes drawPath {
@@ -1926,8 +1936,7 @@
     /* ══════════════════════════════════════════════════
        SATELLITE IMAGE LOAD
     ══════════════════════════════════════════════════ */
-    function reloadSatImages() {
-      /* Reset both cards */
+    function reloadSatImages(keepBbox = false) {
       ['birthImg', 'currentImg'].forEach(id => {
         const img = document.getElementById(id);
         img.classList.remove('loaded'); img.src = '';
@@ -1939,10 +1948,12 @@
         document.getElementById(id).innerHTML = ''
       );
 
-      /* ── FIX: always pass getCardAR() when building padded bbox ── */
-      currentBbox = (currentScope === 'panchayat')
-        ? (computedPanchBbox ? computePaddedBbox(computedPanchBbox, getCardAR()) : computeFocusBbox())
-        : computeDistrictBbox();
+      /* Only recalculate bbox from scope when NOT called from zoom */
+      if (!keepBbox) {
+        currentBbox = (currentScope === 'panchayat')
+          ? (computedPanchBbox ? computePaddedBbox(computedPanchBbox, getCardAR()) : computeFocusBbox())
+          : computeDistrictBbox();
+      }
 
       loadSatImage('birth', SAT_BIRTH_YEAR,
         document.getElementById('birthSkeleton'),
@@ -1958,15 +1969,12 @@
       );
     }
 
+
     async function loadSatImage(type, year, skEl, imgEl, svgEl, srcEl) {
       srcEl.textContent = '📡 Loading…';
       try {
-        let bboxForApi;
-        if (currentScope === 'panchayat') {
-          bboxForApi = computedPanchBbox || RAW_FOCUS_BBOX;
-        } else {
-          bboxForApi = RAW_DIST_BBOX;
-        }
+        /* FIX: always use currentBbox — works for scope AND zoom */
+        const bboxForApi = currentBbox;
 
         const p = new URLSearchParams({ type, year, bbox: JSON.stringify(bboxForApi) });
         const resp = await fetch(`/api/sat_image?${p}`);
@@ -1989,6 +1997,7 @@
         skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Error';
       }
     }
+
 
 
     /* ══════════════════════════════════════════════════
@@ -2078,11 +2087,10 @@
 
     function zoomSat(factor) {
       if (!currentBbox) return;
-      const { minLng, maxLng, minLat, maxLat } = currentBbox;
-      const cx = (minLng + maxLng) / 2;
-      const cy = (minLat + maxLat) / 2;
-      const w = (maxLng - minLng) / factor;
-      const h = (maxLat - minLat) / factor;
+      const cx = (currentBbox.minLng + currentBbox.maxLng) / 2;
+      const cy = (currentBbox.minLat + currentBbox.maxLat) / 2;
+      const w = (currentBbox.maxLng - currentBbox.minLng) / factor;
+      const h = (currentBbox.maxLat - currentBbox.minLat) / factor;
 
       currentBbox = {
         minLng: cx - w / 2,
@@ -2091,11 +2099,9 @@
         maxLat: cy + h / 2
       };
 
-      ['birthMapOverlay', 'currentMapOverlay'].forEach(id => {
-        const svg = document.getElementById(id);
-        if (svg) drawAllOverlays(svg, currentBbox);
-      });
+      reloadSatImages(true); /* keepBbox=true → image reloads for new zoomed bbox */
     }
+
 
 
     /* ══════════════════════════════════════════════════

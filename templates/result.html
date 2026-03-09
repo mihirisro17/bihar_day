@@ -1777,7 +1777,7 @@
         minLat: raw.minLat - KL, maxLat: raw.maxLat + KL
       };
       const cx = (exp.maxLng + exp.minLng) / 2, cy = (exp.maxLat + exp.minLat) / 2;
-      let pW = (exp.maxLng - exp.minLng) * 1.4, pH = (exp.maxLat - exp.minLat) * 1.4;
+      let pW = (exp.maxLng - exp.minLng) * 0.2, pH = (exp.maxLat - exp.minLat) * 0.2;
       if (pW / pH > AR) pH = pW / AR; else pW = pH * AR;
       return { minLng: cx - pW / 2, maxLng: cx + pW / 2, minLat: cy - pH / 2, maxLat: cy + pH / 2 };
     }

@@ -955,8 +955,8 @@
       flex: 1 1 0;
       min-height: 0;
       display: grid;
-      grid-template-columns: 2fr 28px 3fr;
-      /* ← must be 3 columns */
+      grid-template-columns: 1fr 28px 1fr;
+      /* ← equal, same crop from SVG */
       grid-template-rows: 1fr;
       gap: 0;
     }
@@ -1073,23 +1073,28 @@
     }
 
     /* Animated paths */
+    /* FIND & REPLACE all three: */
     .animated-boundary {
-      stroke-dasharray: 4000;
-      stroke-dashoffset: 4000;
+      stroke-dasharray: 150000;
+      /* was 4000 */
+      stroke-dashoffset: 150000;
       animation: drawPath 3s cubic-bezier(.4, 0, .2, 1) forwards .3s;
     }
 
     .animated-boundary-panch {
-      stroke-dasharray: 2000;
-      stroke-dashoffset: 2000;
+      stroke-dasharray: 50000;
+      /* was 2000 */
+      stroke-dashoffset: 50000;
       animation: drawPath 2.5s cubic-bezier(.4, 0, .2, 1) forwards .8s;
     }
 
     .animated-boundary-block {
-      stroke-dasharray: 3000;
-      stroke-dashoffset: 3000;
+      stroke-dasharray: 80000;
+      /* was 3000 */
+      stroke-dashoffset: 80000;
       animation: drawPath 2.8s cubic-bezier(.4, 0, .2, 1) forwards .5s;
     }
+
 
     @keyframes drawPath {
       to {
@@ -1098,10 +1103,10 @@
     }
 
     /* Panchayat glow pulse */
-   .panch-boundary-glow {
-  animation: drawPath 2.5s cubic-bezier(.4, 0, .2, 1) forwards .9s;
-  filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.85));
-}
+    .panch-boundary-glow {
+      animation: drawPath 2.5s cubic-bezier(.4, 0, .2, 1) forwards .9s;
+      filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.85));
+    }
 
     @keyframes panchGlowPulse {
 
@@ -1981,7 +1986,7 @@
         const r = await fetch(url);
         if (!r.ok) { console.warn('[PanchGeoJSON] HTTP', r.status, url); return; }
         const fullGj = await r.json();
-        
+
         const norm = s => String(s || '').toLowerCase().replace(/[\s_\-()+]/g, '');
 
 
@@ -1995,7 +2000,7 @@
           });
           panchGeoData = { type: 'FeatureCollection', features: feats };
           if (panchGeoData.features.length > 0) {
-            let minLng=Infinity, maxLng=-Infinity, minLat=Infinity, maxLat=-Infinity;
+            let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
             panchGeoData.features.forEach(f => {
               function scan(c) {
                 if (typeof c[0] === 'number') {
@@ -2098,6 +2103,18 @@
           }
         });
         svgEl.appendChild(distGrp);
+        requestAnimationFrame(() => {
+          svgEl.querySelectorAll('.animated-boundary').forEach(p => {
+            try {
+              const len = Math.ceil(p.getTotalLength()) + 200;
+              p.style.strokeDasharray = len;
+              p.style.strokeDashoffset = len;
+              p.style.animation = 'none';
+              requestAnimationFrame(() => { p.style.animation = ''; });
+            } catch (e) { }
+          });
+        });
+
       }
 
 

@@ -1018,6 +1018,7 @@ def debug_paths():
     blocks_dir = Path(PUBLIC_DIR) / "blocks"
     panch_dir  = Path(PUBLIC_DIR) / "panchayats"
     return jsonify({
+        "base_dir":          BASE_DIR,
         "public_dir":        PUBLIC_DIR,
         "public_exists":     os.path.isdir(PUBLIC_DIR),
         "blocks_exists":     blocks_dir.exists(),
@@ -1025,6 +1026,8 @@ def debug_paths():
         "blocks_count":      len(list(blocks_dir.glob("*.geojson"))) if blocks_dir.exists() else 0,
         "panchayats_count":  len(list(panch_dir.glob("*.geojson"))) if panch_dir.exists() else 0,
         "dist_geojson":      os.path.exists(os.path.join(PUBLIC_DIR, "bihar_dist_ready.geojson")),
+        "cwd":               os.getcwd(),         # ← compare with base_dir
+        "file_path":         __file__,            # ← confirm resolution
     })
 
 

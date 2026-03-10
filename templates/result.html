@@ -42,10 +42,7 @@
       --glow-s: rgba(249, 115, 22, 0.18);
       --shadow: 0 4px 30px rgba(0, 0, 10, 0.6);
       --radius: 16px;
-      --row1: 44px;
-      --row2: 46px;
-      --bar-h: 90px;
-      /* row1 + row2 */
+      --bar-h: 48px;
     }
 
     html[data-theme="light"] {
@@ -80,6 +77,7 @@
       transition: background .5s, color .5s;
     }
 
+    /* Grid background */
     body::before {
       content: '';
       position: fixed;
@@ -93,6 +91,7 @@
       mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
     }
 
+    /* Ambient glow */
     body::after {
       content: '';
       position: fixed;
@@ -105,6 +104,44 @@
         radial-gradient(ellipse 40% 30% at 50% 50%, rgba(249, 115, 22, 0.04) 0%, transparent 60%);
     }
 
+    /* ═══ CELEBRATION PARTICLES ═══ */
+    .celebration-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatParticle linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes floatParticle {
+      0% {
+        opacity: 0;
+        transform: translateY(100vh) scale(0) rotate(0deg);
+      }
+
+      10% {
+        opacity: .8;
+      }
+
+      90% {
+        opacity: .4;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-10vh) scale(1.2) rotate(720deg);
+      }
+    }
+
+    /* ═══ MOUSE GLOW ═══ */
     #mouseGlow {
       position: fixed;
       top: 0;
@@ -119,51 +156,56 @@
       transition: width .4s, height .4s;
     }
 
-    /* ════════════════════════════════════════
-   TOP BAR — 2 ROWS
-   Row 1: [Back]  [Tag — centered]  [Dark]
-   Row 2: [chip chip chip chip chip chip]
-════════════════════════════════════════ */
+    /* ═══════════════════════════════════════════
+   TOP BAR — SINGLE ROW ONLY
+   [Back]  [Tag — centered]  [Dark]
+═══════════════════════════════════════════ */
     #topInfoBar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 200;
+      height: var(--bar-h);
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      padding: 0 16px;
+      gap: 10px;
       background: var(--card);
       backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border);
       box-shadow: var(--shadow);
     }
 
-    /* — Row 1 — */
-    #topRow1 {
-      height: var(--row1);
-      display: flex;
-      align-items: center;
-      padding: 0 16px;
-      border-bottom: 1px solid var(--border);
-      gap: 10px;
-    }
-
-    /* Tag is centered via margin:auto on both sides */
+    /* Centered tag via margin:auto */
     .welcome-tag {
       margin: 0 auto;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 5px 16px;
+      padding: 6px 18px;
       border-radius: 50px;
       background: linear-gradient(90deg, rgba(139, 92, 246, 0.12), rgba(14, 165, 233, 0.1));
-      border: 1px solid rgba(139, 92, 246, 0.25);
+      border: 1px solid rgba(139, 92, 246, 0.3);
       font-size: .68rem;
       font-weight: 700;
       letter-spacing: .8px;
       text-transform: uppercase;
       white-space: nowrap;
       flex-shrink: 0;
+      animation: tagPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes tagPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+      }
+
+      50% {
+        box-shadow: 0 0 20px 4px rgba(139, 92, 246, 0.15);
+      }
     }
 
     .welcome-tag .tag-hindi {
@@ -176,13 +218,28 @@
     }
 
     .welcome-tag .tag-dot {
-      width: 4px;
-      height: 4px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       background: var(--border2);
+      animation: dotBlink 2s ease-in-out infinite;
     }
 
-    /* — Shared button style — */
+    @keyframes dotBlink {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: .4;
+        transform: scale(.7)
+      }
+    }
+
+    /* Shared button */
     .top-btn {
       flex-shrink: 0;
       display: inline-flex;
@@ -211,18 +268,113 @@
       transform: translateY(-1px);
     }
 
-    /* — Row 2: chips — */
-    #topRow2 {
-      height: var(--row2);
-      display: flex;
-      align-items: center;
-      padding: 0 16px;
-      gap: 7px;
-      overflow-x: auto;
-      scrollbar-width: none;
+    /* ═══════════════════════════════════════════
+   PAGE — 2 column grid
+═══════════════════════════════════════════ */
+    #page {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1.55fr 1fr;
+      gap: 18px;
+      padding: calc(var(--bar-h) + 12px) 18px 14px;
+      overflow: hidden;
     }
 
-    #topRow2::-webkit-scrollbar {
+    /* ═══ LEFT COLUMN ═══ */
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* ── Hero + chips on same row ── */
+    .hero-info-row {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    /* Hero section — compact, no wrap */
+    .hero-section {
+      flex-shrink: 0;
+    }
+
+    .hero-name {
+      line-height: 1.05;
+    }
+
+    .hero-name .namaste {
+      display: block;
+      font-size: 1rem;
+      color: var(--txt2);
+      font-weight: 400;
+      font-family: 'Yatra One', cursive;
+      animation: fadeSlideDown .7s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .hero-name .name-val {
+      display: block;
+      font-size: 1.65rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--gold) 40%, #fde68a 65%, var(--saffron) 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeSlideDown .7s cubic-bezier(.22, 1, .36, 1) .1s both, shimmerName 4s linear infinite;
+    }
+
+    @keyframes shimmerName {
+      0% {
+        background-position: 0%
+      }
+
+      100% {
+        background-position: 200%
+      }
+    }
+
+    @keyframes fadeSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    /* Divider between hero and chips */
+    .hero-divider {
+      flex-shrink: 0;
+      width: 1px;
+      height: 44px;
+      background: linear-gradient(to bottom, transparent, var(--border2), transparent);
+    }
+
+    /* Info chips row — fills rest of hero-info-row */
+    .info-chips {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: 6px;
+    }
+
+    .info-chips::-webkit-scrollbar {
       display: none;
     }
 
@@ -233,12 +385,37 @@
       gap: 8px;
       background: var(--card2);
       border: 1px solid var(--border);
-      padding: 5px 14px;
+      padding: 5px 13px;
       border-radius: 12px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
       transition: all .3s cubic-bezier(.22, 1, .36, 1);
-      animation: chipIn .5s cubic-bezier(.22, 1, .36, 1) both;
+      animation: chipIn .6s cubic-bezier(.22, 1, .36, 1) both;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Shimmer sweep on chip */
+    .info-chip::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+      animation: chipShimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes chipShimmer {
+      0% {
+        left: -100%
+      }
+
+      60%,
+      100% {
+        left: 150%
+      }
     }
 
     .info-chip:nth-child(1) {
@@ -247,34 +424,34 @@
     }
 
     .info-chip:nth-child(2) {
-      animation-delay: .2s;
+      animation-delay: .18s;
       --chip-accent: var(--teal);
     }
 
     .info-chip:nth-child(3) {
-      animation-delay: .3s;
+      animation-delay: .26s;
       --chip-accent: var(--gold);
     }
 
     .info-chip:nth-child(4) {
-      animation-delay: .4s;
+      animation-delay: .34s;
       --chip-accent: var(--saffron);
     }
 
     .info-chip:nth-child(5) {
-      animation-delay: .5s;
+      animation-delay: .42s;
       --chip-accent: var(--green);
     }
 
     .info-chip:nth-child(6) {
-      animation-delay: .6s;
+      animation-delay: .50s;
       --chip-accent: #06b6d4;
     }
 
     @keyframes chipIn {
       from {
         opacity: 0;
-        transform: translateY(8px) scale(.94)
+        transform: translateY(10px) scale(.92)
       }
 
       to {
@@ -285,8 +462,8 @@
 
     .info-chip:hover {
       border-color: var(--chip-accent);
-      box-shadow: 0 0 12px color-mix(in srgb, var(--chip-accent) 30%, transparent), var(--shadow);
-      transform: translateY(-2px);
+      box-shadow: 0 0 14px color-mix(in srgb, var(--chip-accent) 35%, transparent), var(--shadow);
+      transform: translateY(-3px) scale(1.03);
     }
 
     .chip-dot {
@@ -295,7 +472,20 @@
       border-radius: 50%;
       background: var(--chip-accent);
       flex-shrink: 0;
-      box-shadow: 0 0 5px var(--chip-accent);
+      box-shadow: 0 0 6px var(--chip-accent);
+      animation: chipDotPulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes chipDotPulse {
+
+      0%,
+      100% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.4)
+      }
     }
 
     .chip-data {
@@ -305,7 +495,7 @@
     }
 
     .chip-label {
-      font-size: .52rem;
+      font-size: .5rem;
       color: var(--txt3);
       font-weight: 700;
       text-transform: uppercase;
@@ -319,59 +509,7 @@
       font-family: 'Space Grotesk', sans-serif;
     }
 
-    /* ════════════════════════════════════════
-   PAGE — 2-column grid, fills viewport
-════════════════════════════════════════ */
-    #page {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      height: 100%;
-      display: grid;
-      grid-template-columns: 1.55fr 1fr;
-      gap: 18px;
-      padding: calc(var(--bar-h) + 12px) 18px 14px;
-      overflow: hidden;
-    }
-
-    /* ════════════════════════════════════════
-   LEFT COLUMN
-════════════════════════════════════════ */
-    .left-column {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      height: 100%;
-      min-height: 0;
-      overflow: hidden;
-    }
-
-    /* — Hero greeting — */
-    .hero-section {
-      flex-shrink: 0;
-    }
-
-    .hero-name {
-      line-height: 1.1;
-    }
-
-    .hero-name .namaste {
-      display: block;
-      font-size: 1.25rem;
-      color: var(--txt2);
-      font-weight: 400;
-    }
-
-    .hero-name .name-val {
-      font-size: 1.8rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--saffron) 0%, var(--gold) 50%, #fde68a 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    /* — Satellite section — */
+    /* ── Satellite section ── */
     .sat-section {
       flex: 1 1 0;
       min-height: 0;
@@ -479,7 +617,7 @@
       color: var(--teal);
     }
 
-    /* — Satellite grid: two equal side-by-side cards — */
+    /* ── Two sat cards side by side ── */
     .sat-grid {
       flex: 1 1 0;
       min-height: 0;
@@ -488,9 +626,7 @@
       gap: 0;
     }
 
-    /* ════════════════════════════════════════
-   SAT CARD
-════════════════════════════════════════ */
+    /* ═══ SAT CARD ═══ */
     .sat-card {
       position: relative;
       border-radius: var(--radius);
@@ -505,7 +641,7 @@
     .sat-card:hover {
       border-color: rgba(14, 165, 233, .4);
       box-shadow: 0 0 40px var(--glow-t), var(--shadow);
-      transform: translateY(-2px) scale(1.005);
+      transform: translateY(-2px) scale(1.007);
     }
 
     .sat-card.birth-card {
@@ -603,7 +739,6 @@
       pointer-events: none;
     }
 
-    /* Boundary paths */
     .animated-boundary {
       opacity: 0;
       animation: fadeInBoundary 1.2s ease forwards .2s;
@@ -642,7 +777,7 @@
       filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.85));
     }
 
-    /* Skeleton */
+    /* Skeleton loader */
     .sat-skeleton {
       position: absolute;
       inset: 0;
@@ -715,7 +850,6 @@
       color: rgba(139, 92, 246, .25);
     }
 
-    /* Corner badges */
     .sat-corner-badge {
       position: absolute;
       top: 10px;
@@ -761,7 +895,7 @@
       }
 
       50% {
-        opacity: .4
+        opacity: .3
       }
     }
 
@@ -948,7 +1082,7 @@
     }
 
     .sat-div-label {
-      font-size: .58rem;
+      font-size: .56rem;
       font-weight: 800;
       color: var(--txt3);
       letter-spacing: 1px;
@@ -957,9 +1091,7 @@
       font-family: 'Space Grotesk', sans-serif;
     }
 
-    /* ════════════════════════════════════════
-   RIGHT COLUMN — Timeline
-════════════════════════════════════════ */
+    /* ═══ RIGHT COLUMN ═══ */
     .right-column {
       display: flex;
       flex-direction: column;
@@ -1075,6 +1207,7 @@
       border-radius: 50%;
       background: var(--purple);
       box-shadow: 0 0 4px var(--purple);
+      animation: blink 2s infinite;
     }
 
     .tl-year-block {
@@ -1088,15 +1221,27 @@
       font-weight: 900;
       line-height: .95;
       letter-spacing: -1px;
-      background: linear-gradient(135deg, var(--saffron), var(--gold));
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--gold) 50%, #fde68a 100%);
+      background-size: 200% 100%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       transition: transform .4s;
+      animation: shimmerYear 4s linear infinite;
+    }
+
+    @keyframes shimmerYear {
+      0% {
+        background-position: 0%
+      }
+
+      100% {
+        background-position: 200%
+      }
     }
 
     .tl-card-outer:hover .tl-year {
-      transform: scale(1.03) translateX(2px);
+      transform: scale(1.04) translateX(3px);
     }
 
     .tl-year-bar {
@@ -1124,6 +1269,7 @@
       border-radius: 50%;
       background: var(--gold);
       box-shadow: 0 0 8px var(--gold);
+      animation: blink 1.5s infinite;
     }
 
     .tl-body {
@@ -1135,13 +1281,14 @@
       border-radius: 14px;
       background: var(--card2);
       border: 1px solid var(--border);
-      transition: border-color .4s;
+      transition: border-color .4s, background .4s;
       position: relative;
       z-index: 1;
     }
 
     .tl-card-outer:hover .tl-body {
-      border-color: rgba(139, 92, 246, .2);
+      border-color: rgba(139, 92, 246, .25);
+      background: rgba(16, 24, 60, 0.7);
     }
 
     .tl-icon-wrap {
@@ -1159,7 +1306,7 @@
     }
 
     .tl-card-outer:hover .tl-icon-wrap {
-      transform: scale(1.1) rotate(5deg);
+      transform: scale(1.12) rotate(6deg);
       border-color: rgba(139, 92, 246, .4);
     }
 
@@ -1186,6 +1333,12 @@
       border-radius: 50%;
       background: var(--border2);
       transition: all .3s;
+      cursor: pointer;
+    }
+
+    .tl-dot:hover {
+      background: var(--txt3);
+      transform: scale(1.3);
     }
 
     .tl-dot.active {
@@ -1292,7 +1445,7 @@
       }
     }
 
-    /* Playbar */
+    /* ── Playbar ── */
     .tl-playbar {
       flex-shrink: 0;
       display: flex;
@@ -1384,9 +1537,7 @@
       font-size: .6rem;
     }
 
-    /* ════════════════════════════════════════
-   RESPONSIVE
-════════════════════════════════════════ */
+    /* ═══ RESPONSIVE ═══ */
     @media(max-width:1024px) {
 
       html,
@@ -1404,7 +1555,20 @@
         grid-template-columns: 1fr;
         height: auto;
         overflow: visible;
-        padding: 16px;
+        padding: 14px;
+      }
+
+      .hero-info-row {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .hero-divider {
+        display: none;
+      }
+
+      .info-chips {
+        flex-basis: 100%;
       }
 
       .left-column {
@@ -1422,13 +1586,13 @@
         flex: none;
         height: auto;
         grid-template-columns: 1fr;
-        grid-template-rows: 260px 28px 260px;
+        grid-template-rows: 260px 22px 260px;
       }
 
       .sat-divider {
         flex-direction: row;
         width: 100%;
-        height: 28px;
+        height: 22px;
       }
 
       .sat-div-line {
@@ -1468,92 +1632,95 @@
 <body>
   <div id="mouseGlow"></div>
 
-  <!-- ════ TOP BAR ════ -->
+  <!-- Celebration sparkles (injected by JS) -->
+  <div id="sparkleContainer"></div>
+
+  <!-- ════ TOP BAR — single row ════ -->
   <div id="topInfoBar">
+    <a href="/" class="top-btn back-btn">
+      <span style="font-size:1rem;line-height:.8;">←</span> Back
+    </a>
 
-    <!-- Row 1: Back | Tag (centered) | Dark -->
-    <div id="topRow1">
-      <a href="/" class="top-btn back-btn">
-        <span style="font-size:1rem;line-height:.8;">←</span> Back
-      </a>
-
-      <div class="welcome-tag">
-        <span class="tag-hindi">बिहार दिवस प्रदर्शनी</span>
-        <span class="tag-dot"></span>
-        <span class="tag-en">Bihar Diwas Exhibition</span>
-      </div>
-
-      <div class="top-btn theme-toggle" onclick="toggleTheme()">
-        <span id="themeIcon">🌙</span>
-        <span id="themeText">Dark</span>
-      </div>
+    <div class="welcome-tag">
+      <span class="tag-hindi">बिहार दिवस प्रदर्शनी</span>
+      <span class="tag-dot"></span>
+      <span class="tag-en">Bihar Diwas Exhibition</span>
     </div>
 
-    <!-- Row 2: All info chips -->
-    <div id="topRow2">
-      <div class="info-chip">
-        <div class="chip-dot"></div>
-        <div class="chip-data">
-          <span class="chip-label">नाम / Name</span>
-          <span class="chip-val">{{ name }}</span>
-        </div>
-      </div>
-      <div class="info-chip">
-        <div class="chip-dot"></div>
-        <div class="chip-data">
-          <span class="chip-label">जन्म वर्ष / Birth Year</span>
-          <span class="chip-val">{{ birth_year }}</span>
-        </div>
-      </div>
-      <div class="info-chip">
-        <div class="chip-dot"></div>
-        <div class="chip-data">
-          <span class="chip-label">आयु / Age</span>
-          <span class="chip-val">{% if age %}{{ age }} वर्ष{% else %}—{% endif %}</span>
-        </div>
-      </div>
-      <div class="info-chip">
-        <div class="chip-dot"></div>
-        <div class="chip-data">
-          <span class="chip-label">ज़िला / District</span>
-          <span class="chip-val">{{ district }}</span>
-        </div>
-      </div>
-      {% if block %}
-      <div class="info-chip">
-        <div class="chip-dot"></div>
-        <div class="chip-data">
-          <span class="chip-label">ब्लॉक / Block</span>
-          <span class="chip-val">{{ block }}</span>
-        </div>
-      </div>
-      {% endif %}
-      {% if panchayat %}
-      <div class="info-chip">
-        <div class="chip-dot"></div>
-        <div class="chip-data">
-          <span class="chip-label">पंचायत</span>
-          <span class="chip-val">{{ panchayat }}</span>
-        </div>
-      </div>
-      {% endif %}
+    <div class="top-btn theme-toggle" onclick="toggleTheme()">
+      <span id="themeIcon">🌙</span>
+      <span id="themeText">Dark</span>
     </div>
-
-  </div><!-- /topInfoBar -->
+  </div>
 
   <!-- ════ PAGE ════ -->
   <div id="page">
 
-    <!-- ══ LEFT COLUMN: Hero + Satellite ══ -->
+    <!-- ══ LEFT COLUMN ══ -->
     <div class="left-column">
 
-      <!-- Hero greeting -->
-      <section class="hero-section">
-        <div class="hero-name">
-          <span class="namaste">नमस्ते,</span>
-          <span class="name-val">{{ name }}!</span>
+      <!-- Hero greeting + chips on same row -->
+      <div class="hero-chips-row">
+
+        <!-- Greeting -->
+        <section class="hero-section">
+          <div class="hero-name">
+            <span class="namaste">नमस्ते,</span>
+            <span class="name-val">{{ name }}!</span>
+          </div>
+        </section>
+
+        <!-- Info chips inline -->
+        <div class="chips-inline">
+          <div class="info-chip">
+            <div class="chip-dot"></div>
+            <div class="chip-data">
+              <span class="chip-label">नाम / Name</span>
+              <span class="chip-val">{{ name }}</span>
+            </div>
+          </div>
+          <div class="info-chip">
+            <div class="chip-dot"></div>
+            <div class="chip-data">
+              <span class="chip-label">जन्म वर्ष / Birth Year</span>
+              <span class="chip-val">{{ birth_year }}</span>
+            </div>
+          </div>
+          <div class="info-chip">
+            <div class="chip-dot"></div>
+            <div class="chip-data">
+              <span class="chip-label">आयु / Age</span>
+              <span class="chip-val">{% if age %}{{ age }} वर्ष{% else %}—{% endif %}</span>
+            </div>
+          </div>
+          <div class="info-chip">
+            <div class="chip-dot"></div>
+            <div class="chip-data">
+              <span class="chip-label">ज़िला / District</span>
+              <span class="chip-val">{{ district }}</span>
+            </div>
+          </div>
+          {% if block %}
+          <div class="info-chip">
+            <div class="chip-dot"></div>
+            <div class="chip-data">
+              <span class="chip-label">ब्लॉक / Block</span>
+              <span class="chip-val">{{ block }}</span>
+            </div>
+          </div>
+          {% endif %}
+          {% if panchayat %}
+          <div class="info-chip">
+            <div class="chip-dot"></div>
+            <div class="chip-data">
+              <span class="chip-label">पंचायत</span>
+              <span class="chip-val">{{ panchayat }}</span>
+            </div>
+          </div>
+          {% endif %}
         </div>
-      </section>
+
+      </div><!-- /hero-chips-row -->
 
       <!-- Satellite section -->
       <section class="sat-section">
@@ -1741,10 +1908,6 @@
     </div><!-- /right-column -->
 
   </div><!-- /page -->
-
-
-  <!-- /page -->
-
   <script>
     /* ══════════════════════════════════════════════════
        DATA FROM FLASK
@@ -2357,6 +2520,25 @@
       }, 50);
       autoTimer = setTimeout(nextEvent, ms);
     }
+    (function () {
+      const colors = ['#f97316', '#f59e0b', '#8b5cf6', '#0ea5e9', '#10b981', '#fde68a', '#c084fc'];
+      const container = document.getElementById('sparkleContainer');
+      for (let i = 0; i < 18; i++) {
+        const s = document.createElement('div');
+        s.className = 'sparkle';
+        const size = 2 + Math.random() * 5;
+        s.style.cssText = `
+        width:${size}px; height:${size}px;
+        background:${colors[Math.floor(Math.random() * colors.length)]};
+        left:${Math.random() * 100}vw;
+        top:${Math.random() * 100}vh;
+        box-shadow:0 0 ${size * 2}px ${colors[Math.floor(Math.random() * colors.length)]};
+        animation-duration:${4 + Math.random() * 8}s;
+        animation-delay:${Math.random() * 6}s;
+      `;
+        container.appendChild(s);
+      }
+    })();
 
     function nextEvent() { const n = cur < EVENTS.length - 1 ? cur + 1 : 0; animateCardChange(n, 'next'); cur = n; resetProgress(); }
     function prevEvent() { const p = cur > 0 ? cur - 1 : EVENTS.length - 1; animateCardChange(p, 'prev'); cur = p; resetProgress(); }

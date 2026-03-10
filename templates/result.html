@@ -77,7 +77,6 @@
       transition: background .5s, color .5s;
     }
 
-    /* Grid background */
     body::before {
       content: '';
       position: fixed;
@@ -91,7 +90,6 @@
       mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
     }
 
-    /* Ambient glow */
     body::after {
       content: '';
       position: fixed;
@@ -104,21 +102,22 @@
         radial-gradient(ellipse 40% 30% at 50% 50%, rgba(249, 115, 22, 0.04) 0%, transparent 60%);
     }
 
-    /* ═══ CELEBRATION PARTICLES ═══ */
-    .celebration-canvas {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
+    /* ═══ SPARKLE / PARTICLE — FIX: both classes share same rule ═══ */
+    .sparkle,
     .particle {
       position: absolute;
       border-radius: 50%;
       pointer-events: none;
       animation: floatParticle linear infinite;
       opacity: 0;
+    }
+
+    #sparkleContainer {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
     }
 
     @keyframes floatParticle {
@@ -128,7 +127,7 @@
       }
 
       10% {
-        opacity: .8;
+        opacity: .9;
       }
 
       90% {
@@ -137,7 +136,7 @@
 
       100% {
         opacity: 0;
-        transform: translateY(-10vh) scale(1.2) rotate(720deg);
+        transform: translateY(-10vh) scale(1.3) rotate(720deg);
       }
     }
 
@@ -156,10 +155,7 @@
       transition: width .4s, height .4s;
     }
 
-    /* ═══════════════════════════════════════════
-   TOP BAR — SINGLE ROW ONLY
-   [Back]  [Tag — centered]  [Dark]
-═══════════════════════════════════════════ */
+    /* ═══ TOP BAR ═══ */
     #topInfoBar {
       position: fixed;
       top: 0;
@@ -177,7 +173,6 @@
       box-shadow: var(--shadow);
     }
 
-    /* Centered tag via margin:auto */
     .welcome-tag {
       margin: 0 auto;
       display: inline-flex;
@@ -239,7 +234,6 @@
       }
     }
 
-    /* Shared button */
     .top-btn {
       flex-shrink: 0;
       display: inline-flex;
@@ -268,9 +262,7 @@
       transform: translateY(-1px);
     }
 
-    /* ═══════════════════════════════════════════
-   PAGE — 2 column grid
-═══════════════════════════════════════════ */
+    /* ═══ PAGE 2-COL GRID ═══ */
     #page {
       position: relative;
       z-index: 10;
@@ -278,8 +270,8 @@
       height: 100%;
       display: grid;
       grid-template-columns: 1.55fr 1fr;
-      gap: 18px;
-      padding: calc(var(--bar-h) + 12px) 18px 14px;
+      gap: 16px;
+      padding: calc(var(--bar-h) + 10px) 16px 12px;
       overflow: hidden;
     }
 
@@ -287,22 +279,31 @@
     .left-column {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       height: 100%;
       min-height: 0;
       overflow: hidden;
     }
 
-    /* ── Hero + chips on same row ── */
-    .hero-info-row {
+    /* ── Hero + chips on same horizontal row — FIX: overflow visible ── */
+    .hero-chips-row {
       flex-shrink: 0;
       display: flex;
+      flex-direction: row;
       align-items: center;
-      gap: 16px;
+      flex-wrap: nowrap;
+      gap: 0;
       min-width: 0;
+      overflow: visible;
+      /* FIX: was hidden, clips hover effects */
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 8px 12px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
     }
 
-    /* Hero section — compact, no wrap */
     .hero-section {
       flex-shrink: 0;
     }
@@ -313,16 +314,16 @@
 
     .hero-name .namaste {
       display: block;
-      font-size: 1rem;
+      font-size: .78rem;
       color: var(--txt2);
-      font-weight: 400;
+      font-weight: 500;
       font-family: 'Yatra One', cursive;
       animation: fadeSlideDown .7s cubic-bezier(.22, 1, .36, 1) both;
     }
 
     .hero-name .name-val {
       display: block;
-      font-size: 1.65rem;
+      font-size: 1.35rem;
       font-weight: 800;
       background: linear-gradient(135deg, var(--saffron) 0%, var(--gold) 40%, #fde68a 65%, var(--saffron) 100%);
       background-size: 200% 100%;
@@ -330,6 +331,7 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       animation: fadeSlideDown .7s cubic-bezier(.22, 1, .36, 1) .1s both, shimmerName 4s linear infinite;
+      white-space: nowrap;
     }
 
     @keyframes shimmerName {
@@ -354,27 +356,31 @@
       }
     }
 
-    /* Divider between hero and chips */
+    /* Vertical divider */
     .hero-divider {
       flex-shrink: 0;
       width: 1px;
-      height: 44px;
+      height: 38px;
       background: linear-gradient(to bottom, transparent, var(--border2), transparent);
+      margin: 0 12px;
     }
 
-    /* Info chips row — fills rest of hero-info-row */
-    .info-chips {
+    /* Chips strip — FIX: nowrap, overflow-x scroll */
+    .chips-inline {
       flex: 1 1 0;
       min-width: 0;
       display: flex;
+      flex-direction: row;
       align-items: center;
       flex-wrap: nowrap;
-      overflow-x: auto;
-      scrollbar-width: none;
+      /* KEY: never wrap */
       gap: 6px;
+      overflow-x: auto;
+      overflow-y: visible;
+      scrollbar-width: none;
     }
 
-    .info-chips::-webkit-scrollbar {
+    .chips-inline::-webkit-scrollbar {
       display: none;
     }
 
@@ -382,11 +388,11 @@
       flex-shrink: 0;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       background: var(--card2);
       border: 1px solid var(--border);
-      padding: 5px 13px;
-      border-radius: 12px;
+      padding: 5px 11px;
+      border-radius: 10px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
       transition: all .3s cubic-bezier(.22, 1, .36, 1);
@@ -395,7 +401,6 @@
       overflow: hidden;
     }
 
-    /* Shimmer sweep on chip */
     .info-chip::after {
       content: '';
       position: absolute;
@@ -419,39 +424,39 @@
     }
 
     .info-chip:nth-child(1) {
-      animation-delay: .1s;
+      animation-delay: .08s;
       --chip-accent: var(--purple);
     }
 
     .info-chip:nth-child(2) {
-      animation-delay: .18s;
+      animation-delay: .16s;
       --chip-accent: var(--teal);
     }
 
     .info-chip:nth-child(3) {
-      animation-delay: .26s;
+      animation-delay: .24s;
       --chip-accent: var(--gold);
     }
 
     .info-chip:nth-child(4) {
-      animation-delay: .34s;
+      animation-delay: .32s;
       --chip-accent: var(--saffron);
     }
 
     .info-chip:nth-child(5) {
-      animation-delay: .42s;
+      animation-delay: .40s;
       --chip-accent: var(--green);
     }
 
     .info-chip:nth-child(6) {
-      animation-delay: .50s;
+      animation-delay: .48s;
       --chip-accent: #06b6d4;
     }
 
     @keyframes chipIn {
       from {
         opacity: 0;
-        transform: translateY(10px) scale(.92)
+        transform: translateY(8px) scale(.93)
       }
 
       to {
@@ -463,7 +468,8 @@
     .info-chip:hover {
       border-color: var(--chip-accent);
       box-shadow: 0 0 14px color-mix(in srgb, var(--chip-accent) 35%, transparent), var(--shadow);
-      transform: translateY(-3px) scale(1.03);
+      transform: translateY(-3px) scale(1.04);
+      z-index: 5;
     }
 
     .chip-dot {
@@ -495,18 +501,20 @@
     }
 
     .chip-label {
-      font-size: .5rem;
+      font-size: .48rem;
       color: var(--txt3);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
+      white-space: nowrap;
     }
 
     .chip-val {
-      font-size: .82rem;
+      font-size: .8rem;
       font-weight: 700;
       color: var(--txt1);
       font-family: 'Space Grotesk', sans-serif;
+      white-space: nowrap;
     }
 
     /* ── Satellite section ── */
@@ -515,7 +523,7 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
     }
 
     .sat-header-wrap {
@@ -523,7 +531,7 @@
     }
 
     .sat-header-title {
-      font-size: .95rem;
+      font-size: .9rem;
       font-weight: 800;
       color: var(--txt1);
       display: flex;
@@ -542,7 +550,7 @@
       display: flex;
       align-items: center;
       gap: 7px;
-      margin-top: 4px;
+      margin-top: 3px;
       flex-wrap: wrap;
     }
 
@@ -552,7 +560,7 @@
       gap: 4px;
       padding: 2px 10px;
       border-radius: 20px;
-      font-size: .67rem;
+      font-size: .65rem;
       font-weight: 700;
       font-family: 'Space Grotesk', sans-serif;
     }
@@ -589,7 +597,7 @@
     .scope-btns {
       display: flex;
       gap: 6px;
-      margin-top: 7px;
+      margin-top: 6px;
     }
 
     .scope-btn {
@@ -622,7 +630,7 @@
       flex: 1 1 0;
       min-height: 0;
       display: grid;
-      grid-template-columns: 1fr 22px 1fr;
+      grid-template-columns: 1fr 20px 1fr;
       gap: 0;
     }
 
@@ -777,7 +785,7 @@
       filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.85));
     }
 
-    /* Skeleton loader */
+    /* Skeleton */
     .sat-skeleton {
       position: absolute;
       inset: 0;
@@ -1064,14 +1072,13 @@
       border: 1px solid rgba(14, 165, 233, .4);
     }
 
-    /* Sat divider */
     .sat-divider {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      width: 22px;
+      width: 20px;
       flex-shrink: 0;
     }
 
@@ -1097,7 +1104,6 @@
       flex-direction: column;
       height: 100%;
       min-height: 0;
-      gap: 0;
     }
 
     .tl-section {
@@ -1105,11 +1111,11 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .section-header h2 {
-      font-size: 1rem;
+      font-size: .95rem;
       font-weight: 800;
       color: var(--txt1);
       display: flex;
@@ -1126,7 +1132,7 @@
     }
 
     .section-header p {
-      font-size: .72rem;
+      font-size: .7rem;
       color: var(--txt3);
       margin-top: 3px;
     }
@@ -1143,10 +1149,10 @@
       flex: 1 1 0;
       min-height: 0;
       border-radius: var(--radius);
-      padding: 16px 20px;
+      padding: 14px 18px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       background: var(--card);
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
@@ -1192,7 +1198,7 @@
       border-radius: 50px;
       background: linear-gradient(90deg, rgba(139, 92, 246, .15), rgba(14, 165, 233, .1));
       border: 1px solid rgba(139, 92, 246, .25);
-      font-size: .62rem;
+      font-size: .6rem;
       font-weight: 700;
       color: var(--purple);
       text-transform: uppercase;
@@ -1217,7 +1223,7 @@
 
     .tl-year {
       font-family: 'Playfair Display', serif;
-      font-size: 2.6rem;
+      font-size: 2.8rem;
       font-weight: 900;
       line-height: .95;
       letter-spacing: -1px;
@@ -1248,19 +1254,19 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-top: 7px;
+      margin-top: 6px;
     }
 
     .tl-year-line {
       height: 3px;
-      width: 40px;
+      width: 36px;
       border-radius: 3px;
       background: linear-gradient(90deg, var(--saffron), var(--gold));
       transition: width .5s cubic-bezier(.22, 1, .36, 1);
     }
 
     .tl-card-outer:hover .tl-year-line {
-      width: 75px;
+      width: 72px;
     }
 
     .tl-year-bar-dot {
@@ -1272,12 +1278,14 @@
       animation: blink 1.5s infinite;
     }
 
+    /* FIX: tl-body flex:1 so it fills empty space nicely */
     .tl-body {
       display: flex;
       align-items: center;
       gap: 14px;
-      flex-shrink: 0;
-      padding: 12px 14px;
+      flex: 1 1 0;
+      min-height: 0;
+      padding: 14px;
       border-radius: 14px;
       background: var(--card2);
       border: 1px solid var(--border);
@@ -1293,16 +1301,17 @@
 
     .tl-icon-wrap {
       flex-shrink: 0;
-      width: 52px;
-      height: 52px;
+      width: 56px;
+      height: 56px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
+      font-size: 2.2rem;
       background: linear-gradient(135deg, rgba(139, 92, 246, .12), rgba(14, 165, 233, .08));
       border-radius: 12px;
       border: 1px solid rgba(139, 92, 246, .2);
       transition: transform .4s, border-color .4s;
+      align-self: center;
     }
 
     .tl-card-outer:hover .tl-icon-wrap {
@@ -1313,10 +1322,11 @@
     .tl-title {
       font-size: .95rem;
       font-weight: 600;
-      line-height: 1.5;
+      line-height: 1.55;
       color: var(--txt1);
       font-family: 'Space Grotesk', sans-serif;
       flex: 1;
+      align-self: center;
     }
 
     .tl-dots {
@@ -1325,6 +1335,7 @@
       align-items: center;
       position: relative;
       z-index: 1;
+      flex-shrink: 0;
     }
 
     .tl-dot {
@@ -1445,28 +1456,28 @@
       }
     }
 
-    /* ── Playbar ── */
+    /* Playbar */
     .tl-playbar {
       flex-shrink: 0;
       display: flex;
       align-items: center;
       gap: 10px;
       background: var(--card);
-      padding: 8px 13px;
-      border-radius: 14px;
+      padding: 7px 12px;
+      border-radius: 12px;
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
     }
 
     .ctrl-btn {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       background: linear-gradient(135deg, rgba(14, 165, 233, .18), rgba(14, 165, 233, .06));
       border: 1px solid rgba(14, 165, 233, .2);
       color: var(--teal);
-      font-size: .82rem;
+      font-size: .8rem;
       cursor: pointer;
       transition: all .25s;
       display: flex;
@@ -1511,17 +1522,17 @@
     }
 
     .counter-txt {
-      font-size: .72rem;
+      font-size: .7rem;
       font-weight: 800;
       color: var(--txt3);
       font-family: 'Space Grotesk', sans-serif;
-      min-width: 40px;
+      min-width: 38px;
       text-align: right;
     }
 
     .keyboard-hints {
       flex-shrink: 0;
-      font-size: .62rem;
+      font-size: .6rem;
       color: var(--txt3);
       font-weight: 500;
       letter-spacing: .4px;
@@ -1538,7 +1549,7 @@
     }
 
     /* ═══ RESPONSIVE ═══ */
-    @media(max-width:1024px) {
+    @media (max-width: 1024px) {
 
       html,
       body {
@@ -1555,20 +1566,20 @@
         grid-template-columns: 1fr;
         height: auto;
         overflow: visible;
-        padding: 14px;
+        padding: 12px;
       }
 
-      .hero-info-row {
+      .hero-chips-row {
         flex-wrap: wrap;
-        gap: 10px;
       }
 
       .hero-divider {
         display: none;
       }
 
-      .info-chips {
-        flex-basis: 100%;
+      .chips-inline {
+        flex-wrap: wrap;
+        overflow-x: visible;
       }
 
       .left-column {
@@ -1586,13 +1597,13 @@
         flex: none;
         height: auto;
         grid-template-columns: 1fr;
-        grid-template-rows: 260px 22px 260px;
+        grid-template-rows: 260px 20px 260px;
       }
 
       .sat-divider {
         flex-direction: row;
         width: 100%;
-        height: 22px;
+        height: 20px;
       }
 
       .sat-div-line {
@@ -1619,45 +1630,21 @@
 
       .tl-card-outer {
         flex: none;
-        min-height: 280px;
+        min-height: 260px;
       }
 
       #mouseGlow {
         display: none;
       }
     }
-    .hero-chips-row {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: row;      /* horizontal */
-  align-items: center;
-  flex-wrap: nowrap;        /* never wrap to next line */
-  gap: 14px;
-  min-width: 0;
-  overflow: hidden;
-}
-.chips-inline {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: row;      /* horizontal */
-  align-items: center;
-  flex-wrap: nowrap;        /* KEY FIX — was wrap, causing vertical stack */
-  gap: 6px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.chips-inline::-webkit-scrollbar { display: none; }
   </style>
 </head>
 
 <body>
   <div id="mouseGlow"></div>
-
-  <!-- Celebration sparkles (injected by JS) -->
   <div id="sparkleContainer"></div>
 
-  <!-- ════ TOP BAR — single row ════ -->
+  <!-- ════ TOP BAR ════ -->
   <div id="topInfoBar">
     <a href="/" class="top-btn back-btn">
       <span style="font-size:1rem;line-height:.8;">←</span> Back
@@ -1681,10 +1668,9 @@
     <!-- ══ LEFT COLUMN ══ -->
     <div class="left-column">
 
-      <!-- Hero greeting + chips on same row -->
+      <!-- Hero greeting + chips — single pill row -->
       <div class="hero-chips-row">
 
-        <!-- Greeting -->
         <section class="hero-section">
           <div class="hero-name">
             <span class="namaste">नमस्ते,</span>
@@ -1692,7 +1678,9 @@
           </div>
         </section>
 
-        <!-- Info chips inline -->
+        <!-- FIX: added divider -->
+        <div class="hero-divider"></div>
+
         <div class="chips-inline">
           <div class="info-chip">
             <div class="chip-dot"></div>
@@ -1774,7 +1762,6 @@
           {% endif %}
         </div>
 
-        <!-- Side-by-side sat cards -->
         <div class="sat-grid">
 
           <!-- Birth Year Card -->
@@ -1930,10 +1917,8 @@
     </div><!-- /right-column -->
 
   </div><!-- /page -->
+
   <script>
-    /* ══════════════════════════════════════════════════
-       DATA FROM FLASK
-    ══════════════════════════════════════════════════ */
     const EVENTS = {{ events | tojson }};
     const BASE_TL_MS = {{ tl_interval }};
     const DISTRICT = "{{ district }}";
@@ -1942,35 +1927,27 @@
     const BIRTH_YEAR = {{ birth_year }};
     const CURRENT_YEAR = 2026;
 
-    /* ── Satellite-safe birth year: RIDAM archive starts at 1997 ── */
     const SAT_BIRTH_YEAR = BIRTH_YEAR < 1997 ? 1997 : BIRTH_YEAR;
     const BIRTH_YEAR_CLAMPED = BIRTH_YEAR < 1997;
 
     const NS = 'http://www.w3.org/2000/svg';
     const W_RES = 1600, H_RES = 900;
 
-    /* Raw bboxes passed from backend */
     const RAW_DIST_BBOX = {{ (bbox or { "minLng": 83.3, "minLat": 24.3, "maxLng": 88.2, "maxLat": 27.5 }) | tojson }};
     const RAW_PANCH_BBOX = {{ (panch_bbox  or { }) | tojson }};
     const RAW_BLOCK_BBOX = {{ (block_bbox  or { }) | tojson }};
 
-    /* Focus bbox: panchayat > block > district */
     const RAW_FOCUS_BBOX =
       (RAW_PANCH_BBOX && RAW_PANCH_BBOX.minLng != null) ? RAW_PANCH_BBOX :
         (RAW_BLOCK_BBOX && RAW_BLOCK_BBOX.minLng != null) ? RAW_BLOCK_BBOX :
           RAW_DIST_BBOX;
 
-    /* ── View scope state ── */
     let currentScope = (RAW_FOCUS_BBOX !== RAW_DIST_BBOX) ? 'panchayat' : 'district';
     let currentBbox = computePaddedBbox(RAW_FOCUS_BBOX);
     let geoJsonData = null;
     let panchGeoData = null;
-    let computedPanchBbox = null;   /* ← derived from loaded GeoJSON coords */
+    let computedPanchBbox = null;
 
-
-    /* ══════════════════════════════════════════════════
-       BBOX HELPERS
-    ══════════════════════════════════════════════════ */
     function computePaddedBbox(raw, forceAR) {
       if (!raw || raw.minLng == null) return null;
       const AR = forceAR || 16 / 9;
@@ -1985,27 +1962,20 @@
       return { minLng: cx - pW / 2, maxLng: cx + pW / 2, minLat: cy - pH / 2, maxLat: cy + pH / 2 };
     }
 
-    /* ── FIX: Get actual card aspect ratio so bbox matches card, no crop ── */
     function getCardAR() {
       const c = document.querySelector('.sat-card');
       return (c && c.offsetWidth > 10 && c.offsetHeight > 10)
-        ? c.offsetWidth / c.offsetHeight
-        : 4 / 3;
+        ? c.offsetWidth / c.offsetHeight : 4 / 3;
     }
 
-    function computeDistrictBbox() {
-      return computePaddedBbox(RAW_DIST_BBOX, getCardAR());
-    }
+    function computeDistrictBbox() { return computePaddedBbox(RAW_DIST_BBOX, getCardAR()); }
     function computeFocusBbox() {
       const ar = getCardAR();
       if (computedPanchBbox) return computePaddedBbox(computedPanchBbox, ar);
       return computePaddedBbox(RAW_FOCUS_BBOX, ar);
     }
 
-
-    /* ══════════════════════════════════════════════════
-       MOUSE GLOW
-    ══════════════════════════════════════════════════ */
+    /* Mouse glow */
     const mg = document.getElementById('mouseGlow');
     document.addEventListener('mousemove', e => {
       requestAnimationFrame(() => { mg.style.left = e.clientX + 'px'; mg.style.top = e.clientY + 'px'; });
@@ -2015,10 +1985,7 @@
       el.addEventListener('mouseleave', () => { mg.style.width = '500px'; mg.style.height = '500px'; });
     });
 
-
-    /* ══════════════════════════════════════════════════
-       THEME
-    ══════════════════════════════════════════════════ */
+    /* Theme */
     function toggleTheme() {
       const r = document.documentElement;
       const isDark = r.getAttribute('data-theme') === 'dark';
@@ -2027,10 +1994,7 @@
       document.getElementById('themeText').textContent = isDark ? 'Dark' : 'Light';
     }
 
-
-    /* ══════════════════════════════════════════════════
-       SCOPE TOGGLE (District ↔ Panchayat/Block)
-    ══════════════════════════════════════════════════ */
+    /* Scope toggle */
     function setScope(scope) {
       currentScope = scope;
       const distBtn = document.getElementById('scopeDistBtn');
@@ -2039,7 +2003,6 @@
         distBtn.classList.toggle('active', scope === 'district');
         panchBtn.classList.toggle('active', scope === 'panchayat');
       }
-
       ['birthScopeInd', 'currentScopeInd'].forEach(id => {
         const el = document.getElementById(id); if (!el) return;
         el.className = 'scope-indicator ' + (scope === 'panchayat' ? 'panch' : 'dist');
@@ -2048,19 +2011,13 @@
         const el = document.getElementById(id); if (!el) return;
         el.textContent = scope === 'panchayat' ? (PANCHAYAT ? 'Panchayat' : 'Block') : 'District';
       });
-
-      /* ── FIX: always pass getCardAR() when building padded bbox ── */
       currentBbox = scope === 'panchayat'
         ? (computedPanchBbox ? computePaddedBbox(computedPanchBbox, getCardAR()) : computeFocusBbox())
         : computeDistrictBbox();
-
       reloadSatImages();
     }
 
-
-    /* ══════════════════════════════════════════════════
-       SATELLITE IMAGE LOAD
-    ══════════════════════════════════════════════════ */
+    /* Sat image reload */
     function reloadSatImages(keepBbox = false) {
       ['birthImg', 'currentImg'].forEach(id => {
         const img = document.getElementById(id);
@@ -2072,46 +2029,31 @@
       ['birthMapOverlay', 'currentMapOverlay'].forEach(id =>
         document.getElementById(id).innerHTML = ''
       );
-
-      /* Only recalculate bbox from scope when NOT called from zoom */
       if (!keepBbox) {
         currentBbox = (currentScope === 'panchayat')
           ? (computedPanchBbox ? computePaddedBbox(computedPanchBbox, getCardAR()) : computeFocusBbox())
           : computeDistrictBbox();
       }
-
       loadSatImage('birth', SAT_BIRTH_YEAR,
-        document.getElementById('birthSkeleton'),
-        document.getElementById('birthImg'),
-        document.getElementById('birthMapOverlay'),
-        document.getElementById('birthSrc')
-      );
+        document.getElementById('birthSkeleton'), document.getElementById('birthImg'),
+        document.getElementById('birthMapOverlay'), document.getElementById('birthSrc'));
       loadSatImage('current', CURRENT_YEAR,
-        document.getElementById('currentSkeleton'),
-        document.getElementById('currentImg'),
-        document.getElementById('currentMapOverlay'),
-        document.getElementById('currentSrc')
-      );
+        document.getElementById('currentSkeleton'), document.getElementById('currentImg'),
+        document.getElementById('currentMapOverlay'), document.getElementById('currentSrc'));
     }
-
 
     async function loadSatImage(type, year, skEl, imgEl, svgEl, srcEl) {
       srcEl.textContent = '📡 Loading…';
       try {
-        /* FIX: always use currentBbox — works for scope AND zoom */
-        const bboxForApi = currentBbox;
-
-        const p = new URLSearchParams({ type, year, bbox: JSON.stringify(bboxForApi) });
+        const p = new URLSearchParams({ type, year, bbox: JSON.stringify(currentBbox) });
         const resp = await fetch(`/api/sat_image?${p}`);
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
         if (data.url) {
           const img = new Image();
           img.onload = () => {
-            imgEl.src = img.src;
-            imgEl.classList.add('loaded');
-            skEl.classList.add('hidden');
-            srcEl.textContent = data.src_label || '📡 Loaded';
+            imgEl.src = img.src; imgEl.classList.add('loaded');
+            skEl.classList.add('hidden'); srcEl.textContent = data.src_label || '📡 Loaded';
             drawAllOverlays(svgEl, currentBbox || computeDistrictBbox());
           };
           img.onerror = () => { skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Unavailable'; };
@@ -2123,24 +2065,41 @@
       }
     }
 
+    /* Pan / Zoom / Reset */
+    function panSat(dx, dy) {
+      if (!currentBbox) return;
+      const stepLng = (currentBbox.maxLng - currentBbox.minLng) * 0.25;
+      const stepLat = (currentBbox.maxLat - currentBbox.minLat) * 0.25;
+      currentBbox = {
+        minLng: currentBbox.minLng + dx * stepLng, maxLng: currentBbox.maxLng + dx * stepLng,
+        minLat: currentBbox.minLat + dy * stepLat, maxLat: currentBbox.maxLat + dy * stepLat
+      };
+      reloadSatImages(true);
+    }
 
+    function resetSatView() { reloadSatImages(false); }
 
-    /* ══════════════════════════════════════════════════
-       GEOJSON — district boundaries
-    ══════════════════════════════════════════════════ */
+    function zoomSat(factor) {
+      if (!currentBbox) return;
+      const cx = (currentBbox.minLng + currentBbox.maxLng) / 2;
+      const cy = (currentBbox.minLat + currentBbox.maxLat) / 2;
+      const w = (currentBbox.maxLng - currentBbox.minLng) / factor;
+      const h = (currentBbox.maxLat - currentBbox.minLat) / factor;
+      currentBbox = { minLng: cx - w / 2, maxLng: cx + w / 2, minLat: cy - h / 2, maxLat: cy + h / 2 };
+      reloadSatImages(true);
+    }
+
+    /* GeoJSON loaders */
     async function loadGeoJson() {
       try {
-        const url = '/bihar_dist_ready.geojson';   // file placed in public/
-        const r = await fetch(url);
-        if (!r.ok) { console.warn('[GeoJSON] HTTP', r.status, url); return; }
+        const r = await fetch('/bihar_dist_ready.geojson');
+        if (!r.ok) { console.warn('[GeoJSON] HTTP', r.status); return; }
         geoJsonData = await r.json();
-
         ['birthImg', 'currentImg'].forEach((imgId, i) => {
           const img = document.getElementById(imgId);
           if (img.classList.contains('loaded')) {
-            const svgId = i === 0 ? 'birthMapOverlay' : 'currentMapOverlay';
             drawAllOverlays(
-              document.getElementById(svgId),
+              document.getElementById(i === 0 ? 'birthMapOverlay' : 'currentMapOverlay'),
               currentBbox || computeDistrictBbox()
             );
           }
@@ -2148,33 +2107,23 @@
       } catch (e) { console.warn('[GeoJSON]', e); }
     }
 
-
-
-    /* ══════════════════════════════════════════════════
-       GEOJSON — panchayat / block boundary
-    ══════════════════════════════════════════════════ */
     async function loadPanchGeoJson() {
       if (!PANCHAYAT && !BLOCK) return;
       try {
         const normStr = s => String(s || '').trim().toUpperCase().replace(/ /g, '_');
         const stem = normStr(DISTRICT) + '__' + normStr(BLOCK);
-        const url = `/panchayats/${stem}.geojson`;
-
-        const r = await fetch(url);
-        if (!r.ok) { console.warn('[PanchGeoJSON] HTTP', r.status, url); return; }
+        const r = await fetch(`/panchayats/${stem}.geojson`);
+        if (!r.ok) { console.warn('[PanchGeoJSON] HTTP', r.status); return; }
         const fullGj = await r.json();
-
         const norm = s => String(s || '').toLowerCase().replace(/[\s_\-()+]/g, '');
 
         if (PANCHAYAT) {
           const target = norm(PANCHAYAT);
           const feats = (fullGj.features || []).filter(f => {
             const p = f.properties || {};
-            return norm(p.GPNAME_1 || p.panchayat_name || p.Panchayat_Name ||
-              p.PANCHAYAT_NAME || p.name || '') === target;
+            return norm(p.GPNAME_1 || p.panchayat_name || p.Panchayat_Name || p.PANCHAYAT_NAME || p.name || '') === target;
           });
           panchGeoData = { type: 'FeatureCollection', features: feats };
-
           if (panchGeoData.features.length > 0) {
             let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
             panchGeoData.features.forEach(f => {
@@ -2192,89 +2141,37 @@
           const target = norm(BLOCK);
           const feats = (fullGj.features || []).filter(f => {
             const p = f.properties || {};
-            return norm(p.BLK_NAME || p.block_name || p.Block_Name ||
-              p.BLOCK_NAME || p.name || '') === target;
+            return norm(p.BLK_NAME || p.block_name || p.Block_Name || p.BLOCK_NAME || p.name || '') === target;
           });
-          panchGeoData = feats.length
-            ? { type: 'FeatureCollection', features: feats }
-            : fullGj;
+          panchGeoData = feats.length ? { type: 'FeatureCollection', features: feats } : fullGj;
         }
 
         ['birthImg', 'currentImg'].forEach((imgId, i) => {
           const img = document.getElementById(imgId);
           if (img.classList.contains('loaded')) {
-            const svgId = i === 0 ? 'birthMapOverlay' : 'currentMapOverlay';
-            drawAllOverlays(document.getElementById(svgId), currentBbox || computeDistrictBbox());
+            drawAllOverlays(
+              document.getElementById(i === 0 ? 'birthMapOverlay' : 'currentMapOverlay'),
+              currentBbox || computeDistrictBbox()
+            );
           }
         });
       } catch (e) { console.warn('[PanchGeoJSON]', e); }
     }
 
-    /* ── Pan: dx/dy are -1/0/1 direction multipliers ── */
-    function panSat(dx, dy) {
-      if (!currentBbox) return;
-      // Step = 25% of current bbox size per click
-      const stepLng = (currentBbox.maxLng - currentBbox.minLng) * 0.25;
-      const stepLat = (currentBbox.maxLat - currentBbox.minLat) * 0.25;
-
-      currentBbox = {
-        minLng: currentBbox.minLng + dx * stepLng,
-        maxLng: currentBbox.maxLng + dx * stepLng,
-        minLat: currentBbox.minLat + dy * stepLat,
-        maxLat: currentBbox.maxLat + dy * stepLat
-      };
-
-      reloadSatImages(true); // keepBbox=true → don't recalculate from scope
-    }
-
-    /* ── Reset view back to scope default ── */
-    function resetSatView() {
-      reloadSatImages(false); // keepBbox=false → recalculates bbox from scope
-    }
-
-    /* ── Zoom: factor >1 = zoom in, <1 = zoom out ── */
-    function zoomSat(factor) {
-      if (!currentBbox) return;
-      const cx = (currentBbox.minLng + currentBbox.maxLng) / 2;
-      const cy = (currentBbox.minLat + currentBbox.maxLat) / 2;
-      const w = (currentBbox.maxLng - currentBbox.minLng) / factor;
-      const h = (currentBbox.maxLat - currentBbox.minLat) / factor;
-
-      currentBbox = {
-        minLng: cx - w / 2,
-        maxLng: cx + w / 2,
-        minLat: cy - h / 2,
-        maxLat: cy + h / 2
-      };
-
-      reloadSatImages(true);
-    }
-
-
-
-
-    /* ══════════════════════════════════════════════════
-       DRAW OVERLAYS
-       FIX: use actual card px for viewBox, preserveAspectRatio=none
-    ══════════════════════════════════════════════════ */
+    /* Draw overlays */
     function drawAllOverlays(svgEl, bbox) {
       if (!bbox) return;
-
-      /* ── FIX: use actual card dimensions → no more SVG crop ── */
       const cardEl = svgEl.closest('.sat-card');
       const W = (cardEl && cardEl.offsetWidth > 10) ? cardEl.offsetWidth : W_RES;
       const H = (cardEl && cardEl.offsetHeight > 10) ? cardEl.offsetHeight : H_RES;
 
       svgEl.innerHTML = '';
       svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
-      svgEl.setAttribute('preserveAspectRatio', 'none'); /* fill card, no crop */
+      svgEl.setAttribute('preserveAspectRatio', 'none');
 
       const sx = W / (bbox.maxLng - bbox.minLng);
       const sy = H / (bbox.maxLat - bbox.minLat);
-      const proj = (ln, lt) => [
-        (ln - bbox.minLng) * sx,
-        H - (lt - bbox.minLat) * sy
-      ];
+      const proj = (ln, lt) => [(ln - bbox.minLng) * sx, H - (lt - bbox.minLat) * sy];
 
       function rD(ring) {
         return ring.map(([ln, lt], i) => {
@@ -2283,88 +2180,59 @@
         }).join('') + 'Z';
       }
       function gD(g) {
-        return g.type === 'Polygon' ? g.coordinates.map(rD).join('')
-          : g.type === 'MultiPolygon' ? g.coordinates.map(p => p.map(rD).join('')).join('')
-            : '';
+        return g.type === 'Polygon' ? g.coordinates.map(rD).join('') :
+          g.type === 'MultiPolygon' ? g.coordinates.map(p => p.map(rD).join('')).join('') : '';
       }
-
-      /* ── FIX: null-safe norm, strip underscores ── */
       const norm = s => String(s || '').toLowerCase().replace(/[\s_\-()+]/g, '');
 
-      /* ── Layer 1: All districts (faint), active one highlighted ── */
       if (geoJsonData) {
-        const distGrp = document.createElementNS(NS, 'g');
-        distGrp.setAttribute('id', 'ovDistAll');
-
+        const distGrp = document.createElementNS(NS, 'g'); distGrp.setAttribute('id', 'ovDistAll');
         geoJsonData.features.forEach(feat => {
           const d = gD(feat.geometry); if (!d) return;
-          const path = document.createElementNS(NS, 'path');
-          path.setAttribute('d', d);
-
+          const path = document.createElementNS(NS, 'path'); path.setAttribute('d', d);
           const p = feat.properties || {};
-          const featName =
-            p.name || p.raw || p.NAME || p.DISTRICT || p.district ||
-            p.dist_name || p.DIST_NAME || p.DT_NAME ||
-            p.dtname || p.Dist_Name || '';
+          const featName = p.name || p.raw || p.NAME || p.DISTRICT || p.district || p.dist_name || p.DIST_NAME || p.DT_NAME || p.dtname || p.Dist_Name || '';
           const isActive = norm(featName) === norm(DISTRICT);
-
-
           if (isActive) {
             path.setAttribute('stroke', '#f97316');
             path.setAttribute('stroke-width', currentScope === 'panchayat' ? '2' : '4');
             path.setAttribute('fill', 'rgba(249,115,22,0.05)');
-            path.setAttribute('stroke-linecap', 'round');
-            path.setAttribute('stroke-linejoin', 'round');
-            /* ── FIX: use style.filter not setAttribute('filter',…) ── */
+            path.setAttribute('stroke-linecap', 'round'); path.setAttribute('stroke-linejoin', 'round');
             path.style.filter = 'drop-shadow(0 0 6px rgba(249,115,22,0.7))';
             path.classList.add('animated-boundary');
             distGrp.appendChild(path);
           } else {
             path.setAttribute('stroke', 'rgba(160,185,255,0.12)');
-            path.setAttribute('stroke-width', '.6');
-            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke-width', '.6'); path.setAttribute('fill', 'none');
             distGrp.insertBefore(path, distGrp.firstChild);
           }
         });
         svgEl.appendChild(distGrp);
-        /* ── NO getTotalLength() rAF block needed; CSS stroke-dasharray:150000 handles it ── */
       }
 
-      /* ── Layer 2: Panchayat/Block boundary (green glowing) ── */
       if (panchGeoData && panchGeoData.features && panchGeoData.features.length > 0) {
-        const panchGrp = document.createElementNS(NS, 'g');
-        panchGrp.setAttribute('id', 'ovPanch');
-
+        const panchGrp = document.createElementNS(NS, 'g'); panchGrp.setAttribute('id', 'ovPanch');
         panchGeoData.features.forEach(feat => {
           const d = gD(feat.geometry); if (!d) return;
 
           const fillPath = document.createElementNS(NS, 'path');
-          fillPath.setAttribute('d', d);
-          fillPath.setAttribute('fill', 'rgba(16,185,129,0.12)');
-          fillPath.setAttribute('stroke', 'none');
-          panchGrp.appendChild(fillPath);
-
-          const borderPath = document.createElementNS(NS, 'path');
-          borderPath.setAttribute('d', d);
-          borderPath.setAttribute('stroke', '#10b981');
-          borderPath.setAttribute('stroke-width', '3');
-          borderPath.setAttribute('fill', 'none');
-          borderPath.setAttribute('stroke-linecap', 'round');
-          borderPath.setAttribute('stroke-linejoin', 'round');
-          borderPath.classList.add('animated-boundary-panch', 'panch-boundary-glow');
-          panchGrp.appendChild(borderPath);
+          fillPath.setAttribute('d', d); fillPath.setAttribute('fill', 'rgba(16,185,129,0.12)');
+          fillPath.setAttribute('stroke', 'none'); panchGrp.appendChild(fillPath);
 
           const glowPath = document.createElementNS(NS, 'path');
-          glowPath.setAttribute('d', d);
-          glowPath.setAttribute('stroke', 'rgba(16,185,129,0.35)');
-          glowPath.setAttribute('stroke-width', '8');
-          glowPath.setAttribute('fill', 'none');
-          /* ── FIX: style.filter not setAttribute ── */
+          glowPath.setAttribute('d', d); glowPath.setAttribute('stroke', 'rgba(16,185,129,0.35)');
+          glowPath.setAttribute('stroke-width', '8'); glowPath.setAttribute('fill', 'none');
           glowPath.style.filter = 'blur(3px)';
           glowPath.classList.add('animated-boundary-panch');
-          panchGrp.insertBefore(glowPath, borderPath);
-        });
+          panchGrp.appendChild(glowPath);
 
+          const borderPath = document.createElementNS(NS, 'path');
+          borderPath.setAttribute('d', d); borderPath.setAttribute('stroke', '#10b981');
+          borderPath.setAttribute('stroke-width', '3'); borderPath.setAttribute('fill', 'none');
+          borderPath.setAttribute('stroke-linecap', 'round'); borderPath.setAttribute('stroke-linejoin', 'round');
+          borderPath.classList.add('animated-boundary-panch', 'panch-boundary-glow');
+          panchGrp.appendChild(borderPath);
+        });
         svgEl.appendChild(panchGrp);
         drawPanchayatMarker(svgEl, panchGeoData, proj);
 
@@ -2372,7 +2240,6 @@
         drawBboxRect(svgEl, RAW_FOCUS_BBOX, proj);
       }
     }
-
 
     function drawPanchayatMarker(svgEl, gj, proj) {
       try {
@@ -2385,206 +2252,303 @@
         const [cx, cy] = proj(tx / n, ty / n);
 
         const pulse = document.createElementNS(NS, 'circle');
-        pulse.setAttribute('cx', cx.toFixed(1));
-        pulse.setAttribute('cy', cy.toFixed(1));
-        pulse.setAttribute('r', '18');
-        pulse.setAttribute('fill', 'none');
-        pulse.setAttribute('stroke', 'rgba(16,185,129,0.5)');
-        pulse.setAttribute('stroke-width', '2');
+        pulse.setAttribute('cx', cx.toFixed(1)); pulse.setAttribute('cy', cy.toFixed(1));
+        pulse.setAttribute('r', '18'); pulse.setAttribute('fill', 'none');
+        pulse.setAttribute('stroke', 'rgba(16,185,129,0.5)'); pulse.setAttribute('stroke-width', '2');
         pulse.style.animation = 'drawPath 1s ease forwards .5s';
-        pulse.style.filter = 'drop-shadow(0 0 6px rgba(16,185,129,0.6))';
+        pulse.style.filter = 'drop-shadow(0 0 8px rgba(16,185,129,0.8))';
         svgEl.appendChild(pulse);
 
         const dot = document.createElementNS(NS, 'circle');
-        dot.setAttribute('cx', cx.toFixed(1));
-        dot.setAttribute('cy', cy.toFixed(1));
-        dot.setAttribute('r', '5');
-        dot.setAttribute('fill', '#10b981');
-        /* ── FIX: style.filter not setAttribute ── */
+        dot.setAttribute('cx', cx.toFixed(1)); dot.setAttribute('cy', cy.toFixed(1));
+        dot.setAttribute('r', '5'); dot.setAttribute('fill', '#10b981');
         dot.style.filter = 'drop-shadow(0 0 6px #10b981)';
         svgEl.appendChild(dot);
 
-        if (PANCHAYAT || BLOCK) {
-          const label = document.createElementNS(NS, 'text');
-          label.setAttribute('x', (cx + 12).toFixed(1));
-          label.setAttribute('y', (cy - 10).toFixed(1));
-          label.setAttribute('fill', '#6ee7b7');
-          label.setAttribute('font-size', '22');
-          label.setAttribute('font-family', 'Space Grotesk, sans-serif');
-          label.setAttribute('font-weight', '800');
-          label.setAttribute('letter-spacing', '0.5');
-          label.setAttribute('paint-order', 'stroke');
-          label.setAttribute('stroke', 'rgba(2,6,16,0.8)');
-          label.setAttribute('stroke-width', '6');
-          label.setAttribute('stroke-linejoin', 'round');
-          label.textContent = PANCHAYAT || BLOCK;
-          svgEl.appendChild(label);
+        const label = PANCHAYAT || BLOCK;
+        if (label) {
+          const bg = document.createElementNS(NS, 'rect');
+          const textW = Math.max(label.length * 7.5, 60), textH = 20;
+          bg.setAttribute('x', (cx - textW / 2).toFixed(1));
+          bg.setAttribute('y', (cy - 36).toFixed(1));
+          bg.setAttribute('width', textW.toFixed(1));
+          bg.setAttribute('height', textH);
+          bg.setAttribute('rx', '10'); bg.setAttribute('ry', '10');
+          bg.setAttribute('fill', 'rgba(16,185,129,0.85)');
+          svgEl.appendChild(bg);
+
+          const txt = document.createElementNS(NS, 'text');
+          txt.setAttribute('x', cx.toFixed(1));
+          txt.setAttribute('y', (cy - 21).toFixed(1));
+          txt.setAttribute('text-anchor', 'middle');
+          txt.setAttribute('dominant-baseline', 'middle');
+          txt.setAttribute('font-size', '10');
+          txt.setAttribute('font-weight', '700');
+          txt.setAttribute('font-family', 'Space Grotesk,sans-serif');
+          txt.setAttribute('fill', '#fff');
+          txt.setAttribute('letter-spacing', '0.8');
+          txt.textContent = label.toUpperCase();
+          svgEl.appendChild(txt);
         }
-      } catch (e) { console.warn('[Marker]', e); }
+      } catch (e) { console.warn('[marker]', e); }
     }
 
-
-    function drawBboxRect(svgEl, raw, proj) {
+    function drawBboxRect(svgEl, rawBbox, proj) {
       try {
+        if (!rawBbox || rawBbox.minLng == null) return;
         const corners = [
-          [raw.minLng, raw.minLat], [raw.maxLng, raw.minLat],
-          [raw.maxLng, raw.maxLat], [raw.minLng, raw.maxLat]
+          [rawBbox.minLng, rawBbox.minLat],
+          [rawBbox.maxLng, rawBbox.minLat],
+          [rawBbox.maxLng, rawBbox.maxLat],
+          [rawBbox.minLng, rawBbox.maxLat]
         ];
-        const d = corners.map(([ln, lt], i) => {
-          const [px, py] = proj(ln, lt);
-          return (i ? 'L' : 'M') + px.toFixed(2) + ' ' + py.toFixed(2);
-        }).join('') + 'Z';
+        const pts = corners.map(([ln, lt]) => proj(ln, lt));
+        const d = pts.map(([x, y], i) => (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1)).join('') + 'Z';
 
-        const fill = document.createElementNS(NS, 'path');
-        fill.setAttribute('d', d);
-        fill.setAttribute('fill', 'rgba(16,185,129,0.09)');
-        fill.setAttribute('stroke', 'none');
-        svgEl.appendChild(fill);
+        const glowPath = document.createElementNS(NS, 'path');
+        glowPath.setAttribute('d', d);
+        glowPath.setAttribute('stroke', 'rgba(16,185,129,0.3)');
+        glowPath.setAttribute('stroke-width', '10');
+        glowPath.setAttribute('fill', 'rgba(16,185,129,0.06)');
+        glowPath.style.filter = 'blur(4px)';
+        svgEl.appendChild(glowPath);
 
-        const border = document.createElementNS(NS, 'path');
-        border.setAttribute('d', d);
-        border.setAttribute('stroke', '#10b981');
-        border.setAttribute('stroke-width', '3');
-        border.setAttribute('fill', 'none');
-        border.setAttribute('stroke-dasharray', '10,6');
-        /* ── FIX: style.filter not setAttribute ── */
-        border.style.filter = 'drop-shadow(0 0 8px rgba(16,185,129,0.8))';
-        glowPath.style.opacity = '0.5';
-        glowPath.classList.add('animated-boundary-panch');
-        svgEl.appendChild(border);
-      } catch (e) { console.warn('[BboxRect]', e); }
+        const borderPath = document.createElementNS(NS, 'path');
+        borderPath.setAttribute('d', d);
+        borderPath.setAttribute('stroke', '#10b981');
+        borderPath.setAttribute('stroke-width', '2.5');
+        borderPath.setAttribute('fill', 'none');
+        borderPath.setAttribute('stroke-dasharray', '6 4');
+        borderPath.setAttribute('stroke-linecap', 'round');
+        borderPath.classList.add('animated-boundary-panch');
+        svgEl.appendChild(borderPath);
+      } catch (e) { console.warn('[bboxRect]', e); }
     }
 
+    /* ═══════════════════════════════════════════
+       TIMELINE
+    ═══════════════════════════════════════════ */
+    let tlIndex = 0;
+    let tlPlaying = true;
+    let tlSpeed = 1;
+    let tlTimer = null;
+    let tlInterval = BASE_TL_MS;
 
-    /* ══════════════════════════════════════════════════
-       INIT — on page load
-    ══════════════════════════════════════════════════ */
-    document.addEventListener('DOMContentLoaded', () => {
+    function renderEvent(idx, dir = 'right') {
+      const ev = EVENTS[idx];
+      const card = document.getElementById('tlCard');
+      if (!card) return;
 
-      /* ── Birth year clamp UI ── */
-      if (BIRTH_YEAR_CLAMPED) {
-        const skYear = document.querySelector('.birth-card .sk-year');
-        if (skYear) skYear.textContent = '1997';
+      const animOut = dir === 'right' ? 'slide-out-left' : 'slide-out-right';
+      const animIn = dir === 'right' ? 'slide-in-left' : 'slide-in-right';
 
-        const pillBirth = document.querySelector('.sat-pill.birth');
-        if (pillBirth) pillBirth.innerHTML =
-          '◆ 1997 <span style="font-size:.6rem;opacity:.6">(born ' + BIRTH_YEAR + ')</span>';
+      card.classList.add(animOut);
+      setTimeout(() => {
+        card.classList.remove(animOut);
 
-        const labelYear = document.querySelector('.birth-card .sat-label-year');
-        if (labelYear) labelYear.textContent = '1997';
+        document.getElementById('tlEraText').textContent = ev.era || '';
+        document.getElementById('tlYear').textContent = ev.year || '';
+        document.getElementById('tlIcon').textContent = ev.icon || '📌';
+        document.getElementById('tlTitle').textContent = ev.title || '';
+        document.getElementById('counterTxt').textContent = `${idx + 1} / ${EVENTS.length}`;
 
-        const labelDesc = document.querySelector('.birth-card .sat-label-desc');
-        if (labelDesc) labelDesc.textContent = 'Earliest Archive (Born ' + BIRTH_YEAR + ')';
+        const fill = document.getElementById('progressFill');
+        if (fill) fill.style.width = ((idx + 1) / EVENTS.length * 100).toFixed(1) + '%';
+
+        buildDots(idx);
+        card.classList.add(animIn);
+        setTimeout(() => card.classList.remove(animIn), 380);
+      }, 340);
+    }
+
+    function buildDots(activeIdx) {
+      const container = document.getElementById('tlDots');
+      if (!container) return;
+      const total = EVENTS.length;
+      const maxDots = 14;
+      container.innerHTML = '';
+
+      if (total <= maxDots) {
+        EVENTS.forEach((_, i) => {
+          const d = document.createElement('div');
+          d.className = 'tl-dot' + (i === activeIdx ? ' active' : '');
+          d.onclick = () => goToEvent(i);
+          container.appendChild(d);
+        });
+      } else {
+        const half = Math.floor(maxDots / 2);
+        let start = Math.max(0, activeIdx - half);
+        let end = Math.min(total - 1, start + maxDots - 1);
+        if (end - start < maxDots - 1) start = Math.max(0, end - maxDots + 1);
+
+        if (start > 0) {
+          const d = document.createElement('div');
+          d.className = 'tl-dot'; d.style.opacity = '.35';
+          d.onclick = () => goToEvent(0);
+          container.appendChild(d);
+          if (start > 1) {
+            const sp = document.createElement('span');
+            sp.style.cssText = 'font-size:.5rem;color:var(--txt3);align-self:center';
+            sp.textContent = '…'; container.appendChild(sp);
+          }
+        }
+
+        for (let i = start; i <= end; i++) {
+          const d = document.createElement('div');
+          d.className = 'tl-dot' + (i === activeIdx ? ' active' : '');
+          d.onclick = () => goToEvent(i);
+          container.appendChild(d);
+        }
+
+        if (end < total - 1) {
+          if (end < total - 2) {
+            const sp = document.createElement('span');
+            sp.style.cssText = 'font-size:.5rem;color:var(--txt3);align-self:center';
+            sp.textContent = '…'; container.appendChild(sp);
+          }
+          const d = document.createElement('div');
+          d.className = 'tl-dot'; d.style.opacity = '.35';
+          d.onclick = () => goToEvent(total - 1);
+          container.appendChild(d);
+        }
       }
+    }
 
-      /* ── Initial satellite image load ── */
-      reloadSatImages();
+    function goToEvent(idx) {
+      const dir = idx >= tlIndex ? 'right' : 'left';
+      tlIndex = Math.max(0, Math.min(EVENTS.length - 1, idx));
+      renderEvent(tlIndex, dir);
+      resetTimer();
+    }
 
-      /* ── District GeoJSON for border overlays ── */
-      loadGeoJson();
+    function nextEvent() {
+      const next = (tlIndex + 1) % EVENTS.length;
+      const dir = next === 0 ? 'right' : 'right';
+      tlIndex = next;
+      renderEvent(tlIndex, dir);
+      resetTimer();
+    }
 
-      /* ── Panchayat/block GeoJSON for green highlight ── */
-      loadPanchGeoJson();
+    function prevEvent() {
+      const prev = (tlIndex - 1 + EVENTS.length) % EVENTS.length;
+      tlIndex = prev;
+      renderEvent(tlIndex, 'left');
+      resetTimer();
+    }
 
-      /* ── Hide scope controls if no panchayat/block ── */
-      const hasFocus = (RAW_FOCUS_BBOX !== RAW_DIST_BBOX);
-      if (!hasFocus) {
-        document.querySelectorAll('.scope-btns, .scope-indicator, .panch-pin')
-          .forEach(el => el.style.display = 'none');
-      }
+    function resetTimer() {
+      clearInterval(tlTimer);
+      if (tlPlaying) tlTimer = setInterval(nextEvent, tlInterval);
+    }
+
+    function togglePlay() {
+      tlPlaying = !tlPlaying;
+      const btn = document.getElementById('playBtn');
+      if (btn) btn.textContent = tlPlaying ? '⏸' : '▶';
+      if (tlPlaying) { tlTimer = setInterval(nextEvent, tlInterval); }
+      else { clearInterval(tlTimer); }
+    }
+
+    function cycleSpeed() {
+      const speeds = [1, 1.5, 2, 0.5];
+      const labels = ['1×', '1.5×', '2×', '0.5×'];
+      const cur = speeds.indexOf(tlSpeed);
+      tlSpeed = speeds[(cur + 1) % speeds.length];
+      tlInterval = BASE_TL_MS / tlSpeed;
+      const btn = document.getElementById('speedBtn');
+      if (btn) btn.textContent = labels[(cur + 1) % labels.length];
+      resetTimer();
+    }
+
+    /* Keyboard nav */
+    document.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+      else if (e.code === 'ArrowRight') nextEvent();
+      else if (e.code === 'ArrowLeft') prevEvent();
     });
 
+    /* Playbar buttons */
+    const playBtn = document.getElementById('playBtn');
+    const speedBtn = document.getElementById('speedBtn');
+    if (playBtn) playBtn.addEventListener('click', togglePlay);
+    if (speedBtn) speedBtn.addEventListener('click', cycleSpeed);
 
-    /* ══════════════════════════════════════════════════
-       TIMELINE
-    ══════════════════════════════════════════════════ */
-    let cur = 0, isPlaying = true, autoTimer = null, speedMult = 1;
-
-    function renderDots() {
-      const el = document.getElementById('tlDots'); if (!el) return;
-      const max = Math.min(EVENTS.length, 14);
-      el.innerHTML = '';
-      for (let i = 0; i < max; i++) {
-        const d = document.createElement('div');
-        d.className = 'tl-dot' + (i === cur ? ' active' : '');
-        el.appendChild(d);
-      }
-    }
-
-    function updateCardContent(i) {
-      const e = EVENTS[i];
-      document.getElementById('tlEraText').textContent = e.era || '';
-      document.getElementById('tlYear').textContent = e.year || '';
-      document.getElementById('tlIcon').textContent = e.icon || '📌';
-      document.getElementById('tlTitle').textContent = e.title || '';
-      document.getElementById('counterTxt').textContent = `${i + 1} / ${EVENTS.length}`;
-      renderDots();
-    }
-
-    function animateCardChange(i, dir) {
-      const card = document.getElementById('tlCard');
-      card.className = 'tl-card ' + (dir === 'next' ? 'slide-out-left' : 'slide-out-right');
-      setTimeout(() => {
-        updateCardContent(i);
-        card.className = 'tl-card ' + (dir === 'next' ? 'slide-in-right' : 'slide-in-left');
-      }, 320);
-    }
-
-    function resetProgress() {
-      clearTimeout(autoTimer);
-      const fill = document.getElementById('progressFill');
-      fill.style.transition = 'none'; fill.style.width = '0%';
-      if (!isPlaying) return;
-      const ms = BASE_TL_MS / speedMult;
-      setTimeout(() => {
-        fill.style.transition = `width ${ms}ms linear`;
-        fill.style.width = '100%';
-      }, 50);
-      autoTimer = setTimeout(nextEvent, ms);
-    }
-    (function () {
-      const colors = ['#f97316', '#f59e0b', '#8b5cf6', '#0ea5e9', '#10b981', '#fde68a', '#c084fc'];
+    /* ═══════════════════════════════════════════
+       SPARKLE CELEBRATION
+    ═══════════════════════════════════════════ */
+    function spawnSparkles() {
       const container = document.getElementById('sparkleContainer');
-      for (let i = 0; i < 18; i++) {
-        const s = document.createElement('div');
-        s.className = 'sparkle';
-        const size = 2 + Math.random() * 5;
-        s.style.cssText = `
-        width:${size}px; height:${size}px;
-        background:${colors[Math.floor(Math.random() * colors.length)]};
-        left:${Math.random() * 100}vw;
-        top:${Math.random() * 100}vh;
-        box-shadow:0 0 ${size * 2}px ${colors[Math.floor(Math.random() * colors.length)]};
-        animation-duration:${4 + Math.random() * 8}s;
-        animation-delay:${Math.random() * 6}s;
-      `;
-        container.appendChild(s);
+      if (!container) return;
+      const colors = [
+        '#f97316', '#f59e0b', '#fde68a',
+        '#10b981', '#0ea5e9', '#8b5cf6',
+        '#ec4899', '#06b6d4', '#a3e635'
+      ];
+      const shapes = ['circle', 'star', 'square'];
+
+      for (let i = 0; i < 40; i++) {
+        setTimeout(() => {
+          const el = document.createElement('div');
+          el.className = 'sparkle';
+          const size = 4 + Math.random() * 8;
+          const color = colors[Math.floor(Math.random() * colors.length)];
+          const shape = shapes[Math.floor(Math.random() * shapes.length)];
+          const duration = 3 + Math.random() * 5;
+          const delay = Math.random() * 4;
+          const left = Math.random() * 100;
+
+          el.style.cssText = `
+            left:${left}%;
+            bottom:-10px;
+            width:${size}px;
+            height:${size}px;
+            background:${color};
+            border-radius:${shape === 'circle' ? '50%' : shape === 'square' ? '2px' : '0'};
+            box-shadow:0 0 ${size * 1.5}px ${color};
+            animation-duration:${duration}s;
+            animation-delay:${delay}s;
+            ${shape === 'star' ? 'clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)' : ''}
+          `;
+          container.appendChild(el);
+
+          /* Remove after animation completes to avoid DOM bloat */
+          setTimeout(() => el.remove(), (duration + delay + 1) * 1000);
+        }, i * 80);
       }
-    })();
-
-    function nextEvent() { const n = cur < EVENTS.length - 1 ? cur + 1 : 0; animateCardChange(n, 'next'); cur = n; resetProgress(); }
-    function prevEvent() { const p = cur > 0 ? cur - 1 : EVENTS.length - 1; animateCardChange(p, 'prev'); cur = p; resetProgress(); }
-
-    if (EVENTS && EVENTS.length > 0) {
-      updateCardContent(0); resetProgress();
-      document.getElementById('playBtn').addEventListener('click', () => {
-        isPlaying = !isPlaying;
-        document.getElementById('playBtn').innerHTML = isPlaying ? '⏸' : '▶';
-        resetProgress();
-      });
-      document.getElementById('speedBtn').addEventListener('click', () => {
-        speedMult = speedMult === 1 ? 1.5 : speedMult === 1.5 ? 2 : 1;
-        document.getElementById('speedBtn').textContent = speedMult + '×';
-        if (isPlaying) resetProgress();
-      });
-      document.addEventListener('keydown', e => {
-        if (e.key === ' ') { e.preventDefault(); document.getElementById('playBtn').click(); }
-        else if (e.key === 'ArrowRight') nextEvent();
-        else if (e.key === 'ArrowLeft') prevEvent();
-      });
     }
-  </script>
 
+    /* ═══════════════════════════════════════════
+       INIT
+    ═══════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', () => {
+
+      /* Kick off celebration sparkles on load */
+      spawnSparkles();
+      /* Repeat burst every 12 seconds for ongoing festivity */
+      setInterval(spawnSparkles, 12000);
+
+      /* Start timeline */
+      if (EVENTS.length > 0) {
+        renderEvent(0, 'right');
+        tlTimer = setInterval(nextEvent, tlInterval);
+      }
+
+      /* Load satellite images */
+      reloadSatImages();
+
+      /* Load GeoJSON overlays */
+      loadGeoJson();
+      loadPanchGeoJson();
+
+      /* Reload on window resize (bbox needs recalculation) */
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => reloadSatImages(), 400);
+      });
+    });
+  </script>
 
 </body>
 

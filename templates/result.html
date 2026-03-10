@@ -44,6 +44,8 @@
       --shadow: 0 4px 30px rgba(0, 0, 10, 0.6);
       --radius: 20px;
       --radius-sm: 12px;
+      --topbar-h: 84px;
+      /* row1(40) + row2(44) */
     }
 
     html[data-theme="light"] {
@@ -118,46 +120,51 @@
       transition: width .4s, height .4s;
     }
 
-    /* ═══ TOP INFO BAR ═══ */
+    /* ═══════════════════════════════════════
+   TOP BAR — 2 rows
+   Row 1: Back | Breadcrumb | Dark
+   Row 2: Welcome tag | Chips
+═══════════════════════════════════════ */
     #topInfoBar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 200;
-      height: 54px;
       display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 0 16px;
+      flex-direction: column;
       background: var(--card);
       backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border);
       box-shadow: var(--shadow);
     }
 
-    /* ═══ BREADCRUMB SUBBAR ═══ */
-    #subBar {
-      position: fixed;
-      top: 54px;
-      left: 0;
-      right: 0;
-      z-index: 199;
-      height: 32px;
+    /* ── Row 1: Back · Breadcrumb · Dark ── */
+    #topRow1 {
       display: flex;
       align-items: center;
-      padding: 0 20px;
-      background: var(--bg2);
+      gap: 10px;
+      padding: 6px 16px;
+      height: 40px;
       border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(16px);
     }
 
-    /* ═══ TOP BAR BUTTONS ═══ */
+    /* ── Row 2: Tag · Chips ── */
+    #topRow2 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 16px;
+      height: 44px;
+      overflow: hidden;
+    }
+
+    /* ── Shared button style ── */
     .top-btn {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 7px 16px;
+      gap: 7px;
+      padding: 5px 14px;
       border-radius: 50px;
       background: var(--card2);
       border: 1px solid var(--border2);
@@ -168,7 +175,7 @@
       color: var(--txt1);
       text-decoration: none;
       font-weight: 600;
-      font-size: .78rem;
+      font-size: .76rem;
       letter-spacing: .3px;
       flex-shrink: 0;
       white-space: nowrap;
@@ -176,29 +183,61 @@
 
     .top-btn:hover {
       border-color: var(--teal);
-      box-shadow: 0 0 20px var(--glow-t), var(--shadow);
+      box-shadow: 0 0 18px var(--glow-t), var(--shadow);
       color: var(--teal);
       transform: translateY(-1px);
     }
 
-    .theme-toggle {
-      margin-left: auto;
+    /* Breadcrumb fills middle of row 1 */
+    #topRow1 .location-bc {
+      flex: 1;
+      min-width: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--txt2);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
-    /* ═══ WELCOME TAG (inside top bar) ═══ */
+    #topRow1 .location-bc .bc-item {
+      color: var(--txt2);
+    }
+
+    #topRow1 .location-bc .bc-item.active {
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    #topRow1 .location-bc .bc-sep {
+      color: var(--txt3);
+      margin: 0 2px;
+    }
+
+    #topRow1 .location-bc .bc-icon {
+      font-size: .85rem;
+      flex-shrink: 0;
+    }
+
+    /* Welcome tag in row 2 */
     .welcome-tag {
       flex-shrink: 0;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 5px 12px;
+      gap: 7px;
+      padding: 4px 12px;
       border-radius: 50px;
       background: linear-gradient(90deg, rgba(139, 92, 246, 0.12), rgba(14, 165, 233, 0.1));
       border: 1px solid rgba(139, 92, 246, 0.25);
-      font-size: .68rem;
+      font-size: .66rem;
       font-weight: 700;
       letter-spacing: .8px;
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .welcome-tag .tag-hindi {
@@ -217,16 +256,16 @@
       background: var(--border2);
     }
 
-    /* ═══ INFO CHIPS (inside top bar, horizontal scroll) ═══ */
+    /* Info chips — fill remaining row 2 space, horizontal scroll */
     .info-chips {
       flex: 1;
       min-width: 0;
       display: flex;
+      align-items: center;
       flex-wrap: nowrap;
       overflow-x: auto;
       scrollbar-width: none;
       gap: 6px;
-      padding: 0;
     }
 
     .info-chips::-webkit-scrollbar {
@@ -237,10 +276,10 @@
       flex-shrink: 0;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       background: var(--card2);
       border: 1px solid var(--border);
-      padding: 5px 11px;
+      padding: 4px 11px;
       border-radius: 12px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
@@ -281,7 +320,7 @@
     @keyframes chipIn {
       from {
         opacity: 0;
-        transform: translateY(10px) scale(.94)
+        transform: translateY(8px) scale(.94)
       }
 
       to {
@@ -312,7 +351,7 @@
     }
 
     .chip-label {
-      font-size: .52rem;
+      font-size: .5rem;
       color: var(--txt3);
       font-weight: 700;
       text-transform: uppercase;
@@ -320,61 +359,34 @@
     }
 
     .chip-val {
-      font-size: .78rem;
+      font-size: .76rem;
       font-weight: 700;
       color: var(--txt1);
       font-family: 'Space Grotesk', sans-serif;
     }
 
-    /* ═══ LOCATION BREADCRUMB (inside subbar) ═══ */
-    .location-bc {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: .72rem;
-      font-weight: 600;
-      color: var(--txt2);
-      font-family: 'Space Grotesk', sans-serif;
-      animation: chipIn .5s .7s both;
-    }
-
-    .location-bc .bc-item {
-      color: var(--txt2);
-    }
-
-    .location-bc .bc-item.active {
-      color: var(--green);
-      font-weight: 800;
-    }
-
-    .location-bc .bc-sep {
-      color: var(--txt3);
-      font-size: .8rem;
-      margin: 0 2px;
-    }
-
-    .location-bc .bc-icon {
-      font-size: .9rem;
-    }
-
-    /* ═══ PAGE GRID ═══ */
+    /* ═══════════════════════════════════════
+   PAGE GRID — fills viewport below top bar
+   Left col (~60%): hero + satellite
+   Right col (~40%): timeline
+═══════════════════════════════════════ */
     #page {
       position: relative;
       z-index: 10;
       width: 100%;
       height: 100%;
       display: grid;
-      grid-template-columns: 1.5fr 1fr;
-      gap: 24px;
-      padding: 102px 32px 18px 32px;
-      /* 54 topBar + 32 subBar + 16 gap */
+      grid-template-columns: 1.55fr 1fr;
+      gap: 20px;
+      padding: calc(var(--topbar-h) + 10px) 24px 14px 24px;
     }
 
     .left-column {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       height: 100%;
+      min-height: 0;
       overflow: hidden;
     }
 
@@ -383,23 +395,23 @@
       flex-direction: column;
       height: 100%;
       min-height: 0;
-      padding-top: 4px;
-      gap: 0;
+      overflow: hidden;
     }
 
-    /* ═══ HERO — just the greeting ═══ */
+    /* ═══ HERO — compact greeting only ═══ */
     .hero-section {
       flex-shrink: 0;
     }
 
     .hero-name {
-      font-size: 2rem;
+      font-size: 1.85rem;
       line-height: 1.15;
     }
 
     .hero-name .namaste {
-      font-size: 1.6rem;
+      font-size: 1.45rem;
       color: var(--txt2);
+      font-weight: 400;
     }
 
     .hero-name .name-val {
@@ -407,12 +419,13 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      font-weight: 800;
     }
 
     @keyframes fadeSlideUp {
       from {
         opacity: 0;
-        transform: translateY(20px)
+        transform: translateY(16px)
       }
 
       to {
@@ -421,444 +434,14 @@
       }
     }
 
-    /* ═══ TIMELINE ═══ */
-    .tl-section {
-      flex: 0 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .section-header h2 {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: var(--txt1);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 0;
-      font-family: 'Space Grotesk', sans-serif;
-      letter-spacing: -.3px;
-    }
-
-    .section-header h2 .sh-hindi {
-      font-family: 'Yatra One', cursive;
-      color: var(--gold);
-    }
-
-    .section-header p {
-      font-size: .75rem;
-      color: var(--txt3);
-      margin-top: 3px;
-      letter-spacing: .2px;
-    }
-
-    .tl-card-outer {
-      flex: 0 0 auto;
-      height: 290px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .tl-card {
-      flex: 1 1 0;
-      min-height: 0;
-      border-radius: var(--radius);
-      padding: 18px 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(28px) saturate(160%);
-      position: relative;
-      overflow: hidden;
-      transition: border-color .4s, box-shadow .4s;
-    }
-
-    .tl-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--purple), var(--teal), transparent);
-      opacity: .6;
-    }
-
-    .tl-card::after {
-      content: '';
-      position: absolute;
-      bottom: -60px;
-      right: -60px;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, var(--glow-p) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .tl-card-outer:hover .tl-card {
-      border-color: rgba(139, 92, 246, 0.3);
-      box-shadow: 0 0 40px var(--glow-p), var(--shadow);
-    }
-
-    .tl-era-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      align-self: flex-start;
-      padding: 3px 12px;
-      border-radius: 50px;
-      background: linear-gradient(90deg, rgba(139, 92, 246, .15), rgba(14, 165, 233, .1));
-      border: 1px solid rgba(139, 92, 246, .25);
-      font-size: .62rem;
-      font-weight: 700;
-      color: var(--purple);
-      text-transform: uppercase;
-      letter-spacing: .8px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .tl-era-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--purple);
-      box-shadow: 0 0 4px var(--purple);
-    }
-
-    .tl-year-block {
-      position: relative;
-      z-index: 1;
-    }
-
-    .tl-year {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.8rem;
-      font-weight: 900;
-      line-height: .95;
-      letter-spacing: -1px;
-      background: linear-gradient(135deg, var(--saffron), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      transition: transform .4s;
-    }
-
-    .tl-card-outer:hover .tl-year {
-      transform: scale(1.03) translateX(2px);
-    }
-
-    .tl-year-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .tl-year-line {
-      height: 3px;
-      width: 40px;
-      border-radius: 3px;
-      background: linear-gradient(90deg, var(--saffron), var(--gold));
-      transition: width .5s cubic-bezier(.22, 1, .36, 1);
-    }
-
-    .tl-card-outer:hover .tl-year-line {
-      width: 80px;
-    }
-
-    .tl-year-bar-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--gold);
-      box-shadow: 0 0 8px var(--gold);
-    }
-
-    .tl-body {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-shrink: 0;
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: var(--card2);
-      border: 1px solid var(--border);
-      transition: border-color .4s, background .4s;
-      position: relative;
-      z-index: 1;
-    }
-
-    .tl-card-outer:hover .tl-body {
-      border-color: rgba(139, 92, 246, .2);
-    }
-
-    .tl-icon-wrap {
-      flex-shrink: 0;
-      width: 56px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.2rem;
-      background: linear-gradient(135deg, rgba(139, 92, 246, .12), rgba(14, 165, 233, .08));
-      border-radius: 12px;
-      border: 1px solid rgba(139, 92, 246, .2);
-      transition: transform .4s, border-color .4s;
-    }
-
-    .tl-card-outer:hover .tl-icon-wrap {
-      transform: scale(1.1) rotate(5deg);
-      border-color: rgba(139, 92, 246, .4);
-    }
-
-    .tl-title {
-      font-size: 1rem;
-      font-weight: 600;
-      line-height: 1.5;
-      color: var(--txt1);
-      font-family: 'Space Grotesk', sans-serif;
-      transition: color .4s;
-      flex: 1;
-    }
-
-    .tl-dots {
-      display: flex;
-      gap: 5px;
-      align-items: center;
-      position: relative;
-      z-index: 1;
-    }
-
-    .tl-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--border2);
-      transition: all .3s;
-    }
-
-    .tl-dot.active {
-      background: var(--teal);
-      width: 18px;
-      border-radius: 3px;
-      box-shadow: 0 0 8px var(--teal);
-    }
-
-    .tl-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--card);
-      border: 1px solid var(--border2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--txt2);
-      font-size: 1.2rem;
-      cursor: pointer;
-      z-index: 20;
-      transition: all .3s;
-      backdrop-filter: blur(10px);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .tl-card-outer:hover .tl-arrow {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .tl-arrow:hover {
-      background: var(--purple);
-      color: #fff;
-      border-color: var(--purple);
-      transform: translateY(-50%) scale(1.12);
-      box-shadow: 0 0 16px var(--glow-p);
-    }
-
-    .tl-arrow.left {
-      left: -12px;
-    }
-
-    .tl-arrow.right {
-      right: -12px;
-    }
-
-    .slide-out-left {
-      animation: solAnim .35s cubic-bezier(.8, 0, .2, 1) forwards;
-    }
-
-    .slide-out-right {
-      animation: sorAnim .35s cubic-bezier(.8, 0, .2, 1) forwards;
-    }
-
-    .slide-in-left {
-      animation: silAnim .35s cubic-bezier(.2, .8, .2, 1) forwards;
-    }
-
-    .slide-in-right {
-      animation: sirAnim .35s cubic-bezier(.2, .8, .2, 1) forwards;
-    }
-
-    @keyframes solAnim {
-      to {
-        opacity: 0;
-        transform: translateX(-30px) scale(.96)
-      }
-    }
-
-    @keyframes sorAnim {
-      to {
-        opacity: 0;
-        transform: translateX(30px) scale(.96)
-      }
-    }
-
-    @keyframes silAnim {
-      from {
-        opacity: 0;
-        transform: translateX(30px) scale(.96)
-      }
-
-      to {
-        opacity: 1;
-        transform: none
-      }
-    }
-
-    @keyframes sirAnim {
-      from {
-        opacity: 0;
-        transform: translateX(-30px) scale(.96)
-      }
-
-      to {
-        opacity: 1;
-        transform: none
-      }
-    }
-
-    /* ═══ PLAYBAR ═══ */
-    .tl-playbar {
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--card);
-      padding: 9px 14px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
-    }
-
-    .ctrl-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, rgba(14, 165, 233, .18), rgba(14, 165, 233, .06));
-      border: 1px solid rgba(14, 165, 233, .2);
-      color: var(--teal);
-      font-size: .85rem;
-      cursor: pointer;
-      transition: all .25s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-    }
-
-    .ctrl-btn:hover {
-      background: linear-gradient(135deg, var(--teal), var(--teal2));
-      color: #fff;
-      border-color: var(--teal);
-      transform: scale(1.15);
-      box-shadow: 0 0 16px var(--glow-t);
-    }
-
-    .tl-progress-track {
-      flex: 1;
-      height: 5px;
-      background: var(--bg3);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .tl-progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--teal), var(--purple), var(--gold));
-      background-size: 200% 100%;
-      animation: pgAnim 2s linear infinite;
-      border-radius: 10px;
-    }
-
-    @keyframes pgAnim {
-      0% {
-        background-position: 0%
-      }
-
-      100% {
-        background-position: 200%
-      }
-    }
-
-    .counter-txt {
-      font-size: .75rem;
-      font-weight: 800;
-      color: var(--txt3);
-      font-family: 'Space Grotesk', sans-serif;
-      min-width: 42px;
-      text-align: right;
-    }
-
-    .keyboard-hints {
-      flex-shrink: 0;
-      font-size: .65rem;
-      color: var(--txt3);
-      font-weight: 500;
-      letter-spacing: .4px;
-    }
-
-    kbd {
-      background: var(--bg3);
-      padding: 2px 6px;
-      border-radius: 5px;
-      font-family: 'Space Grotesk', monospace;
-      border: 1px solid var(--border2);
-      color: var(--txt2);
-      font-size: .62rem;
-    }
-
-    /* ═══ SATELLITE ═══ */
+    /* ═══ SATELLITE SECTION ═══ */
     .sat-section {
       flex: 1 1 0;
       min-height: 0;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
       animation: fadeSlideUp .8s cubic-bezier(.22, 1, .36, 1) .2s both;
-    }
-
-    @keyframes fadeSlideRight {
-      from {
-        opacity: 0;
-        transform: translateX(30px)
-      }
-
-      to {
-        opacity: 1;
-        transform: none
-      }
     }
 
     .sat-header-wrap {
@@ -866,7 +449,7 @@
     }
 
     .sat-header-title {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 800;
       color: var(--txt1);
       display: flex;
@@ -884,18 +467,18 @@
     .sat-year-pills {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-top: 5px;
+      gap: 7px;
+      margin-top: 4px;
       flex-wrap: wrap;
     }
 
     .sat-pill {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      padding: 3px 11px;
+      gap: 4px;
+      padding: 2px 10px;
       border-radius: 20px;
-      font-size: .7rem;
+      font-size: .68rem;
       font-weight: 700;
       font-family: 'Space Grotesk', sans-serif;
     }
@@ -919,30 +502,29 @@
     }
 
     .sat-pill-arrow {
-      font-size: .8rem;
+      font-size: .75rem;
       color: var(--txt3);
     }
 
     .sat-pill-dist {
-      font-size: .72rem;
+      font-size: .7rem;
       color: var(--txt3);
       font-weight: 600;
     }
 
-    /* Scope toggle */
     .scope-btns {
       display: flex;
       gap: 6px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
     .scope-btn {
-      padding: 4px 13px;
+      padding: 3px 12px;
       border-radius: 20px;
       border: 1px solid var(--border2);
       background: var(--card2);
       color: var(--txt3);
-      font-size: .68rem;
+      font-size: .65rem;
       font-weight: 700;
       cursor: pointer;
       font-family: 'Space Grotesk', sans-serif;
@@ -954,7 +536,7 @@
       background: rgba(16, 185, 129, .15);
       border-color: var(--green);
       color: var(--green);
-      box-shadow: 0 0 12px var(--glow-g);
+      box-shadow: 0 0 10px var(--glow-g);
     }
 
     .scope-btn:hover:not(.active) {
@@ -962,19 +544,18 @@
       color: var(--teal);
     }
 
+    /* ── Satellite grid: birth | divider | now ── */
     .sat-grid {
       flex: 1 1 0;
       min-height: 0;
       display: grid;
-      grid-template-columns: 1fr 28px 1fr;
+      grid-template-columns: 1fr 24px 1fr;
       grid-template-rows: 1fr;
       gap: 0;
     }
 
     /* ═══ SAT CARD ═══ */
     .sat-card {
-      flex: 1 1 0;
-      min-height: 0;
       position: relative;
       border-radius: var(--radius);
       overflow: hidden;
@@ -987,11 +568,11 @@
     .sat-card:hover {
       border-color: rgba(14, 165, 233, .4);
       box-shadow: 0 0 40px var(--glow-t), var(--shadow);
-      transform: translateY(-3px) scale(1.005);
+      transform: translateY(-2px) scale(1.005);
     }
 
     .sat-card.birth-card {
-      opacity: .92;
+      opacity: .93;
     }
 
     .sat-card.birth-card:hover {
@@ -1085,7 +666,7 @@
       pointer-events: none;
     }
 
-    /* ── Animated paths ── */
+    /* Animated paths */
     .animated-boundary {
       opacity: 0;
       animation: fadeInBoundary 1.2s ease forwards 0.2s;
@@ -1124,7 +705,7 @@
       filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.85));
     }
 
-    /* ── Skeleton ── */
+    /* Skeleton */
     .sat-skeleton {
       position: absolute;
       inset: 0;
@@ -1134,7 +715,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
+      gap: 12px;
       border-radius: var(--radius);
       transition: opacity .7s, visibility .7s;
     }
@@ -1147,8 +728,8 @@
 
     .sk-orbit {
       position: relative;
-      width: 52px;
-      height: 52px;
+      width: 48px;
+      height: 48px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1164,7 +745,7 @@
     }
 
     .sk-ring:nth-child(2) {
-      inset: 9px;
+      inset: 8px;
       border-top-color: var(--teal);
       animation: skSpin 1.5s linear infinite reverse;
     }
@@ -1176,13 +757,13 @@
     }
 
     .sk-icon {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       position: relative;
       z-index: 1;
     }
 
     .sk-text {
-      font-size: .65rem;
+      font-size: .62rem;
       color: var(--txt3);
       font-weight: 700;
       text-transform: uppercase;
@@ -1192,25 +773,25 @@
 
     .sk-year {
       font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       font-weight: 900;
       color: rgba(139, 92, 246, .25);
     }
 
-    /* ── Corner badges ── */
+    /* Corner badges */
     .sat-corner-badge {
       position: absolute;
-      top: 12px;
-      left: 12px;
+      top: 10px;
+      left: 10px;
       z-index: 8;
-      font-size: .6rem;
+      font-size: .58rem;
       font-weight: 700;
       letter-spacing: .8px;
       text-transform: uppercase;
       color: rgba(255, 255, 255, .85);
       background: rgba(0, 0, 0, .55);
       border: 1px solid rgba(255, 255, 255, .12);
-      padding: 4px 10px;
+      padding: 3px 9px;
       border-radius: 20px;
       backdrop-filter: blur(10px);
       display: flex;
@@ -1247,28 +828,29 @@
       }
     }
 
-    /* ── Panchayat pin ── */
+    /* Panchayat pin */
     .panch-pin {
       position: absolute;
-      top: 12px;
+      top: 10px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 9;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 13px;
+      gap: 5px;
+      padding: 3px 11px;
       border-radius: 20px;
       backdrop-filter: blur(14px);
       background: rgba(16, 185, 129, .25);
       border: 1px solid rgba(16, 185, 129, .5);
-      font-size: .62rem;
+      font-size: .6rem;
       font-weight: 700;
       color: #6ee7b7;
       letter-spacing: .8px;
       text-transform: uppercase;
       font-family: 'Space Grotesk', sans-serif;
       animation: pulsePinAnim 2.4s ease-in-out infinite;
+      white-space: nowrap;
     }
 
     .panch-pin .pp-dot {
@@ -1293,34 +875,34 @@
 
     .sat-status {
       position: absolute;
-      top: 12px;
-      right: 12px;
+      top: 10px;
+      right: 10px;
       z-index: 8;
-      font-size: .58rem;
+      font-size: .56rem;
       font-weight: 700;
       letter-spacing: .8px;
       text-transform: uppercase;
       color: rgba(255, 255, 255, .75);
       background: rgba(0, 0, 0, .5);
       border: 1px solid rgba(255, 255, 255, .08);
-      padding: 4px 10px;
+      padding: 3px 9px;
       border-radius: 20px;
       backdrop-filter: blur(10px);
     }
 
-    /* ── Scope indicator ── */
+    /* Scope indicator */
     .scope-indicator {
       position: absolute;
-      bottom: 56px;
-      right: 12px;
+      bottom: 52px;
+      right: 10px;
       z-index: 8;
       display: flex;
       align-items: center;
       gap: 5px;
-      padding: 3px 10px;
+      padding: 3px 9px;
       border-radius: 20px;
       backdrop-filter: blur(10px);
-      font-size: .58rem;
+      font-size: .56rem;
       font-weight: 700;
       letter-spacing: .8px;
       text-transform: uppercase;
@@ -1356,13 +938,13 @@
       animation: blink 1.8s infinite;
     }
 
-    /* ── Label bar ── */
+    /* Label bar */
     .sat-label {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
-      padding: 50px 18px 14px;
+      padding: 44px 14px 12px;
       z-index: 5;
       background: linear-gradient(to top, rgba(2, 6, 16, .97) 0%, rgba(2, 6, 16, .6) 50%, transparent 100%);
       display: flex;
@@ -1373,12 +955,12 @@
     .sat-label-left {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px;
     }
 
     .sat-label-year {
       font-family: 'Playfair Display', serif;
-      font-size: 2.4rem;
+      font-size: 2.2rem;
       font-weight: 900;
       color: #fff;
       line-height: 1;
@@ -1386,7 +968,7 @@
     }
 
     .sat-label-desc {
-      font-size: .6rem;
+      font-size: .58rem;
       color: rgba(255, 255, 255, .45);
       font-weight: 600;
       letter-spacing: 1px;
@@ -1395,11 +977,11 @@
     }
 
     .sat-src {
-      font-size: .65rem;
+      font-size: .62rem;
       color: #fff;
       font-weight: 700;
       letter-spacing: .3px;
-      padding: 5px 12px;
+      padding: 4px 10px;
       border-radius: 20px;
       backdrop-filter: blur(8px);
       font-family: 'Space Grotesk', sans-serif;
@@ -1415,14 +997,14 @@
       border: 1px solid rgba(14, 165, 233, .4);
     }
 
-    /* ── Divider ── */
+    /* Divider */
     .sat-divider {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      width: 28px;
+      width: 24px;
       flex-shrink: 0;
     }
 
@@ -1433,7 +1015,7 @@
     }
 
     .sat-div-label {
-      font-size: .62rem;
+      font-size: .58rem;
       font-weight: 800;
       color: var(--txt3);
       letter-spacing: 1px;
@@ -1442,8 +1024,431 @@
       font-family: 'Space Grotesk', sans-serif;
     }
 
+    /* ═══ TIMELINE ═══ */
+    .tl-section {
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-header h2 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--txt1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: -.3px;
+    }
+
+    .section-header h2 .sh-hindi {
+      font-family: 'Yatra One', cursive;
+      color: var(--gold);
+    }
+
+    .section-header p {
+      font-size: .72rem;
+      color: var(--txt3);
+      margin-top: 3px;
+      letter-spacing: .2px;
+    }
+
+    .tl-card-outer {
+      flex: 1 1 0;
+      min-height: 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tl-card {
+      flex: 1 1 0;
+      min-height: 0;
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(28px) saturate(160%);
+      position: relative;
+      overflow: hidden;
+      transition: border-color .4s, box-shadow .4s;
+    }
+
+    .tl-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--purple), var(--teal), transparent);
+      opacity: .6;
+    }
+
+    .tl-card::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      right: -60px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, var(--glow-p) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .tl-card-outer:hover .tl-card {
+      border-color: rgba(139, 92, 246, 0.3);
+      box-shadow: 0 0 40px var(--glow-p), var(--shadow);
+    }
+
+    .tl-era-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      align-self: flex-start;
+      padding: 3px 12px;
+      border-radius: 50px;
+      background: linear-gradient(90deg, rgba(139, 92, 246, .15), rgba(14, 165, 233, .1));
+      border: 1px solid rgba(139, 92, 246, .25);
+      font-size: .62rem;
+      font-weight: 700;
+      color: var(--purple);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tl-era-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--purple);
+      box-shadow: 0 0 4px var(--purple);
+    }
+
+    .tl-year-block {
+      position: relative;
+      z-index: 1;
+    }
+
+    .tl-year {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      font-weight: 900;
+      line-height: .95;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--saffron), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: transform .4s;
+    }
+
+    .tl-card-outer:hover .tl-year {
+      transform: scale(1.03) translateX(2px);
+    }
+
+    .tl-year-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 7px;
+    }
+
+    .tl-year-line {
+      height: 3px;
+      width: 40px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--saffron), var(--gold));
+      transition: width .5s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .tl-card-outer:hover .tl-year-line {
+      width: 75px;
+    }
+
+    .tl-year-bar-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 8px var(--gold);
+    }
+
+    .tl-body {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      transition: border-color .4s, background .4s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tl-card-outer:hover .tl-body {
+      border-color: rgba(139, 92, 246, .2);
+    }
+
+    .tl-icon-wrap {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      background: linear-gradient(135deg, rgba(139, 92, 246, .12), rgba(14, 165, 233, .08));
+      border-radius: 12px;
+      border: 1px solid rgba(139, 92, 246, .2);
+      transition: transform .4s, border-color .4s;
+    }
+
+    .tl-card-outer:hover .tl-icon-wrap {
+      transform: scale(1.1) rotate(5deg);
+      border-color: rgba(139, 92, 246, .4);
+    }
+
+    .tl-title {
+      font-size: .95rem;
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--txt1);
+      font-family: 'Space Grotesk', sans-serif;
+      transition: color .4s;
+      flex: 1;
+    }
+
+    .tl-dots {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tl-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--border2);
+      transition: all .3s;
+    }
+
+    .tl-dot.active {
+      background: var(--teal);
+      width: 18px;
+      border-radius: 3px;
+      box-shadow: 0 0 8px var(--teal);
+    }
+
+    .tl-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--txt2);
+      font-size: 1.1rem;
+      cursor: pointer;
+      z-index: 20;
+      transition: all .3s;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .tl-card-outer:hover .tl-arrow {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .tl-arrow:hover {
+      background: var(--purple);
+      color: #fff;
+      border-color: var(--purple);
+      transform: translateY(-50%) scale(1.12);
+      box-shadow: 0 0 16px var(--glow-p);
+    }
+
+    .tl-arrow.left {
+      left: -12px;
+    }
+
+    .tl-arrow.right {
+      right: -12px;
+    }
+
+    .slide-out-left {
+      animation: solAnim .35s cubic-bezier(.8, 0, .2, 1) forwards;
+    }
+
+    .slide-out-right {
+      animation: sorAnim .35s cubic-bezier(.8, 0, .2, 1) forwards;
+    }
+
+    .slide-in-left {
+      animation: silAnim .35s cubic-bezier(.2, .8, .2, 1) forwards;
+    }
+
+    .slide-in-right {
+      animation: sirAnim .35s cubic-bezier(.2, .8, .2, 1) forwards;
+    }
+
+    @keyframes solAnim {
+      to {
+        opacity: 0;
+        transform: translateX(-30px) scale(.96)
+      }
+    }
+
+    @keyframes sorAnim {
+      to {
+        opacity: 0;
+        transform: translateX(30px) scale(.96)
+      }
+    }
+
+    @keyframes silAnim {
+      from {
+        opacity: 0;
+        transform: translateX(30px) scale(.96)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    @keyframes sirAnim {
+      from {
+        opacity: 0;
+        transform: translateX(-30px) scale(.96)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    /* ── Playbar ── */
+    .tl-playbar {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card);
+      padding: 8px 13px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .ctrl-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(14, 165, 233, .18), rgba(14, 165, 233, .06));
+      border: 1px solid rgba(14, 165, 233, .2);
+      color: var(--teal);
+      font-size: .82rem;
+      cursor: pointer;
+      transition: all .25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .ctrl-btn:hover {
+      background: linear-gradient(135deg, var(--teal), var(--teal2));
+      color: #fff;
+      border-color: var(--teal);
+      transform: scale(1.15);
+      box-shadow: 0 0 16px var(--glow-t);
+    }
+
+    .tl-progress-track {
+      flex: 1;
+      height: 5px;
+      background: var(--bg3);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .tl-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--teal), var(--purple), var(--gold));
+      background-size: 200% 100%;
+      animation: pgAnim 2s linear infinite;
+      border-radius: 10px;
+    }
+
+    @keyframes pgAnim {
+      0% {
+        background-position: 0%
+      }
+
+      100% {
+        background-position: 200%
+      }
+    }
+
+    .counter-txt {
+      font-size: .72rem;
+      font-weight: 800;
+      color: var(--txt3);
+      font-family: 'Space Grotesk', sans-serif;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .keyboard-hints {
+      flex-shrink: 0;
+      font-size: .62rem;
+      color: var(--txt3);
+      font-weight: 500;
+      letter-spacing: .4px;
+    }
+
+    kbd {
+      background: var(--bg3);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: 'Space Grotesk', monospace;
+      border: 1px solid var(--border2);
+      color: var(--txt2);
+      font-size: .6rem;
+    }
+
     /* ═══ RESPONSIVE ═══ */
     @media (max-width: 1024px) {
+
+      :root {
+        --topbar-h: 0px;
+      }
 
       html,
       body {
@@ -1453,40 +1458,22 @@
       }
 
       #topInfoBar {
+        position: static;
+        flex-direction: column;
+      }
+
+      #topRow1,
+      #topRow2 {
         height: auto;
         flex-wrap: wrap;
         padding: 8px 12px;
         gap: 6px;
       }
 
-      #subBar {
-        position: static;
-      }
-
-      .info-chips {
-        order: 3;
-        flex-basis: 100%;
-        width: 100%;
-      }
-
-      .welcome-tag {
-        order: 1;
-      }
-
-      .back-btn {
-        order: 0;
-      }
-
-      .theme-toggle {
-        order: 2;
-        margin-left: auto;
-      }
-
       #page {
         grid-template-columns: 1fr;
         height: auto;
-        padding: 16px;
-        padding-top: 16px;
+        padding: 14px;
       }
 
       .left-column {
@@ -1500,17 +1487,31 @@
         min-height: auto;
       }
 
+      .tl-section {
+        flex: none;
+      }
+
+      .tl-card-outer {
+        flex: none;
+        min-height: auto;
+        height: auto;
+      }
+
+      .tl-card {
+        min-height: 220px;
+      }
+
       .sat-grid {
         flex: none;
         height: auto;
         grid-template-columns: 1fr;
-        grid-template-rows: 260px 36px 260px;
+        grid-template-rows: 260px 32px 260px;
       }
 
       .sat-divider {
         flex-direction: row;
         width: 100%;
-        height: 36px;
+        height: 32px;
       }
 
       .sat-div-line {
@@ -1523,22 +1524,11 @@
         writing-mode: horizontal-tb;
       }
 
-      .tl-section,
-      .tl-card-outer,
-      .tl-card {
-        flex: none;
-        min-height: auto;
-      }
-
-      .tl-card {
-        min-height: 200px;
-      }
-
       .sat-card {
         min-height: 260px;
       }
 
-      .mouseGlow {
+      #mouseGlow {
         display: none;
       }
     }
@@ -1548,98 +1538,96 @@
 <body>
   <div id="mouseGlow"></div>
 
-  <!-- ══ TOP INFO BAR ══ -->
+  <!-- ══ TOP BAR ══ -->
   <div id="topInfoBar">
 
-    <a href="/" class="top-btn back-btn">
-      <span style="font-size:1rem;line-height:.8;">←</span> Back
-    </a>
-
-    <div class="welcome-tag">
-      <span class="tag-hindi">बिहार दिवस प्रदर्शनी</span>
-      <span class="tag-dot"></span>
-      <span class="tag-en">Bihar Diwas Exhibition</span>
+    <!-- Row 1: Back | Breadcrumb | Dark -->
+    <div id="topRow1">
+      <a href="/" class="top-btn back-btn">
+        <span style="font-size:1rem;line-height:.8;">←</span> Back
+      </a>
+      <div class="location-bc">
+        <span class="bc-icon">📍</span>
+        <span class="bc-item">{{ district }}</span>
+        {% if block %}
+        <span class="bc-sep">›</span>
+        <span class="bc-item">{{ block }}</span>
+        {% endif %}
+        {% if panchayat %}
+        <span class="bc-sep">›</span>
+        <span class="bc-item active">{{ panchayat }}</span>
+        {% endif %}
+      </div>
+      <div class="top-btn theme-toggle" onclick="toggleTheme()">
+        <span id="themeIcon">🌙</span>
+        <span id="themeText">Dark</span>
+      </div>
     </div>
 
-    <!-- Info chips — horizontal scroll -->
-    <div class="info-chips">
-      <div class="info-chip">
-        <div class="chip-dot"></div>
-        <div class="chip-data">
-          <span class="chip-label">नाम / Name</span>
-          <span class="chip-val">{{ name }}</span>
-        </div>
+    <!-- Row 2: Tag | Chips -->
+    <div id="topRow2">
+      <div class="welcome-tag">
+        <span class="tag-hindi">बिहार दिवस प्रदर्शनी</span>
+        <span class="tag-dot"></span>
+        <span class="tag-en">Bihar Diwas Exhibition</span>
       </div>
-      <div class="info-chip">
-        <div class="chip-dot"></div>
-        <div class="chip-data">
-          <span class="chip-label">जन्म वर्ष / Birth Year</span>
-          <span class="chip-val">{{ birth_year }}</span>
+      <div class="info-chips">
+        <div class="info-chip">
+          <div class="chip-dot"></div>
+          <div class="chip-data">
+            <span class="chip-label">नाम / Name</span>
+            <span class="chip-val">{{ name }}</span>
+          </div>
         </div>
-      </div>
-      <div class="info-chip">
-        <div class="chip-dot"></div>
-        <div class="chip-data">
-          <span class="chip-label">आयु / Age</span>
-          <span class="chip-val">{% if age %}{{ age }} वर्ष{% else %}—{% endif %}</span>
+        <div class="info-chip">
+          <div class="chip-dot"></div>
+          <div class="chip-data">
+            <span class="chip-label">जन्म वर्ष / Birth Year</span>
+            <span class="chip-val">{{ birth_year }}</span>
+          </div>
         </div>
-      </div>
-      <div class="info-chip">
-        <div class="chip-dot"></div>
-        <div class="chip-data">
-          <span class="chip-label">ज़िला / District</span>
-          <span class="chip-val">{{ district }}</span>
+        <div class="info-chip">
+          <div class="chip-dot"></div>
+          <div class="chip-data">
+            <span class="chip-label">आयु / Age</span>
+            <span class="chip-val">{% if age %}{{ age }} वर्ष{% else %}—{% endif %}</span>
+          </div>
         </div>
-      </div>
-      {% if block %}
-      <div class="info-chip">
-        <div class="chip-dot"></div>
-        <div class="chip-data">
-          <span class="chip-label">ब्लॉक / Block</span>
-          <span class="chip-val">{{ block }}</span>
+        <div class="info-chip">
+          <div class="chip-dot"></div>
+          <div class="chip-data">
+            <span class="chip-label">ज़िला / District</span>
+            <span class="chip-val">{{ district }}</span>
+          </div>
         </div>
-      </div>
-      {% endif %}
-      {% if panchayat %}
-      <div class="info-chip">
-        <div class="chip-dot"></div>
-        <div class="chip-data">
-          <span class="chip-label">पंचायत / Panchayat</span>
-          <span class="chip-val">{{ panchayat }}</span>
+        {% if block %}
+        <div class="info-chip">
+          <div class="chip-dot"></div>
+          <div class="chip-data">
+            <span class="chip-label">ब्लॉक / Block</span>
+            <span class="chip-val">{{ block }}</span>
+          </div>
         </div>
+        {% endif %}
+        {% if panchayat %}
+        <div class="info-chip">
+          <div class="chip-dot"></div>
+          <div class="chip-data">
+            <span class="chip-label">पंचायत</span>
+            <span class="chip-val">{{ panchayat }}</span>
+          </div>
+        </div>
+        {% endif %}
       </div>
-      {% endif %}
-    </div>
-
-    <div class="top-btn theme-toggle" onclick="toggleTheme()">
-      <span id="themeIcon">🌙</span>
-      <span id="themeText">Dark</span>
     </div>
 
   </div><!-- /topInfoBar -->
 
-  <!-- ══ BREADCRUMB SUBBAR ══ -->
-  <div id="subBar">
-    <div class="location-bc">
-      <span class="bc-icon">📍</span>
-      <span class="bc-item">{{ district }}</span>
-      {% if block %}
-      <span class="bc-sep">›</span>
-      <span class="bc-item">{{ block }}</span>
-      {% endif %}
-      {% if panchayat %}
-      <span class="bc-sep">›</span>
-      <span class="bc-item active">{{ panchayat }}</span>
-      {% endif %}
-    </div>
-  </div><!-- /subBar -->
-
   <div id="page">
 
-    <!-- ══ LEFT COLUMN: Hero + Satellite ══ -->
+    <!-- ══ LEFT: Hero + Satellite ══ -->
     <div class="left-column">
 
-      <!-- ── Hero: just the greeting ── -->
       <section class="hero-section">
         <div class="hero-name">
           <span class="namaste">नमस्ते,</span><br>
@@ -1647,7 +1635,6 @@
         </div>
       </section>
 
-      <!-- ── Satellite ── -->
       <section class="sat-section">
         <div class="sat-header-wrap">
           <div class="sat-header-title">
@@ -1666,7 +1653,6 @@
             <span class="sat-pill scope">🏘️ {{ block }}</span>
             {% endif %}
           </div>
-
           {% if panchayat or block %}
           <div class="scope-btns">
             <button class="scope-btn" id="scopeDistBtn" onclick="setScope('district')">🗺️ District</button>
@@ -1675,13 +1661,11 @@
             </button>
           </div>
           {% endif %}
+        </div>
 
-        </div><!-- /sat-header-wrap -->
-
-        <!-- Side-by-side satellite grid -->
         <div class="sat-grid">
 
-          <!-- ── Birth Year Card ── -->
+          <!-- Birth Card -->
           <div class="sat-card birth-card">
             <div class="sat-skeleton" id="birthSkeleton">
               <div class="sk-orbit">
@@ -1704,15 +1688,12 @@
               <div class="badge-dot"></div>{{ district }}
             </div>
             <div class="sat-status">ARCHIVE</div>
-            {% if panchayat %}
-            <div class="panch-pin">
+            {% if panchayat %}<div class="panch-pin">
               <div class="pp-dot"></div>{{ panchayat }}
             </div>
-            {% elif block %}
-            <div class="panch-pin">
+            {% elif block %}<div class="panch-pin">
               <div class="pp-dot"></div>{{ block }}
-            </div>
-            {% endif %}
+            </div>{% endif %}
             <div class="scope-indicator panch" id="birthScopeInd">
               <div class="si-dot"></div>
               <span id="birthScopeLabel">{% if panchayat %}Panchayat{% else %}Block{% endif %}</span>
@@ -1726,14 +1707,14 @@
             </div>
           </div>
 
-          <!-- ── Vertical divider ── -->
+          <!-- Divider -->
           <div class="sat-divider">
             <div class="sat-div-line"></div>
             <div class="sat-div-label">vs</div>
             <div class="sat-div-line"></div>
           </div>
 
-          <!-- ── Present Card ── -->
+          <!-- Present Card -->
           <div class="sat-card now-card">
             <div class="sat-skeleton" id="currentSkeleton">
               <div class="sk-orbit">
@@ -1756,15 +1737,12 @@
               <div class="badge-dot"></div>{{ district }}
             </div>
             <div class="sat-status">PRESENT</div>
-            {% if panchayat %}
-            <div class="panch-pin">
+            {% if panchayat %}<div class="panch-pin">
               <div class="pp-dot"></div>{{ panchayat }}
             </div>
-            {% elif block %}
-            <div class="panch-pin">
+            {% elif block %}<div class="panch-pin">
               <div class="pp-dot"></div>{{ block }}
-            </div>
-            {% endif %}
+            </div>{% endif %}
             <div class="scope-indicator panch" id="currentScopeInd">
               <div class="si-dot"></div>
               <span id="currentScopeLabel">{% if panchayat %}Panchayat{% else %}Block{% endif %}</span>
@@ -1783,7 +1761,7 @@
 
     </div><!-- /left-column -->
 
-    <!-- ══ RIGHT COLUMN: Timeline ══ -->
+    <!-- ══ RIGHT: Timeline ══ -->
     <div class="right-column">
       <section class="tl-section">
         <div class="section-header">

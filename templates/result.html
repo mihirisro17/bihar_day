@@ -9,7 +9,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=Yatra+One&family=Space+Grotesk:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
   <style>
-    *,
+    **,
     *::before,
     *::after {
       margin: 0;
@@ -42,9 +42,9 @@
       --glow-p: rgba(139, 92, 246, 0.15);
       --glow-g: rgba(16, 185, 129, 0.15);
       --shadow: 0 4px 30px rgba(0, 0, 10, 0.6);
-      --radius: 20px;
+      --radius: 16px;
       --radius-sm: 12px;
-      --bar-h: 50px;
+      --bar-h: 52px;
     }
 
     html[data-theme="light"] {
@@ -104,7 +104,6 @@
         radial-gradient(ellipse 40% 30% at 50% 50%, rgba(249, 115, 22, 0.04) 0%, transparent 60%);
     }
 
-    /* ═══ MOUSE GLOW ═══ */
     #mouseGlow {
       position: fixed;
       top: 0;
@@ -119,10 +118,10 @@
       transition: width .4s, height .4s;
     }
 
-    /* ═══════════════════════════════════
+    /* ═══════════════════════════════════════════════
    TOP BAR — SINGLE ROW
-   [Back] [Tag] [chips…] [Dark]
-═══════════════════════════════════ */
+   [Back] [नमस्ते,NAME!] [Diwas Tag] [chips…] [Dark]
+═══════════════════════════════════════════════ */
     #topInfoBar {
       position: fixed;
       top: 0;
@@ -140,7 +139,35 @@
       box-shadow: var(--shadow);
     }
 
-    /* Shared button style */
+    /* Compact hero in top bar */
+    .hero-inline {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0px;
+      padding: 0 6px 0 2px;
+      border-right: 1px solid var(--border2);
+      margin-right: 2px;
+    }
+
+    .hero-inline .hi-namaste {
+      font-size: .58rem;
+      color: var(--txt3);
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .hero-inline .hi-name {
+      font-size: .9rem;
+      font-weight: 800;
+      line-height: 1.15;
+      background: linear-gradient(135deg, var(--saffron), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Shared button */
     .top-btn {
       display: inline-flex;
       align-items: center;
@@ -169,19 +196,24 @@
       transform: translateY(-1px);
     }
 
+    .theme-toggle {
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
     /* Welcome tag */
     .welcome-tag {
       flex-shrink: 0;
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      padding: 4px 12px;
+      gap: 6px;
+      padding: 4px 11px;
       border-radius: 50px;
       background: linear-gradient(90deg, rgba(139, 92, 246, 0.12), rgba(14, 165, 233, 0.1));
       border: 1px solid rgba(139, 92, 246, 0.25);
-      font-size: .65rem;
+      font-size: .63rem;
       font-weight: 700;
-      letter-spacing: .8px;
+      letter-spacing: .7px;
       text-transform: uppercase;
       white-space: nowrap;
     }
@@ -202,7 +234,7 @@
       background: var(--border2);
     }
 
-    /* Info chips row — flex:1, horizontal scroll */
+    /* Info chips */
     .info-chips {
       flex: 1;
       min-width: 0;
@@ -211,7 +243,7 @@
       flex-wrap: nowrap;
       overflow-x: auto;
       scrollbar-width: none;
-      gap: 6px;
+      gap: 5px;
     }
 
     .info-chips::-webkit-scrollbar {
@@ -222,11 +254,11 @@
       flex-shrink: 0;
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 6px;
       background: var(--card2);
       border: 1px solid var(--border);
-      padding: 4px 11px;
-      border-radius: 12px;
+      padding: 3px 10px;
+      border-radius: 10px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
       transition: all .3s cubic-bezier(.22, 1, .36, 1);
@@ -293,33 +325,28 @@
     .chip-data {
       display: flex;
       flex-direction: column;
-      gap: 1px;
+      gap: 0px;
     }
 
     .chip-label {
-      font-size: .5rem;
+      font-size: .48rem;
       color: var(--txt3);
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: .9px;
     }
 
     .chip-val {
-      font-size: .76rem;
+      font-size: .74rem;
       font-weight: 700;
       color: var(--txt1);
       font-family: 'Space Grotesk', sans-serif;
     }
 
-    /* theme toggle at far right */
-    .theme-toggle {
-      margin-left: auto;
-      flex-shrink: 0;
-    }
-
-    /* ═══════════════════════════════════
-   PAGE — flex column below top bar
-═══════════════════════════════════ */
+    /* ═══════════════════════════════════════════════
+   PAGE LAYOUT
+   flex column, starts below top bar
+═══════════════════════════════════════════════ */
     #page {
       position: relative;
       z-index: 10;
@@ -327,57 +354,43 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding: calc(var(--bar-h) + 10px) 18px 14px;
+      gap: 8px;
+      padding: calc(var(--bar-h) + 10px) 16px 12px;
       overflow: hidden;
     }
 
-    /* ── Top meta row: hero left + sat header right ── */
-    .page-top {
+    /* ── Meta row: aligned with the 3 cards below ── */
+    .meta-row {
       flex-shrink: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      align-items: end;
+    }
+
+    /* Sat meta spans cols 1+2 */
+    .sat-meta {
+      grid-column: 1 / 3;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    /* Hero — compact greeting */
-    .hero-section {
-      flex-shrink: 0;
-    }
-
-    .hero-name {
-      font-size: 1.75rem;
-      line-height: 1.1;
-    }
-
-    .hero-name .namaste {
-      font-size: 1.35rem;
-      color: var(--txt2);
-      font-weight: 400;
-      display: block;
-    }
-
-    .hero-name .name-val {
-      background: linear-gradient(135deg, var(--saffron) 0%, var(--gold) 50%, #fde68a 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-weight: 800;
-    }
-
-    /* Sat header — center-right of page-top */
-    .sat-header-wrap {
-      flex-shrink: 0;
+    .sat-meta-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .sat-header-title {
-      font-size: .95rem;
+      font-size: .9rem;
       font-weight: 800;
       color: var(--txt1);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       font-family: 'Space Grotesk', sans-serif;
       letter-spacing: -.3px;
     }
@@ -390,8 +403,7 @@
     .sat-year-pills {
       display: flex;
       align-items: center;
-      gap: 7px;
-      margin-top: 4px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
@@ -399,9 +411,9 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 2px 10px;
+      padding: 2px 9px;
       border-radius: 20px;
-      font-size: .66rem;
+      font-size: .64rem;
       font-weight: 700;
       font-family: 'Space Grotesk', sans-serif;
     }
@@ -425,33 +437,31 @@
     }
 
     .sat-pill-arrow {
-      font-size: .75rem;
+      font-size: .7rem;
       color: var(--txt3);
     }
 
     .sat-pill-dist {
-      font-size: .68rem;
+      font-size: .66rem;
       color: var(--txt3);
       font-weight: 600;
     }
 
     .scope-btns {
       display: flex;
-      gap: 6px;
-      margin-top: 6px;
+      gap: 5px;
     }
 
     .scope-btn {
-      padding: 3px 12px;
+      padding: 3px 11px;
       border-radius: 20px;
       border: 1px solid var(--border2);
       background: var(--card2);
       color: var(--txt3);
-      font-size: .64rem;
+      font-size: .62rem;
       font-weight: 700;
       cursor: pointer;
       font-family: 'Space Grotesk', sans-serif;
-      letter-spacing: .5px;
       transition: all .3s;
     }
 
@@ -467,10 +477,37 @@
       color: var(--teal);
     }
 
-    /* ═══════════════════════════════════
-   CARDS ROW — 3 EQUAL COLUMNS
-   [Birth Sat] [Present Sat] [Journey]
-═══════════════════════════════════ */
+    /* Journey meta — col 3 */
+    .journey-meta {
+      grid-column: 3 / 4;
+    }
+
+    .section-header h2 {
+      font-size: .95rem;
+      font-weight: 800;
+      color: var(--txt1);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin: 0;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: -.3px;
+    }
+
+    .section-header h2 .sh-hindi {
+      font-family: 'Yatra One', cursive;
+      color: var(--gold);
+    }
+
+    .section-header p {
+      font-size: .68rem;
+      color: var(--txt3);
+      margin-top: 2px;
+    }
+
+    /* ═══════════════════════════════════════════════
+   3 EQUAL CARD COLUMNS
+═══════════════════════════════════════════════ */
     .cards-row {
       flex: 1 1 0;
       min-height: 0;
@@ -479,18 +516,8 @@
       gap: 14px;
     }
 
-    /* Each column wrapper */
-    .card-col {
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      gap: 0;
-    }
-
-    /* ═══ SAT CARD ═══ */
+    /* ── Satellite cards ── */
     .sat-card {
-      flex: 1 1 0;
-      min-height: 0;
       position: relative;
       border-radius: var(--radius);
       overflow: hidden;
@@ -498,6 +525,7 @@
       box-shadow: var(--shadow);
       background: #020610;
       transition: all .45s cubic-bezier(.22, 1, .36, 1);
+      /* no flex needed — grid handles height */
     }
 
     .sat-card:hover {
@@ -601,7 +629,7 @@
       pointer-events: none;
     }
 
-    /* Animated boundary paths */
+    /* Boundary paths */
     .animated-boundary {
       opacity: 0;
       animation: fadeInBoundary 1.2s ease forwards .2s;
@@ -763,7 +791,6 @@
       }
     }
 
-    /* Panchayat pin */
     .panch-pin {
       position: absolute;
       top: 10px;
@@ -825,7 +852,6 @@
       backdrop-filter: blur(10px);
     }
 
-    /* Scope indicator */
     .scope-indicator {
       position: absolute;
       bottom: 52px;
@@ -873,7 +899,6 @@
       animation: blink 1.8s infinite;
     }
 
-    /* Label bar */
     .sat-label {
       position: absolute;
       bottom: 0;
@@ -899,7 +924,6 @@
       font-weight: 900;
       color: #fff;
       line-height: 1;
-      text-shadow: 0 0 30px rgba(255, 255, 255, .2);
     }
 
     .sat-label-desc {
@@ -932,46 +956,13 @@
       border: 1px solid rgba(14, 165, 233, .4);
     }
 
-    /* ═══ TIMELINE COLUMN ═══ */
-    .tl-col {
-      display: flex;
-      flex-direction: column;
-      flex: 1 1 0;
-      min-height: 0;
-      gap: 10px;
-    }
-
-    .section-header h2 {
-      font-size: 1rem;
-      font-weight: 800;
-      color: var(--txt1);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 0;
-      font-family: 'Space Grotesk', sans-serif;
-      letter-spacing: -.3px;
-    }
-
-    .section-header h2 .sh-hindi {
-      font-family: 'Yatra One', cursive;
-      color: var(--gold);
-    }
-
-    .section-header p {
-      font-size: .72rem;
-      color: var(--txt3);
-      margin-top: 3px;
-      letter-spacing: .2px;
-    }
-
-    /* Timeline card outer fills remaining space */
+    /* ── Timeline card (col 3) ── */
     .tl-card-outer {
-      flex: 1 1 0;
-      min-height: 0;
-      position: relative;
+      /* fills grid cell completely */
       display: flex;
       flex-direction: column;
+      height: 100%;
+      position: relative;
     }
 
     .tl-card {
@@ -1102,7 +1093,7 @@
       border-radius: 14px;
       background: var(--card2);
       border: 1px solid var(--border);
-      transition: border-color .4s, background .4s;
+      transition: border-color .4s;
       position: relative;
       z-index: 1;
     }
@@ -1136,7 +1127,6 @@
       line-height: 1.5;
       color: var(--txt1);
       font-family: 'Space Grotesk', sans-serif;
-      transition: color .4s;
       flex: 1;
     }
 
@@ -1163,7 +1153,6 @@
       box-shadow: 0 0 8px var(--teal);
     }
 
-    /* Timeline nav arrows */
     .tl-arrow {
       position: absolute;
       top: 50%;
@@ -1207,7 +1196,6 @@
       right: -12px;
     }
 
-    /* Slide animations */
     .slide-out-left {
       animation: solAnim .35s cubic-bezier(.8, 0, .2, 1) forwards;
     }
@@ -1270,10 +1258,11 @@
       gap: 10px;
       background: var(--card);
       padding: 8px 13px;
-      border-radius: 16px;
+      border-radius: 14px;
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
+      margin-top: 8px;
     }
 
     .ctrl-btn {
@@ -1342,6 +1331,7 @@
       color: var(--txt3);
       font-weight: 500;
       letter-spacing: .4px;
+      margin-top: 6px;
     }
 
     kbd {
@@ -1371,6 +1361,11 @@
         gap: 6px;
       }
 
+      .info-chips {
+        flex-basis: 100%;
+        order: 10;
+      }
+
       .theme-toggle {
         margin-left: auto;
       }
@@ -1378,26 +1373,32 @@
       #page {
         height: auto;
         overflow: visible;
-        padding: calc(var(--bar-h) + 10px) 12px 14px;
-        gap: 12px;
+        padding-top: calc(var(--bar-h) + 70px);
       }
 
-      .page-top {
-        flex-wrap: wrap;
+      .meta-row {
+        grid-template-columns: 1fr;
+      }
+
+      .sat-meta {
+        grid-column: 1/2;
+      }
+
+      .journey-meta {
+        grid-column: 1/2;
       }
 
       .cards-row {
         grid-template-columns: 1fr;
-        grid-template-rows: 300px 300px auto;
         gap: 12px;
       }
 
       .sat-card {
-        min-height: 300px;
+        min-height: 280px;
       }
 
-      .tl-col {
-        min-height: 300px;
+      .tl-card-outer {
+        min-height: 280px;
       }
     }
   </style>
@@ -1406,12 +1407,18 @@
 <body>
   <div id="mouseGlow"></div>
 
-  <!-- ══ SINGLE ROW TOP BAR ══ -->
+  <!-- ══ TOP BAR: Back | नमस्ते,NAME! | Diwas Tag | chips | Dark ══ -->
   <div id="topInfoBar">
 
     <a href="/" class="top-btn back-btn">
       <span style="font-size:1rem;line-height:.8;">←</span> Back
     </a>
+
+    <!-- Compact hero greeting -->
+    <div class="hero-inline">
+      <span class="hi-namaste">नमस्ते,</span>
+      <span class="hi-name">{{ name }}!</span>
+    </div>
 
     <div class="welcome-tag">
       <span class="tag-hindi">बिहार दिवस प्रदर्शनी</span>
@@ -1478,31 +1485,28 @@
   <!-- ══ PAGE ══ -->
   <div id="page">
 
-    <!-- Top meta row: hero + sat header -->
-    <div class="page-top">
-      <section class="hero-section">
-        <div class="hero-name">
-          <span class="namaste">नमस्ते,</span>
-          <span class="name-val">{{ name }}!</span>
-        </div>
-      </section>
+    <!-- Meta row: aligned headers above each column -->
+    <div class="meta-row">
 
-      <div class="sat-header-wrap">
-        <div class="sat-header-title">
-          <span class="sh-hindi">अंतरिक्ष से</span> 🛰️ Satellite View
-        </div>
-        <div class="sat-year-pills">
-          <span class="sat-pill birth">◆ {{ birth_year }}</span>
-          <span class="sat-pill-arrow">→</span>
-          <span class="sat-pill now">◆ 2026</span>
-          <span class="sat-pill-dist">· {{ district }}</span>
-          {% if panchayat %}
-          <span class="sat-pill-dist">›</span>
-          <span class="sat-pill scope">🌾 {{ panchayat }}</span>
-          {% elif block %}
-          <span class="sat-pill-dist">›</span>
-          <span class="sat-pill scope">🏘️ {{ block }}</span>
-          {% endif %}
+      <!-- Spans cols 1+2 — sat title, pills, scope -->
+      <div class="sat-meta">
+        <div class="sat-meta-left">
+          <div class="sat-header-title">
+            <span class="sh-hindi">अंतरिक्ष से</span> 🛰️ Satellite View
+          </div>
+          <div class="sat-year-pills">
+            <span class="sat-pill birth">◆ {{ birth_year }}</span>
+            <span class="sat-pill-arrow">→</span>
+            <span class="sat-pill now">◆ 2026</span>
+            <span class="sat-pill-dist">· {{ district }}</span>
+            {% if panchayat %}
+            <span class="sat-pill-dist">›</span>
+            <span class="sat-pill scope">🌾 {{ panchayat }}</span>
+            {% elif block %}
+            <span class="sat-pill-dist">›</span>
+            <span class="sat-pill scope">🏘️ {{ block }}</span>
+            {% endif %}
+          </div>
         </div>
         {% if panchayat or block %}
         <div class="scope-btns">
@@ -1513,797 +1517,789 @@
         </div>
         {% endif %}
       </div>
-    </div>
 
-    <!-- ══ 3 EQUAL COLUMNS ══ -->
+      <!-- Col 3 header — journey -->
+      <div class="journey-meta">
+        <div class="section-header">
+          <h2><span class="sh-hindi">आपका सफर</span> &nbsp;📜 Historical Journey</h2>
+          <p>Events that shaped Bihar since {{ birth_year }}</p>
+        </div>
+      </div>
+
+    </div><!-- /meta-row -->
+
+    <!-- 3 EQUAL CARDS -->
     <div class="cards-row">
 
-      <!-- Col 1: Birth Year Satellite -->
-      <div class="card-col">
-        <div class="sat-card birth-card">
-          <div class="sat-skeleton" id="birthSkeleton">
-            <div class="sk-orbit">
-              <div class="sk-ring"></div>
-              <div class="sk-ring"></div>
-              <div class="sk-icon">🛰️</div>
-            </div>
-            <div class="sk-year">{{ birth_year }}</div>
-            <div class="sk-text">Fetching archive…</div>
+      <!-- Card 1: Birth Year Satellite -->
+      <div class="sat-card birth-card">
+        <div class="sat-skeleton" id="birthSkeleton">
+          <div class="sk-orbit">
+            <div class="sk-ring"></div>
+            <div class="sk-ring"></div>
+            <div class="sk-icon">🛰️</div>
           </div>
-          <div class="sat-img-container">
-            <div class="sat-layer-group">
-              <img class="sat-img" id="birthImg" alt="Birth Year Satellite" />
-              <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg"
-                preserveAspectRatio="xMidYMid slice"></svg>
-            </div>
-            <div class="sat-vignette"></div>
+          <div class="sk-year">{{ birth_year }}</div>
+          <div class="sk-text">Fetching archive…</div>
+        </div>
+        <div class="sat-img-container">
+          <div class="sat-layer-group">
+            <img class="sat-img" id="birthImg" alt="Birth Year Satellite" />
+            <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid slice"></svg>
           </div>
-          <div class="sat-corner-badge">
-            <div class="badge-dot"></div>{{ district }}
+          <div class="sat-vignette"></div>
+        </div>
+        <div class="sat-corner-badge">
+          <div class="badge-dot"></div>{{ district }}
+        </div>
+        <div class="sat-status">ARCHIVE</div>
+        {% if panchayat %}<div class="panch-pin">
+          <div class="pp-dot"></div>{{ panchayat }}
+        </div>
+        {% elif block %}<div class="panch-pin">
+          <div class="pp-dot"></div>{{ block }}
+        </div>{% endif %}
+        <div class="scope-indicator panch" id="birthScopeInd">
+          <div class="si-dot"></div>
+          <span id="birthScopeLabel">{% if panchayat %}Panchayat{% else %}Block{% endif %}</span>
+        </div>
+        <div class="sat-label">
+          <div class="sat-label-left">
+            <div class="sat-label-year">{{ birth_year }}</div>
+            <div class="sat-label-desc">Birth Year</div>
           </div>
-          <div class="sat-status">ARCHIVE</div>
-          {% if panchayat %}<div class="panch-pin">
-            <div class="pp-dot"></div>{{ panchayat }}
-          </div>
-          {% elif block %}<div class="panch-pin">
-            <div class="pp-dot"></div>{{ block }}
-          </div>{% endif %}
-          <div class="scope-indicator panch" id="birthScopeInd">
-            <div class="si-dot"></div>
-            <span id="birthScopeLabel">{% if panchayat %}Panchayat{% else %}Block{% endif %}</span>
-          </div>
-          <div class="sat-label">
-            <div class="sat-label-left">
-              <div class="sat-label-year">{{ birth_year }}</div>
-              <div class="sat-label-desc">Birth Year</div>
-            </div>
-            <div class="sat-src" id="birthSrc">📡 Loading…</div>
-          </div>
+          <div class="sat-src" id="birthSrc">📡 Loading…</div>
         </div>
       </div>
 
-      <!-- Col 2: Present Satellite -->
-      <div class="card-col">
-        <div class="sat-card now-card">
-          <div class="sat-skeleton" id="currentSkeleton">
-            <div class="sk-orbit">
-              <div class="sk-ring"></div>
-              <div class="sk-ring"></div>
-              <div class="sk-icon">🌍</div>
-            </div>
-            <div class="sk-year">2026</div>
-            <div class="sk-text">Fetching present…</div>
+      <!-- Card 2: Present Satellite -->
+      <div class="sat-card now-card">
+        <div class="sat-skeleton" id="currentSkeleton">
+          <div class="sk-orbit">
+            <div class="sk-ring"></div>
+            <div class="sk-ring"></div>
+            <div class="sk-icon">🌍</div>
           </div>
-          <div class="sat-img-container">
-            <div class="sat-layer-group">
-              <img class="sat-img" id="currentImg" alt="2026 Satellite" />
-              <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg"
-                preserveAspectRatio="xMidYMid slice"></svg>
-            </div>
-            <div class="sat-vignette"></div>
+          <div class="sk-year">2026</div>
+          <div class="sk-text">Fetching present…</div>
+        </div>
+        <div class="sat-img-container">
+          <div class="sat-layer-group">
+            <img class="sat-img" id="currentImg" alt="2026 Satellite" />
+            <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid slice"></svg>
           </div>
-          <div class="sat-corner-badge">
-            <div class="badge-dot"></div>{{ district }}
+          <div class="sat-vignette"></div>
+        </div>
+        <div class="sat-corner-badge">
+          <div class="badge-dot"></div>{{ district }}
+        </div>
+        <div class="sat-status">PRESENT</div>
+        {% if panchayat %}<div class="panch-pin">
+          <div class="pp-dot"></div>{{ panchayat }}
+        </div>
+        {% elif block %}<div class="panch-pin">
+          <div class="pp-dot"></div>{{ block }}
+        </div>{% endif %}
+        <div class="scope-indicator panch" id="currentScopeInd">
+          <div class="si-dot"></div>
+          <span id="currentScopeLabel">{% if panchayat %}Panchayat{% else %}Block{% endif %}</span>
+        </div>
+        <div class="sat-label">
+          <div class="sat-label-left">
+            <div class="sat-label-year">2026</div>
+            <div class="sat-label-desc">Present Day</div>
           </div>
-          <div class="sat-status">PRESENT</div>
-          {% if panchayat %}<div class="panch-pin">
-            <div class="pp-dot"></div>{{ panchayat }}
-          </div>
-          {% elif block %}<div class="panch-pin">
-            <div class="pp-dot"></div>{{ block }}
-          </div>{% endif %}
-          <div class="scope-indicator panch" id="currentScopeInd">
-            <div class="si-dot"></div>
-            <span id="currentScopeLabel">{% if panchayat %}Panchayat{% else %}Block{% endif %}</span>
-          </div>
-          <div class="sat-label">
-            <div class="sat-label-left">
-              <div class="sat-label-year">2026</div>
-              <div class="sat-label-desc">Present Day</div>
-            </div>
-            <div class="sat-src" id="currentSrc">📡 Loading…</div>
-          </div>
+          <div class="sat-src" id="currentSrc">📡 Loading…</div>
         </div>
       </div>
 
-      <!-- Col 3: Historical Journey -->
-      <div class="card-col">
-        <div class="tl-col">
-          <div class="section-header">
-            <h2><span class="sh-hindi">आपका सफर</span> &nbsp;📜 Historical Journey</h2>
-            <p>Events that shaped Bihar since {{ birth_year }}</p>
+      <!-- Card 3: Historical Journey -->
+      <div class="tl-card-outer">
+        <div class="tl-arrow left" onclick="prevEvent()">‹</div>
+        <div class="tl-arrow right" onclick="nextEvent()">›</div>
+        {% if events %}
+        <div class="tl-card" id="tlCard">
+          <div class="tl-era-tag" id="tlEra">
+            <span class="tl-era-dot"></span>
+            <span id="tlEraText"></span>
           </div>
-
-          {% if events %}
-          <div class="tl-card-outer">
-            <div class="tl-arrow left" onclick="prevEvent()">‹</div>
-            <div class="tl-arrow right" onclick="nextEvent()">›</div>
-            <div class="tl-card" id="tlCard">
-              <div class="tl-era-tag" id="tlEra">
-                <span class="tl-era-dot"></span>
-                <span id="tlEraText"></span>
-              </div>
-              <div class="tl-year-block">
-                <div class="tl-year" id="tlYear"></div>
-                <div class="tl-year-bar">
-                  <div class="tl-year-line"></div>
-                  <div class="tl-year-bar-dot"></div>
-                </div>
-              </div>
-              <div class="tl-body">
-                <div class="tl-icon-wrap" id="tlIcon"></div>
-                <div class="tl-title" id="tlTitle"></div>
-              </div>
-              <div class="tl-dots" id="tlDots"></div>
+          <div class="tl-year-block">
+            <div class="tl-year" id="tlYear"></div>
+            <div class="tl-year-bar">
+              <div class="tl-year-line"></div>
+              <div class="tl-year-bar-dot"></div>
             </div>
           </div>
-
-          <div class="tl-playbar">
-            <button class="ctrl-btn" id="playBtn">⏸</button>
-            <button class="ctrl-btn" id="speedBtn"
-              style="font-size:.72rem;font-family:'Space Grotesk',sans-serif;">1×</button>
-            <div class="tl-progress-track">
-              <div class="tl-progress-fill" id="progressFill"></div>
-            </div>
-            <div class="counter-txt" id="counterTxt">1 / {{ events|length }}</div>
+          <div class="tl-body">
+            <div class="tl-icon-wrap" id="tlIcon"></div>
+            <div class="tl-title" id="tlTitle"></div>
           </div>
-
-          <div class="keyboard-hints">
-            <kbd>Space</kbd> Play/Pause &nbsp;|&nbsp; <kbd>←</kbd> <kbd>→</kbd> Navigate
-          </div>
-
-          {% else %}
-          <div class="tl-card" style="justify-content:center;align-items:center;flex:1;">
-            <p style="opacity:.4;text-align:center;font-size:.85rem;">No events recorded.</p>
-          </div>
-          {% endif %}
-
+          <div class="tl-dots" id="tlDots"></div>
         </div>
+        <div class="tl-playbar">
+          <button class="ctrl-btn" id="playBtn">⏸</button>
+          <button class="ctrl-btn" id="speedBtn"
+            style="font-size:.72rem;font-family:'Space Grotesk',sans-serif;">1×</button>
+          <div class="tl-progress-track">
+            <div class="tl-progress-fill" id="progressFill"></div>
+          </div>
+          <div class="counter-txt" id="counterTxt">1 / {{ events|length }}</div>
+        </div>
+        <div class="keyboard-hints">
+          <kbd>Space</kbd> Play/Pause &nbsp;|&nbsp; <kbd>←</kbd> <kbd>→</kbd> Navigate
+        </div>
+        {% else %}
+        <div class="tl-card" style="justify-content:center;align-items:center;">
+          <p style="opacity:.4;text-align:center;font-size:.85rem;">No events recorded.</p>
+        </div>
+        {% endif %}
       </div>
 
     </div><!-- /cards-row -->
 
   </div><!-- /page -->
-</body>
 
 
-<!-- /page -->
 
-<script>
-  /* ══════════════════════════════════════════════════
-     DATA FROM FLASK
-  ══════════════════════════════════════════════════ */
-  const EVENTS = {{ events | tojson }};
-  const BASE_TL_MS = {{ tl_interval }};
-  const DISTRICT = "{{ district }}";
-  const BLOCK = "{{ block or '' }}";
-  const PANCHAYAT = "{{ panchayat or '' }}";
-  const BIRTH_YEAR = {{ birth_year }};
-  const CURRENT_YEAR = 2026;
+  <!-- /page -->
 
-  /* ── Satellite-safe birth year: RIDAM archive starts at 1997 ── */
-  const SAT_BIRTH_YEAR = BIRTH_YEAR < 1997 ? 1997 : BIRTH_YEAR;
-  const BIRTH_YEAR_CLAMPED = BIRTH_YEAR < 1997;
+  <script>
+    /* ══════════════════════════════════════════════════
+       DATA FROM FLASK
+    ══════════════════════════════════════════════════ */
+    const EVENTS = {{ events | tojson }};
+    const BASE_TL_MS = {{ tl_interval }};
+    const DISTRICT = "{{ district }}";
+    const BLOCK = "{{ block or '' }}";
+    const PANCHAYAT = "{{ panchayat or '' }}";
+    const BIRTH_YEAR = {{ birth_year }};
+    const CURRENT_YEAR = 2026;
 
-  const NS = 'http://www.w3.org/2000/svg';
-  const W_RES = 1600, H_RES = 900;
+    /* ── Satellite-safe birth year: RIDAM archive starts at 1997 ── */
+    const SAT_BIRTH_YEAR = BIRTH_YEAR < 1997 ? 1997 : BIRTH_YEAR;
+    const BIRTH_YEAR_CLAMPED = BIRTH_YEAR < 1997;
 
-  /* Raw bboxes passed from backend */
-  const RAW_DIST_BBOX = {{ (bbox or { "minLng": 83.3, "minLat": 24.3, "maxLng": 88.2, "maxLat": 27.5 }) | tojson }};
-  const RAW_PANCH_BBOX = {{ (panch_bbox  or { }) | tojson }};
-  const RAW_BLOCK_BBOX = {{ (block_bbox  or { }) | tojson }};
+    const NS = 'http://www.w3.org/2000/svg';
+    const W_RES = 1600, H_RES = 900;
 
-  /* Focus bbox: panchayat > block > district */
-  const RAW_FOCUS_BBOX =
-    (RAW_PANCH_BBOX && RAW_PANCH_BBOX.minLng != null) ? RAW_PANCH_BBOX :
-      (RAW_BLOCK_BBOX && RAW_BLOCK_BBOX.minLng != null) ? RAW_BLOCK_BBOX :
-        RAW_DIST_BBOX;
+    /* Raw bboxes passed from backend */
+    const RAW_DIST_BBOX = {{ (bbox or { "minLng": 83.3, "minLat": 24.3, "maxLng": 88.2, "maxLat": 27.5 }) | tojson }};
+    const RAW_PANCH_BBOX = {{ (panch_bbox  or { }) | tojson }};
+    const RAW_BLOCK_BBOX = {{ (block_bbox  or { }) | tojson }};
 
-  /* ── View scope state ── */
-  let currentScope = (RAW_FOCUS_BBOX !== RAW_DIST_BBOX) ? 'panchayat' : 'district';
-  let currentBbox = computePaddedBbox(RAW_FOCUS_BBOX);
-  let geoJsonData = null;
-  let panchGeoData = null;
-  let computedPanchBbox = null;   /* ← derived from loaded GeoJSON coords */
+    /* Focus bbox: panchayat > block > district */
+    const RAW_FOCUS_BBOX =
+      (RAW_PANCH_BBOX && RAW_PANCH_BBOX.minLng != null) ? RAW_PANCH_BBOX :
+        (RAW_BLOCK_BBOX && RAW_BLOCK_BBOX.minLng != null) ? RAW_BLOCK_BBOX :
+          RAW_DIST_BBOX;
 
-
-  /* ══════════════════════════════════════════════════
-     BBOX HELPERS
-  ══════════════════════════════════════════════════ */
-  function computePaddedBbox(raw, forceAR) {
-    if (!raw || raw.minLng == null) return null;
-    const AR = forceAR || 16 / 9;
-    const KL = 0.10, KG = 0.12;
-    const exp = {
-      minLng: raw.minLng - KG, maxLng: raw.maxLng + KG,
-      minLat: raw.minLat - KL, maxLat: raw.maxLat + KL
-    };
-    const cx = (exp.maxLng + exp.minLng) / 2, cy = (exp.maxLat + exp.minLat) / 2;
-    let pW = (exp.maxLng - exp.minLng) * 1.5, pH = (exp.maxLat - exp.minLat) * 1.5;
-    if (pW / pH > AR) pH = pW / AR; else pW = pH * AR;
-    return { minLng: cx - pW / 2, maxLng: cx + pW / 2, minLat: cy - pH / 2, maxLat: cy + pH / 2 };
-  }
-
-  /* ── FIX: Get actual card aspect ratio so bbox matches card, no crop ── */
-  function getCardAR() {
-    const c = document.querySelector('.sat-card');
-    return (c && c.offsetWidth > 10 && c.offsetHeight > 10)
-      ? c.offsetWidth / c.offsetHeight
-      : 4 / 3;
-  }
-
-  function computeDistrictBbox() {
-    return computePaddedBbox(RAW_DIST_BBOX, getCardAR());
-  }
-  function computeFocusBbox() {
-    const ar = getCardAR();
-    if (computedPanchBbox) return computePaddedBbox(computedPanchBbox, ar);
-    return computePaddedBbox(RAW_FOCUS_BBOX, ar);
-  }
+    /* ── View scope state ── */
+    let currentScope = (RAW_FOCUS_BBOX !== RAW_DIST_BBOX) ? 'panchayat' : 'district';
+    let currentBbox = computePaddedBbox(RAW_FOCUS_BBOX);
+    let geoJsonData = null;
+    let panchGeoData = null;
+    let computedPanchBbox = null;   /* ← derived from loaded GeoJSON coords */
 
 
-  /* ══════════════════════════════════════════════════
-     MOUSE GLOW
-  ══════════════════════════════════════════════════ */
-  const mg = document.getElementById('mouseGlow');
-  document.addEventListener('mousemove', e => {
-    requestAnimationFrame(() => { mg.style.left = e.clientX + 'px'; mg.style.top = e.clientY + 'px'; });
-  });
-  document.querySelectorAll('.sat-card,.tl-card,.info-chip,.top-btn,.ctrl-btn,.scope-btn').forEach(el => {
-    el.addEventListener('mouseenter', () => { mg.style.width = '700px'; mg.style.height = '700px'; });
-    el.addEventListener('mouseleave', () => { mg.style.width = '500px'; mg.style.height = '500px'; });
-  });
-
-
-  /* ══════════════════════════════════════════════════
-     THEME
-  ══════════════════════════════════════════════════ */
-  function toggleTheme() {
-    const r = document.documentElement;
-    const isDark = r.getAttribute('data-theme') === 'dark';
-    r.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
-    document.getElementById('themeText').textContent = isDark ? 'Dark' : 'Light';
-  }
-
-
-  /* ══════════════════════════════════════════════════
-     SCOPE TOGGLE (District ↔ Panchayat/Block)
-  ══════════════════════════════════════════════════ */
-  function setScope(scope) {
-    currentScope = scope;
-    const distBtn = document.getElementById('scopeDistBtn');
-    const panchBtn = document.getElementById('scopePanchBtn');
-    if (distBtn && panchBtn) {
-      distBtn.classList.toggle('active', scope === 'district');
-      panchBtn.classList.toggle('active', scope === 'panchayat');
+    /* ══════════════════════════════════════════════════
+       BBOX HELPERS
+    ══════════════════════════════════════════════════ */
+    function computePaddedBbox(raw, forceAR) {
+      if (!raw || raw.minLng == null) return null;
+      const AR = forceAR || 16 / 9;
+      const KL = 0.10, KG = 0.12;
+      const exp = {
+        minLng: raw.minLng - KG, maxLng: raw.maxLng + KG,
+        minLat: raw.minLat - KL, maxLat: raw.maxLat + KL
+      };
+      const cx = (exp.maxLng + exp.minLng) / 2, cy = (exp.maxLat + exp.minLat) / 2;
+      let pW = (exp.maxLng - exp.minLng) * 1.5, pH = (exp.maxLat - exp.minLat) * 1.5;
+      if (pW / pH > AR) pH = pW / AR; else pW = pH * AR;
+      return { minLng: cx - pW / 2, maxLng: cx + pW / 2, minLat: cy - pH / 2, maxLat: cy + pH / 2 };
     }
 
-    ['birthScopeInd', 'currentScopeInd'].forEach(id => {
-      const el = document.getElementById(id); if (!el) return;
-      el.className = 'scope-indicator ' + (scope === 'panchayat' ? 'panch' : 'dist');
+    /* ── FIX: Get actual card aspect ratio so bbox matches card, no crop ── */
+    function getCardAR() {
+      const c = document.querySelector('.sat-card');
+      return (c && c.offsetWidth > 10 && c.offsetHeight > 10)
+        ? c.offsetWidth / c.offsetHeight
+        : 4 / 3;
+    }
+
+    function computeDistrictBbox() {
+      return computePaddedBbox(RAW_DIST_BBOX, getCardAR());
+    }
+    function computeFocusBbox() {
+      const ar = getCardAR();
+      if (computedPanchBbox) return computePaddedBbox(computedPanchBbox, ar);
+      return computePaddedBbox(RAW_FOCUS_BBOX, ar);
+    }
+
+
+    /* ══════════════════════════════════════════════════
+       MOUSE GLOW
+    ══════════════════════════════════════════════════ */
+    const mg = document.getElementById('mouseGlow');
+    document.addEventListener('mousemove', e => {
+      requestAnimationFrame(() => { mg.style.left = e.clientX + 'px'; mg.style.top = e.clientY + 'px'; });
     });
-    ['birthScopeLabel', 'currentScopeLabel'].forEach(id => {
-      const el = document.getElementById(id); if (!el) return;
-      el.textContent = scope === 'panchayat' ? (PANCHAYAT ? 'Panchayat' : 'Block') : 'District';
+    document.querySelectorAll('.sat-card,.tl-card,.info-chip,.top-btn,.ctrl-btn,.scope-btn').forEach(el => {
+      el.addEventListener('mouseenter', () => { mg.style.width = '700px'; mg.style.height = '700px'; });
+      el.addEventListener('mouseleave', () => { mg.style.width = '500px'; mg.style.height = '500px'; });
     });
 
-    /* ── FIX: always pass getCardAR() when building padded bbox ── */
-    currentBbox = scope === 'panchayat'
-      ? (computedPanchBbox ? computePaddedBbox(computedPanchBbox, getCardAR()) : computeFocusBbox())
-      : computeDistrictBbox();
 
-    reloadSatImages();
-  }
+    /* ══════════════════════════════════════════════════
+       THEME
+    ══════════════════════════════════════════════════ */
+    function toggleTheme() {
+      const r = document.documentElement;
+      const isDark = r.getAttribute('data-theme') === 'dark';
+      r.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
+      document.getElementById('themeText').textContent = isDark ? 'Dark' : 'Light';
+    }
 
 
-  /* ══════════════════════════════════════════════════
-     SATELLITE IMAGE LOAD
-  ══════════════════════════════════════════════════ */
-  function reloadSatImages(keepBbox = false) {
-    ['birthImg', 'currentImg'].forEach(id => {
-      const img = document.getElementById(id);
-      img.classList.remove('loaded'); img.src = '';
-    });
-    ['birthSkeleton', 'currentSkeleton'].forEach(id =>
-      document.getElementById(id).classList.remove('hidden')
-    );
-    ['birthMapOverlay', 'currentMapOverlay'].forEach(id =>
-      document.getElementById(id).innerHTML = ''
-    );
+    /* ══════════════════════════════════════════════════
+       SCOPE TOGGLE (District ↔ Panchayat/Block)
+    ══════════════════════════════════════════════════ */
+    function setScope(scope) {
+      currentScope = scope;
+      const distBtn = document.getElementById('scopeDistBtn');
+      const panchBtn = document.getElementById('scopePanchBtn');
+      if (distBtn && panchBtn) {
+        distBtn.classList.toggle('active', scope === 'district');
+        panchBtn.classList.toggle('active', scope === 'panchayat');
+      }
 
-    /* Only recalculate bbox from scope when NOT called from zoom */
-    if (!keepBbox) {
-      currentBbox = (currentScope === 'panchayat')
+      ['birthScopeInd', 'currentScopeInd'].forEach(id => {
+        const el = document.getElementById(id); if (!el) return;
+        el.className = 'scope-indicator ' + (scope === 'panchayat' ? 'panch' : 'dist');
+      });
+      ['birthScopeLabel', 'currentScopeLabel'].forEach(id => {
+        const el = document.getElementById(id); if (!el) return;
+        el.textContent = scope === 'panchayat' ? (PANCHAYAT ? 'Panchayat' : 'Block') : 'District';
+      });
+
+      /* ── FIX: always pass getCardAR() when building padded bbox ── */
+      currentBbox = scope === 'panchayat'
         ? (computedPanchBbox ? computePaddedBbox(computedPanchBbox, getCardAR()) : computeFocusBbox())
         : computeDistrictBbox();
+
+      reloadSatImages();
     }
 
-    loadSatImage('birth', SAT_BIRTH_YEAR,
-      document.getElementById('birthSkeleton'),
-      document.getElementById('birthImg'),
-      document.getElementById('birthMapOverlay'),
-      document.getElementById('birthSrc')
-    );
-    loadSatImage('current', CURRENT_YEAR,
-      document.getElementById('currentSkeleton'),
-      document.getElementById('currentImg'),
-      document.getElementById('currentMapOverlay'),
-      document.getElementById('currentSrc')
-    );
-  }
 
-
-  async function loadSatImage(type, year, skEl, imgEl, svgEl, srcEl) {
-    srcEl.textContent = '📡 Loading…';
-    try {
-      /* FIX: always use currentBbox — works for scope AND zoom */
-      const bboxForApi = currentBbox;
-
-      const p = new URLSearchParams({ type, year, bbox: JSON.stringify(bboxForApi) });
-      const resp = await fetch(`/api/sat_image?${p}`);
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      const data = await resp.json();
-      if (data.url) {
-        const img = new Image();
-        img.onload = () => {
-          imgEl.src = img.src;
-          imgEl.classList.add('loaded');
-          skEl.classList.add('hidden');
-          srcEl.textContent = data.src_label || '📡 Loaded';
-          drawAllOverlays(svgEl, currentBbox || computeDistrictBbox());
-        };
-        img.onerror = () => { skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Unavailable'; };
-        img.src = data.url;
-      } else { skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Unavailable'; }
-    } catch (e) {
-      console.warn('[SAT]', e);
-      skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Error';
-    }
-  }
-
-
-
-  /* ══════════════════════════════════════════════════
-     GEOJSON — district boundaries
-  ══════════════════════════════════════════════════ */
-  async function loadGeoJson() {
-    try {
-      const url = '/bihar_dist_ready.geojson';   // file placed in public/
-      const r = await fetch(url);
-      if (!r.ok) { console.warn('[GeoJSON] HTTP', r.status, url); return; }
-      geoJsonData = await r.json();
-
-      ['birthImg', 'currentImg'].forEach((imgId, i) => {
-        const img = document.getElementById(imgId);
-        if (img.classList.contains('loaded')) {
-          const svgId = i === 0 ? 'birthMapOverlay' : 'currentMapOverlay';
-          drawAllOverlays(
-            document.getElementById(svgId),
-            currentBbox || computeDistrictBbox()
-          );
-        }
+    /* ══════════════════════════════════════════════════
+       SATELLITE IMAGE LOAD
+    ══════════════════════════════════════════════════ */
+    function reloadSatImages(keepBbox = false) {
+      ['birthImg', 'currentImg'].forEach(id => {
+        const img = document.getElementById(id);
+        img.classList.remove('loaded'); img.src = '';
       });
-    } catch (e) { console.warn('[GeoJSON]', e); }
-  }
+      ['birthSkeleton', 'currentSkeleton'].forEach(id =>
+        document.getElementById(id).classList.remove('hidden')
+      );
+      ['birthMapOverlay', 'currentMapOverlay'].forEach(id =>
+        document.getElementById(id).innerHTML = ''
+      );
+
+      /* Only recalculate bbox from scope when NOT called from zoom */
+      if (!keepBbox) {
+        currentBbox = (currentScope === 'panchayat')
+          ? (computedPanchBbox ? computePaddedBbox(computedPanchBbox, getCardAR()) : computeFocusBbox())
+          : computeDistrictBbox();
+      }
+
+      loadSatImage('birth', SAT_BIRTH_YEAR,
+        document.getElementById('birthSkeleton'),
+        document.getElementById('birthImg'),
+        document.getElementById('birthMapOverlay'),
+        document.getElementById('birthSrc')
+      );
+      loadSatImage('current', CURRENT_YEAR,
+        document.getElementById('currentSkeleton'),
+        document.getElementById('currentImg'),
+        document.getElementById('currentMapOverlay'),
+        document.getElementById('currentSrc')
+      );
+    }
+
+
+    async function loadSatImage(type, year, skEl, imgEl, svgEl, srcEl) {
+      srcEl.textContent = '📡 Loading…';
+      try {
+        /* FIX: always use currentBbox — works for scope AND zoom */
+        const bboxForApi = currentBbox;
+
+        const p = new URLSearchParams({ type, year, bbox: JSON.stringify(bboxForApi) });
+        const resp = await fetch(`/api/sat_image?${p}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        if (data.url) {
+          const img = new Image();
+          img.onload = () => {
+            imgEl.src = img.src;
+            imgEl.classList.add('loaded');
+            skEl.classList.add('hidden');
+            srcEl.textContent = data.src_label || '📡 Loaded';
+            drawAllOverlays(svgEl, currentBbox || computeDistrictBbox());
+          };
+          img.onerror = () => { skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Unavailable'; };
+          img.src = data.url;
+        } else { skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Unavailable'; }
+      } catch (e) {
+        console.warn('[SAT]', e);
+        skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Error';
+      }
+    }
 
 
 
-  /* ══════════════════════════════════════════════════
-     GEOJSON — panchayat / block boundary
-  ══════════════════════════════════════════════════ */
-  async function loadPanchGeoJson() {
-    if (!PANCHAYAT && !BLOCK) return;
-    try {
-      const normStr = s => String(s || '').trim().toUpperCase().replace(/ /g, '_');
-      const stem = normStr(DISTRICT) + '__' + normStr(BLOCK);
-      const url = `/panchayats/${stem}.geojson`;
+    /* ══════════════════════════════════════════════════
+       GEOJSON — district boundaries
+    ══════════════════════════════════════════════════ */
+    async function loadGeoJson() {
+      try {
+        const url = '/bihar_dist_ready.geojson';   // file placed in public/
+        const r = await fetch(url);
+        if (!r.ok) { console.warn('[GeoJSON] HTTP', r.status, url); return; }
+        geoJsonData = await r.json();
 
-      const r = await fetch(url);
-      if (!r.ok) { console.warn('[PanchGeoJSON] HTTP', r.status, url); return; }
-      const fullGj = await r.json();
+        ['birthImg', 'currentImg'].forEach((imgId, i) => {
+          const img = document.getElementById(imgId);
+          if (img.classList.contains('loaded')) {
+            const svgId = i === 0 ? 'birthMapOverlay' : 'currentMapOverlay';
+            drawAllOverlays(
+              document.getElementById(svgId),
+              currentBbox || computeDistrictBbox()
+            );
+          }
+        });
+      } catch (e) { console.warn('[GeoJSON]', e); }
+    }
 
+
+
+    /* ══════════════════════════════════════════════════
+       GEOJSON — panchayat / block boundary
+    ══════════════════════════════════════════════════ */
+    async function loadPanchGeoJson() {
+      if (!PANCHAYAT && !BLOCK) return;
+      try {
+        const normStr = s => String(s || '').trim().toUpperCase().replace(/ /g, '_');
+        const stem = normStr(DISTRICT) + '__' + normStr(BLOCK);
+        const url = `/panchayats/${stem}.geojson`;
+
+        const r = await fetch(url);
+        if (!r.ok) { console.warn('[PanchGeoJSON] HTTP', r.status, url); return; }
+        const fullGj = await r.json();
+
+        const norm = s => String(s || '').toLowerCase().replace(/[\s_\-()+]/g, '');
+
+        if (PANCHAYAT) {
+          const target = norm(PANCHAYAT);
+          const feats = (fullGj.features || []).filter(f => {
+            const p = f.properties || {};
+            return norm(p.GPNAME_1 || p.panchayat_name || p.Panchayat_Name ||
+              p.PANCHAYAT_NAME || p.name || '') === target;
+          });
+          panchGeoData = { type: 'FeatureCollection', features: feats };
+
+          if (panchGeoData.features.length > 0) {
+            let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
+            panchGeoData.features.forEach(f => {
+              function scan(c) {
+                if (typeof c[0] === 'number') {
+                  minLng = Math.min(minLng, c[0]); maxLng = Math.max(maxLng, c[0]);
+                  minLat = Math.min(minLat, c[1]); maxLat = Math.max(maxLat, c[1]);
+                } else c.forEach(scan);
+              }
+              scan(f.geometry.coordinates);
+            });
+            computedPanchBbox = { minLng, maxLng, minLat, maxLat };
+          }
+        } else {
+          const target = norm(BLOCK);
+          const feats = (fullGj.features || []).filter(f => {
+            const p = f.properties || {};
+            return norm(p.BLK_NAME || p.block_name || p.Block_Name ||
+              p.BLOCK_NAME || p.name || '') === target;
+          });
+          panchGeoData = feats.length
+            ? { type: 'FeatureCollection', features: feats }
+            : fullGj;
+        }
+
+        ['birthImg', 'currentImg'].forEach((imgId, i) => {
+          const img = document.getElementById(imgId);
+          if (img.classList.contains('loaded')) {
+            const svgId = i === 0 ? 'birthMapOverlay' : 'currentMapOverlay';
+            drawAllOverlays(document.getElementById(svgId), currentBbox || computeDistrictBbox());
+          }
+        });
+      } catch (e) { console.warn('[PanchGeoJSON]', e); }
+    }
+
+    /* ── Pan: dx/dy are -1/0/1 direction multipliers ── */
+    function panSat(dx, dy) {
+      if (!currentBbox) return;
+      // Step = 25% of current bbox size per click
+      const stepLng = (currentBbox.maxLng - currentBbox.minLng) * 0.25;
+      const stepLat = (currentBbox.maxLat - currentBbox.minLat) * 0.25;
+
+      currentBbox = {
+        minLng: currentBbox.minLng + dx * stepLng,
+        maxLng: currentBbox.maxLng + dx * stepLng,
+        minLat: currentBbox.minLat + dy * stepLat,
+        maxLat: currentBbox.maxLat + dy * stepLat
+      };
+
+      reloadSatImages(true); // keepBbox=true → don't recalculate from scope
+    }
+
+    /* ── Reset view back to scope default ── */
+    function resetSatView() {
+      reloadSatImages(false); // keepBbox=false → recalculates bbox from scope
+    }
+
+    /* ── Zoom: factor >1 = zoom in, <1 = zoom out ── */
+    function zoomSat(factor) {
+      if (!currentBbox) return;
+      const cx = (currentBbox.minLng + currentBbox.maxLng) / 2;
+      const cy = (currentBbox.minLat + currentBbox.maxLat) / 2;
+      const w = (currentBbox.maxLng - currentBbox.minLng) / factor;
+      const h = (currentBbox.maxLat - currentBbox.minLat) / factor;
+
+      currentBbox = {
+        minLng: cx - w / 2,
+        maxLng: cx + w / 2,
+        minLat: cy - h / 2,
+        maxLat: cy + h / 2
+      };
+
+      reloadSatImages(true);
+    }
+
+
+
+
+    /* ══════════════════════════════════════════════════
+       DRAW OVERLAYS
+       FIX: use actual card px for viewBox, preserveAspectRatio=none
+    ══════════════════════════════════════════════════ */
+    function drawAllOverlays(svgEl, bbox) {
+      if (!bbox) return;
+
+      /* ── FIX: use actual card dimensions → no more SVG crop ── */
+      const cardEl = svgEl.closest('.sat-card');
+      const W = (cardEl && cardEl.offsetWidth > 10) ? cardEl.offsetWidth : W_RES;
+      const H = (cardEl && cardEl.offsetHeight > 10) ? cardEl.offsetHeight : H_RES;
+
+      svgEl.innerHTML = '';
+      svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      svgEl.setAttribute('preserveAspectRatio', 'none'); /* fill card, no crop */
+
+      const sx = W / (bbox.maxLng - bbox.minLng);
+      const sy = H / (bbox.maxLat - bbox.minLat);
+      const proj = (ln, lt) => [
+        (ln - bbox.minLng) * sx,
+        H - (lt - bbox.minLat) * sy
+      ];
+
+      function rD(ring) {
+        return ring.map(([ln, lt], i) => {
+          const [px, py] = proj(ln, lt);
+          return (i ? 'L' : 'M') + px.toFixed(2) + ' ' + py.toFixed(2);
+        }).join('') + 'Z';
+      }
+      function gD(g) {
+        return g.type === 'Polygon' ? g.coordinates.map(rD).join('')
+          : g.type === 'MultiPolygon' ? g.coordinates.map(p => p.map(rD).join('')).join('')
+            : '';
+      }
+
+      /* ── FIX: null-safe norm, strip underscores ── */
       const norm = s => String(s || '').toLowerCase().replace(/[\s_\-()+]/g, '');
 
-      if (PANCHAYAT) {
-        const target = norm(PANCHAYAT);
-        const feats = (fullGj.features || []).filter(f => {
-          const p = f.properties || {};
-          return norm(p.GPNAME_1 || p.panchayat_name || p.Panchayat_Name ||
-            p.PANCHAYAT_NAME || p.name || '') === target;
-        });
-        panchGeoData = { type: 'FeatureCollection', features: feats };
+      /* ── Layer 1: All districts (faint), active one highlighted ── */
+      if (geoJsonData) {
+        const distGrp = document.createElementNS(NS, 'g');
+        distGrp.setAttribute('id', 'ovDistAll');
 
-        if (panchGeoData.features.length > 0) {
-          let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
-          panchGeoData.features.forEach(f => {
-            function scan(c) {
-              if (typeof c[0] === 'number') {
-                minLng = Math.min(minLng, c[0]); maxLng = Math.max(maxLng, c[0]);
-                minLat = Math.min(minLat, c[1]); maxLat = Math.max(maxLat, c[1]);
-              } else c.forEach(scan);
-            }
-            scan(f.geometry.coordinates);
-          });
-          computedPanchBbox = { minLng, maxLng, minLat, maxLat };
-        }
-      } else {
-        const target = norm(BLOCK);
-        const feats = (fullGj.features || []).filter(f => {
-          const p = f.properties || {};
-          return norm(p.BLK_NAME || p.block_name || p.Block_Name ||
-            p.BLOCK_NAME || p.name || '') === target;
+        geoJsonData.features.forEach(feat => {
+          const d = gD(feat.geometry); if (!d) return;
+          const path = document.createElementNS(NS, 'path');
+          path.setAttribute('d', d);
+
+          const p = feat.properties || {};
+          const featName =
+            p.name || p.raw || p.NAME || p.DISTRICT || p.district ||
+            p.dist_name || p.DIST_NAME || p.DT_NAME ||
+            p.dtname || p.Dist_Name || '';
+          const isActive = norm(featName) === norm(DISTRICT);
+
+
+          if (isActive) {
+            path.setAttribute('stroke', '#f97316');
+            path.setAttribute('stroke-width', currentScope === 'panchayat' ? '2' : '4');
+            path.setAttribute('fill', 'rgba(249,115,22,0.05)');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+            /* ── FIX: use style.filter not setAttribute('filter',…) ── */
+            path.style.filter = 'drop-shadow(0 0 6px rgba(249,115,22,0.7))';
+            path.classList.add('animated-boundary');
+            distGrp.appendChild(path);
+          } else {
+            path.setAttribute('stroke', 'rgba(160,185,255,0.12)');
+            path.setAttribute('stroke-width', '.6');
+            path.setAttribute('fill', 'none');
+            distGrp.insertBefore(path, distGrp.firstChild);
+          }
         });
-        panchGeoData = feats.length
-          ? { type: 'FeatureCollection', features: feats }
-          : fullGj;
+        svgEl.appendChild(distGrp);
+        /* ── NO getTotalLength() rAF block needed; CSS stroke-dasharray:150000 handles it ── */
       }
 
-      ['birthImg', 'currentImg'].forEach((imgId, i) => {
-        const img = document.getElementById(imgId);
-        if (img.classList.contains('loaded')) {
-          const svgId = i === 0 ? 'birthMapOverlay' : 'currentMapOverlay';
-          drawAllOverlays(document.getElementById(svgId), currentBbox || computeDistrictBbox());
-        }
-      });
-    } catch (e) { console.warn('[PanchGeoJSON]', e); }
-  }
+      /* ── Layer 2: Panchayat/Block boundary (green glowing) ── */
+      if (panchGeoData && panchGeoData.features && panchGeoData.features.length > 0) {
+        const panchGrp = document.createElementNS(NS, 'g');
+        panchGrp.setAttribute('id', 'ovPanch');
 
-  /* ── Pan: dx/dy are -1/0/1 direction multipliers ── */
-  function panSat(dx, dy) {
-    if (!currentBbox) return;
-    // Step = 25% of current bbox size per click
-    const stepLng = (currentBbox.maxLng - currentBbox.minLng) * 0.25;
-    const stepLat = (currentBbox.maxLat - currentBbox.minLat) * 0.25;
+        panchGeoData.features.forEach(feat => {
+          const d = gD(feat.geometry); if (!d) return;
 
-    currentBbox = {
-      minLng: currentBbox.minLng + dx * stepLng,
-      maxLng: currentBbox.maxLng + dx * stepLng,
-      minLat: currentBbox.minLat + dy * stepLat,
-      maxLat: currentBbox.maxLat + dy * stepLat
-    };
+          const fillPath = document.createElementNS(NS, 'path');
+          fillPath.setAttribute('d', d);
+          fillPath.setAttribute('fill', 'rgba(16,185,129,0.12)');
+          fillPath.setAttribute('stroke', 'none');
+          panchGrp.appendChild(fillPath);
 
-    reloadSatImages(true); // keepBbox=true → don't recalculate from scope
-  }
+          const borderPath = document.createElementNS(NS, 'path');
+          borderPath.setAttribute('d', d);
+          borderPath.setAttribute('stroke', '#10b981');
+          borderPath.setAttribute('stroke-width', '3');
+          borderPath.setAttribute('fill', 'none');
+          borderPath.setAttribute('stroke-linecap', 'round');
+          borderPath.setAttribute('stroke-linejoin', 'round');
+          borderPath.classList.add('animated-boundary-panch', 'panch-boundary-glow');
+          panchGrp.appendChild(borderPath);
 
-  /* ── Reset view back to scope default ── */
-  function resetSatView() {
-    reloadSatImages(false); // keepBbox=false → recalculates bbox from scope
-  }
+          const glowPath = document.createElementNS(NS, 'path');
+          glowPath.setAttribute('d', d);
+          glowPath.setAttribute('stroke', 'rgba(16,185,129,0.35)');
+          glowPath.setAttribute('stroke-width', '8');
+          glowPath.setAttribute('fill', 'none');
+          /* ── FIX: style.filter not setAttribute ── */
+          glowPath.style.filter = 'blur(3px)';
+          glowPath.classList.add('animated-boundary-panch');
+          panchGrp.insertBefore(glowPath, borderPath);
+        });
 
-  /* ── Zoom: factor >1 = zoom in, <1 = zoom out ── */
-  function zoomSat(factor) {
-    if (!currentBbox) return;
-    const cx = (currentBbox.minLng + currentBbox.maxLng) / 2;
-    const cy = (currentBbox.minLat + currentBbox.maxLat) / 2;
-    const w = (currentBbox.maxLng - currentBbox.minLng) / factor;
-    const h = (currentBbox.maxLat - currentBbox.minLat) / factor;
+        svgEl.appendChild(panchGrp);
+        drawPanchayatMarker(svgEl, panchGeoData, proj);
 
-    currentBbox = {
-      minLng: cx - w / 2,
-      maxLng: cx + w / 2,
-      minLat: cy - h / 2,
-      maxLat: cy + h / 2
-    };
-
-    reloadSatImages(true);
-  }
-
-
-
-
-  /* ══════════════════════════════════════════════════
-     DRAW OVERLAYS
-     FIX: use actual card px for viewBox, preserveAspectRatio=none
-  ══════════════════════════════════════════════════ */
-  function drawAllOverlays(svgEl, bbox) {
-    if (!bbox) return;
-
-    /* ── FIX: use actual card dimensions → no more SVG crop ── */
-    const cardEl = svgEl.closest('.sat-card');
-    const W = (cardEl && cardEl.offsetWidth > 10) ? cardEl.offsetWidth : W_RES;
-    const H = (cardEl && cardEl.offsetHeight > 10) ? cardEl.offsetHeight : H_RES;
-
-    svgEl.innerHTML = '';
-    svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svgEl.setAttribute('preserveAspectRatio', 'none'); /* fill card, no crop */
-
-    const sx = W / (bbox.maxLng - bbox.minLng);
-    const sy = H / (bbox.maxLat - bbox.minLat);
-    const proj = (ln, lt) => [
-      (ln - bbox.minLng) * sx,
-      H - (lt - bbox.minLat) * sy
-    ];
-
-    function rD(ring) {
-      return ring.map(([ln, lt], i) => {
-        const [px, py] = proj(ln, lt);
-        return (i ? 'L' : 'M') + px.toFixed(2) + ' ' + py.toFixed(2);
-      }).join('') + 'Z';
-    }
-    function gD(g) {
-      return g.type === 'Polygon' ? g.coordinates.map(rD).join('')
-        : g.type === 'MultiPolygon' ? g.coordinates.map(p => p.map(rD).join('')).join('')
-          : '';
+      } else if (RAW_FOCUS_BBOX && RAW_FOCUS_BBOX !== RAW_DIST_BBOX) {
+        drawBboxRect(svgEl, RAW_FOCUS_BBOX, proj);
+      }
     }
 
-    /* ── FIX: null-safe norm, strip underscores ── */
-    const norm = s => String(s || '').toLowerCase().replace(/[\s_\-()+]/g, '');
 
-    /* ── Layer 1: All districts (faint), active one highlighted ── */
-    if (geoJsonData) {
-      const distGrp = document.createElementNS(NS, 'g');
-      distGrp.setAttribute('id', 'ovDistAll');
+    function drawPanchayatMarker(svgEl, gj, proj) {
+      try {
+        let tx = 0, ty = 0, n = 0;
+        const feat = gj.features[0];
+        const coords = feat.geometry.type === 'MultiPolygon'
+          ? feat.geometry.coordinates[0][0]
+          : feat.geometry.coordinates[0];
+        coords.forEach(([ln, lt]) => { tx += ln; ty += lt; n++; });
+        const [cx, cy] = proj(tx / n, ty / n);
 
-      geoJsonData.features.forEach(feat => {
-        const d = gD(feat.geometry); if (!d) return;
-        const path = document.createElementNS(NS, 'path');
-        path.setAttribute('d', d);
+        const pulse = document.createElementNS(NS, 'circle');
+        pulse.setAttribute('cx', cx.toFixed(1));
+        pulse.setAttribute('cy', cy.toFixed(1));
+        pulse.setAttribute('r', '18');
+        pulse.setAttribute('fill', 'none');
+        pulse.setAttribute('stroke', 'rgba(16,185,129,0.5)');
+        pulse.setAttribute('stroke-width', '2');
+        pulse.style.animation = 'drawPath 1s ease forwards .5s';
+        pulse.style.filter = 'drop-shadow(0 0 6px rgba(16,185,129,0.6))';
+        svgEl.appendChild(pulse);
 
-        const p = feat.properties || {};
-        const featName =
-          p.name || p.raw || p.NAME || p.DISTRICT || p.district ||
-          p.dist_name || p.DIST_NAME || p.DT_NAME ||
-          p.dtname || p.Dist_Name || '';
-        const isActive = norm(featName) === norm(DISTRICT);
-
-
-        if (isActive) {
-          path.setAttribute('stroke', '#f97316');
-          path.setAttribute('stroke-width', currentScope === 'panchayat' ? '2' : '4');
-          path.setAttribute('fill', 'rgba(249,115,22,0.05)');
-          path.setAttribute('stroke-linecap', 'round');
-          path.setAttribute('stroke-linejoin', 'round');
-          /* ── FIX: use style.filter not setAttribute('filter',…) ── */
-          path.style.filter = 'drop-shadow(0 0 6px rgba(249,115,22,0.7))';
-          path.classList.add('animated-boundary');
-          distGrp.appendChild(path);
-        } else {
-          path.setAttribute('stroke', 'rgba(160,185,255,0.12)');
-          path.setAttribute('stroke-width', '.6');
-          path.setAttribute('fill', 'none');
-          distGrp.insertBefore(path, distGrp.firstChild);
-        }
-      });
-      svgEl.appendChild(distGrp);
-      /* ── NO getTotalLength() rAF block needed; CSS stroke-dasharray:150000 handles it ── */
-    }
-
-    /* ── Layer 2: Panchayat/Block boundary (green glowing) ── */
-    if (panchGeoData && panchGeoData.features && panchGeoData.features.length > 0) {
-      const panchGrp = document.createElementNS(NS, 'g');
-      panchGrp.setAttribute('id', 'ovPanch');
-
-      panchGeoData.features.forEach(feat => {
-        const d = gD(feat.geometry); if (!d) return;
-
-        const fillPath = document.createElementNS(NS, 'path');
-        fillPath.setAttribute('d', d);
-        fillPath.setAttribute('fill', 'rgba(16,185,129,0.12)');
-        fillPath.setAttribute('stroke', 'none');
-        panchGrp.appendChild(fillPath);
-
-        const borderPath = document.createElementNS(NS, 'path');
-        borderPath.setAttribute('d', d);
-        borderPath.setAttribute('stroke', '#10b981');
-        borderPath.setAttribute('stroke-width', '3');
-        borderPath.setAttribute('fill', 'none');
-        borderPath.setAttribute('stroke-linecap', 'round');
-        borderPath.setAttribute('stroke-linejoin', 'round');
-        borderPath.classList.add('animated-boundary-panch', 'panch-boundary-glow');
-        panchGrp.appendChild(borderPath);
-
-        const glowPath = document.createElementNS(NS, 'path');
-        glowPath.setAttribute('d', d);
-        glowPath.setAttribute('stroke', 'rgba(16,185,129,0.35)');
-        glowPath.setAttribute('stroke-width', '8');
-        glowPath.setAttribute('fill', 'none');
+        const dot = document.createElementNS(NS, 'circle');
+        dot.setAttribute('cx', cx.toFixed(1));
+        dot.setAttribute('cy', cy.toFixed(1));
+        dot.setAttribute('r', '5');
+        dot.setAttribute('fill', '#10b981');
         /* ── FIX: style.filter not setAttribute ── */
-        glowPath.style.filter = 'blur(3px)';
+        dot.style.filter = 'drop-shadow(0 0 6px #10b981)';
+        svgEl.appendChild(dot);
+
+        if (PANCHAYAT || BLOCK) {
+          const label = document.createElementNS(NS, 'text');
+          label.setAttribute('x', (cx + 12).toFixed(1));
+          label.setAttribute('y', (cy - 10).toFixed(1));
+          label.setAttribute('fill', '#6ee7b7');
+          label.setAttribute('font-size', '22');
+          label.setAttribute('font-family', 'Space Grotesk, sans-serif');
+          label.setAttribute('font-weight', '800');
+          label.setAttribute('letter-spacing', '0.5');
+          label.setAttribute('paint-order', 'stroke');
+          label.setAttribute('stroke', 'rgba(2,6,16,0.8)');
+          label.setAttribute('stroke-width', '6');
+          label.setAttribute('stroke-linejoin', 'round');
+          label.textContent = PANCHAYAT || BLOCK;
+          svgEl.appendChild(label);
+        }
+      } catch (e) { console.warn('[Marker]', e); }
+    }
+
+
+    function drawBboxRect(svgEl, raw, proj) {
+      try {
+        const corners = [
+          [raw.minLng, raw.minLat], [raw.maxLng, raw.minLat],
+          [raw.maxLng, raw.maxLat], [raw.minLng, raw.maxLat]
+        ];
+        const d = corners.map(([ln, lt], i) => {
+          const [px, py] = proj(ln, lt);
+          return (i ? 'L' : 'M') + px.toFixed(2) + ' ' + py.toFixed(2);
+        }).join('') + 'Z';
+
+        const fill = document.createElementNS(NS, 'path');
+        fill.setAttribute('d', d);
+        fill.setAttribute('fill', 'rgba(16,185,129,0.09)');
+        fill.setAttribute('stroke', 'none');
+        svgEl.appendChild(fill);
+
+        const border = document.createElementNS(NS, 'path');
+        border.setAttribute('d', d);
+        border.setAttribute('stroke', '#10b981');
+        border.setAttribute('stroke-width', '3');
+        border.setAttribute('fill', 'none');
+        border.setAttribute('stroke-dasharray', '10,6');
+        /* ── FIX: style.filter not setAttribute ── */
+        border.style.filter = 'drop-shadow(0 0 8px rgba(16,185,129,0.8))';
+        glowPath.style.opacity = '0.5';
         glowPath.classList.add('animated-boundary-panch');
-        panchGrp.insertBefore(glowPath, borderPath);
-      });
-
-      svgEl.appendChild(panchGrp);
-      drawPanchayatMarker(svgEl, panchGeoData, proj);
-
-    } else if (RAW_FOCUS_BBOX && RAW_FOCUS_BBOX !== RAW_DIST_BBOX) {
-      drawBboxRect(svgEl, RAW_FOCUS_BBOX, proj);
+        svgEl.appendChild(border);
+      } catch (e) { console.warn('[BboxRect]', e); }
     }
-  }
 
 
-  function drawPanchayatMarker(svgEl, gj, proj) {
-    try {
-      let tx = 0, ty = 0, n = 0;
-      const feat = gj.features[0];
-      const coords = feat.geometry.type === 'MultiPolygon'
-        ? feat.geometry.coordinates[0][0]
-        : feat.geometry.coordinates[0];
-      coords.forEach(([ln, lt]) => { tx += ln; ty += lt; n++; });
-      const [cx, cy] = proj(tx / n, ty / n);
+    /* ══════════════════════════════════════════════════
+       INIT — on page load
+    ══════════════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', () => {
 
-      const pulse = document.createElementNS(NS, 'circle');
-      pulse.setAttribute('cx', cx.toFixed(1));
-      pulse.setAttribute('cy', cy.toFixed(1));
-      pulse.setAttribute('r', '18');
-      pulse.setAttribute('fill', 'none');
-      pulse.setAttribute('stroke', 'rgba(16,185,129,0.5)');
-      pulse.setAttribute('stroke-width', '2');
-      pulse.style.animation = 'drawPath 1s ease forwards .5s';
-      pulse.style.filter = 'drop-shadow(0 0 6px rgba(16,185,129,0.6))';
-      svgEl.appendChild(pulse);
+      /* ── Birth year clamp UI ── */
+      if (BIRTH_YEAR_CLAMPED) {
+        const skYear = document.querySelector('.birth-card .sk-year');
+        if (skYear) skYear.textContent = '1997';
 
-      const dot = document.createElementNS(NS, 'circle');
-      dot.setAttribute('cx', cx.toFixed(1));
-      dot.setAttribute('cy', cy.toFixed(1));
-      dot.setAttribute('r', '5');
-      dot.setAttribute('fill', '#10b981');
-      /* ── FIX: style.filter not setAttribute ── */
-      dot.style.filter = 'drop-shadow(0 0 6px #10b981)';
-      svgEl.appendChild(dot);
+        const pillBirth = document.querySelector('.sat-pill.birth');
+        if (pillBirth) pillBirth.innerHTML =
+          '◆ 1997 <span style="font-size:.6rem;opacity:.6">(born ' + BIRTH_YEAR + ')</span>';
 
-      if (PANCHAYAT || BLOCK) {
-        const label = document.createElementNS(NS, 'text');
-        label.setAttribute('x', (cx + 12).toFixed(1));
-        label.setAttribute('y', (cy - 10).toFixed(1));
-        label.setAttribute('fill', '#6ee7b7');
-        label.setAttribute('font-size', '22');
-        label.setAttribute('font-family', 'Space Grotesk, sans-serif');
-        label.setAttribute('font-weight', '800');
-        label.setAttribute('letter-spacing', '0.5');
-        label.setAttribute('paint-order', 'stroke');
-        label.setAttribute('stroke', 'rgba(2,6,16,0.8)');
-        label.setAttribute('stroke-width', '6');
-        label.setAttribute('stroke-linejoin', 'round');
-        label.textContent = PANCHAYAT || BLOCK;
-        svgEl.appendChild(label);
+        const labelYear = document.querySelector('.birth-card .sat-label-year');
+        if (labelYear) labelYear.textContent = '1997';
+
+        const labelDesc = document.querySelector('.birth-card .sat-label-desc');
+        if (labelDesc) labelDesc.textContent = 'Earliest Archive (Born ' + BIRTH_YEAR + ')';
       }
-    } catch (e) { console.warn('[Marker]', e); }
-  }
+
+      /* ── Initial satellite image load ── */
+      reloadSatImages();
+
+      /* ── District GeoJSON for border overlays ── */
+      loadGeoJson();
+
+      /* ── Panchayat/block GeoJSON for green highlight ── */
+      loadPanchGeoJson();
+
+      /* ── Hide scope controls if no panchayat/block ── */
+      const hasFocus = (RAW_FOCUS_BBOX !== RAW_DIST_BBOX);
+      if (!hasFocus) {
+        document.querySelectorAll('.scope-btns, .scope-indicator, .panch-pin')
+          .forEach(el => el.style.display = 'none');
+      }
+    });
 
 
-  function drawBboxRect(svgEl, raw, proj) {
-    try {
-      const corners = [
-        [raw.minLng, raw.minLat], [raw.maxLng, raw.minLat],
-        [raw.maxLng, raw.maxLat], [raw.minLng, raw.maxLat]
-      ];
-      const d = corners.map(([ln, lt], i) => {
-        const [px, py] = proj(ln, lt);
-        return (i ? 'L' : 'M') + px.toFixed(2) + ' ' + py.toFixed(2);
-      }).join('') + 'Z';
+    /* ══════════════════════════════════════════════════
+       TIMELINE
+    ══════════════════════════════════════════════════ */
+    let cur = 0, isPlaying = true, autoTimer = null, speedMult = 1;
 
-      const fill = document.createElementNS(NS, 'path');
-      fill.setAttribute('d', d);
-      fill.setAttribute('fill', 'rgba(16,185,129,0.09)');
-      fill.setAttribute('stroke', 'none');
-      svgEl.appendChild(fill);
-
-      const border = document.createElementNS(NS, 'path');
-      border.setAttribute('d', d);
-      border.setAttribute('stroke', '#10b981');
-      border.setAttribute('stroke-width', '3');
-      border.setAttribute('fill', 'none');
-      border.setAttribute('stroke-dasharray', '10,6');
-      /* ── FIX: style.filter not setAttribute ── */
-      border.style.filter = 'drop-shadow(0 0 8px rgba(16,185,129,0.8))';
-      glowPath.style.opacity = '0.5';
-      glowPath.classList.add('animated-boundary-panch');
-      svgEl.appendChild(border);
-    } catch (e) { console.warn('[BboxRect]', e); }
-  }
-
-
-  /* ══════════════════════════════════════════════════
-     INIT — on page load
-  ══════════════════════════════════════════════════ */
-  document.addEventListener('DOMContentLoaded', () => {
-
-    /* ── Birth year clamp UI ── */
-    if (BIRTH_YEAR_CLAMPED) {
-      const skYear = document.querySelector('.birth-card .sk-year');
-      if (skYear) skYear.textContent = '1997';
-
-      const pillBirth = document.querySelector('.sat-pill.birth');
-      if (pillBirth) pillBirth.innerHTML =
-        '◆ 1997 <span style="font-size:.6rem;opacity:.6">(born ' + BIRTH_YEAR + ')</span>';
-
-      const labelYear = document.querySelector('.birth-card .sat-label-year');
-      if (labelYear) labelYear.textContent = '1997';
-
-      const labelDesc = document.querySelector('.birth-card .sat-label-desc');
-      if (labelDesc) labelDesc.textContent = 'Earliest Archive (Born ' + BIRTH_YEAR + ')';
+    function renderDots() {
+      const el = document.getElementById('tlDots'); if (!el) return;
+      const max = Math.min(EVENTS.length, 14);
+      el.innerHTML = '';
+      for (let i = 0; i < max; i++) {
+        const d = document.createElement('div');
+        d.className = 'tl-dot' + (i === cur ? ' active' : '');
+        el.appendChild(d);
+      }
     }
 
-    /* ── Initial satellite image load ── */
-    reloadSatImages();
-
-    /* ── District GeoJSON for border overlays ── */
-    loadGeoJson();
-
-    /* ── Panchayat/block GeoJSON for green highlight ── */
-    loadPanchGeoJson();
-
-    /* ── Hide scope controls if no panchayat/block ── */
-    const hasFocus = (RAW_FOCUS_BBOX !== RAW_DIST_BBOX);
-    if (!hasFocus) {
-      document.querySelectorAll('.scope-btns, .scope-indicator, .panch-pin')
-        .forEach(el => el.style.display = 'none');
+    function updateCardContent(i) {
+      const e = EVENTS[i];
+      document.getElementById('tlEraText').textContent = e.era || '';
+      document.getElementById('tlYear').textContent = e.year || '';
+      document.getElementById('tlIcon').textContent = e.icon || '📌';
+      document.getElementById('tlTitle').textContent = e.title || '';
+      document.getElementById('counterTxt').textContent = `${i + 1} / ${EVENTS.length}`;
+      renderDots();
     }
-  });
 
-
-  /* ══════════════════════════════════════════════════
-     TIMELINE
-  ══════════════════════════════════════════════════ */
-  let cur = 0, isPlaying = true, autoTimer = null, speedMult = 1;
-
-  function renderDots() {
-    const el = document.getElementById('tlDots'); if (!el) return;
-    const max = Math.min(EVENTS.length, 14);
-    el.innerHTML = '';
-    for (let i = 0; i < max; i++) {
-      const d = document.createElement('div');
-      d.className = 'tl-dot' + (i === cur ? ' active' : '');
-      el.appendChild(d);
+    function animateCardChange(i, dir) {
+      const card = document.getElementById('tlCard');
+      card.className = 'tl-card ' + (dir === 'next' ? 'slide-out-left' : 'slide-out-right');
+      setTimeout(() => {
+        updateCardContent(i);
+        card.className = 'tl-card ' + (dir === 'next' ? 'slide-in-right' : 'slide-in-left');
+      }, 320);
     }
-  }
 
-  function updateCardContent(i) {
-    const e = EVENTS[i];
-    document.getElementById('tlEraText').textContent = e.era || '';
-    document.getElementById('tlYear').textContent = e.year || '';
-    document.getElementById('tlIcon').textContent = e.icon || '📌';
-    document.getElementById('tlTitle').textContent = e.title || '';
-    document.getElementById('counterTxt').textContent = `${i + 1} / ${EVENTS.length}`;
-    renderDots();
-  }
+    function resetProgress() {
+      clearTimeout(autoTimer);
+      const fill = document.getElementById('progressFill');
+      fill.style.transition = 'none'; fill.style.width = '0%';
+      if (!isPlaying) return;
+      const ms = BASE_TL_MS / speedMult;
+      setTimeout(() => {
+        fill.style.transition = `width ${ms}ms linear`;
+        fill.style.width = '100%';
+      }, 50);
+      autoTimer = setTimeout(nextEvent, ms);
+    }
 
-  function animateCardChange(i, dir) {
-    const card = document.getElementById('tlCard');
-    card.className = 'tl-card ' + (dir === 'next' ? 'slide-out-left' : 'slide-out-right');
-    setTimeout(() => {
-      updateCardContent(i);
-      card.className = 'tl-card ' + (dir === 'next' ? 'slide-in-right' : 'slide-in-left');
-    }, 320);
-  }
+    function nextEvent() { const n = cur < EVENTS.length - 1 ? cur + 1 : 0; animateCardChange(n, 'next'); cur = n; resetProgress(); }
+    function prevEvent() { const p = cur > 0 ? cur - 1 : EVENTS.length - 1; animateCardChange(p, 'prev'); cur = p; resetProgress(); }
 
-  function resetProgress() {
-    clearTimeout(autoTimer);
-    const fill = document.getElementById('progressFill');
-    fill.style.transition = 'none'; fill.style.width = '0%';
-    if (!isPlaying) return;
-    const ms = BASE_TL_MS / speedMult;
-    setTimeout(() => {
-      fill.style.transition = `width ${ms}ms linear`;
-      fill.style.width = '100%';
-    }, 50);
-    autoTimer = setTimeout(nextEvent, ms);
-  }
-
-  function nextEvent() { const n = cur < EVENTS.length - 1 ? cur + 1 : 0; animateCardChange(n, 'next'); cur = n; resetProgress(); }
-  function prevEvent() { const p = cur > 0 ? cur - 1 : EVENTS.length - 1; animateCardChange(p, 'prev'); cur = p; resetProgress(); }
-
-  if (EVENTS && EVENTS.length > 0) {
-    updateCardContent(0); resetProgress();
-    document.getElementById('playBtn').addEventListener('click', () => {
-      isPlaying = !isPlaying;
-      document.getElementById('playBtn').innerHTML = isPlaying ? '⏸' : '▶';
-      resetProgress();
-    });
-    document.getElementById('speedBtn').addEventListener('click', () => {
-      speedMult = speedMult === 1 ? 1.5 : speedMult === 1.5 ? 2 : 1;
-      document.getElementById('speedBtn').textContent = speedMult + '×';
-      if (isPlaying) resetProgress();
-    });
-    document.addEventListener('keydown', e => {
-      if (e.key === ' ') { e.preventDefault(); document.getElementById('playBtn').click(); }
-      else if (e.key === 'ArrowRight') nextEvent();
-      else if (e.key === 'ArrowLeft') prevEvent();
-    });
-  }
-</script>
+    if (EVENTS && EVENTS.length > 0) {
+      updateCardContent(0); resetProgress();
+      document.getElementById('playBtn').addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        document.getElementById('playBtn').innerHTML = isPlaying ? '⏸' : '▶';
+        resetProgress();
+      });
+      document.getElementById('speedBtn').addEventListener('click', () => {
+        speedMult = speedMult === 1 ? 1.5 : speedMult === 1.5 ? 2 : 1;
+        document.getElementById('speedBtn').textContent = speedMult + '×';
+        if (isPlaying) resetProgress();
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === ' ') { e.preventDefault(); document.getElementById('playBtn').click(); }
+        else if (e.key === 'ArrowRight') nextEvent();
+        else if (e.key === 'ArrowLeft') prevEvent();
+      });
+    }
+  </script>
 
 
 </body>

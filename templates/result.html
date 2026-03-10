@@ -9,7 +9,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=Yatra+One&family=Space+Grotesk:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
   <style>
-    **,
+    *,
     *::before,
     *::after {
       margin: 0;
@@ -30,21 +30,22 @@
       --txt2: rgba(200, 215, 255, 0.72);
       --txt3: rgba(160, 185, 240, 0.45);
       --saffron: #f97316;
-      --saffron2: #ea580c;
       --gold: #f59e0b;
       --teal: #0ea5e9;
       --teal2: #0284c7;
       --purple: #8b5cf6;
       --purple2: #7c3aed;
       --green: #10b981;
-      --glow-s: rgba(249, 115, 22, 0.18);
       --glow-t: rgba(14, 165, 233, 0.15);
       --glow-p: rgba(139, 92, 246, 0.15);
       --glow-g: rgba(16, 185, 129, 0.15);
+      --glow-s: rgba(249, 115, 22, 0.18);
       --shadow: 0 4px 30px rgba(0, 0, 10, 0.6);
       --radius: 16px;
-      --radius-sm: 12px;
-      --bar-h: 52px;
+      --row1: 44px;
+      --row2: 46px;
+      --bar-h: 90px;
+      /* row1 + row2 */
     }
 
     html[data-theme="light"] {
@@ -58,10 +59,10 @@
       --txt1: #0c1135;
       --txt2: rgba(12, 17, 53, 0.7);
       --txt3: rgba(12, 17, 53, 0.4);
-      --glow-s: rgba(249, 115, 22, 0.1);
       --glow-t: rgba(14, 165, 233, 0.1);
       --glow-p: rgba(139, 92, 246, 0.1);
       --glow-g: rgba(16, 185, 129, 0.1);
+      --glow-s: rgba(249, 115, 22, 0.1);
       --shadow: 0 4px 30px rgba(50, 80, 200, 0.08);
     }
 
@@ -118,104 +119,51 @@
       transition: width .4s, height .4s;
     }
 
-    /* ═══════════════════════════════════════════════
-   TOP BAR — SINGLE ROW
-   [Back] [नमस्ते,NAME!] [Diwas Tag] [chips…] [Dark]
-═══════════════════════════════════════════════ */
+    /* ════════════════════════════════════════
+   TOP BAR — 2 ROWS
+   Row 1: [Back]  [Tag — centered]  [Dark]
+   Row 2: [chip chip chip chip chip chip]
+════════════════════════════════════════ */
     #topInfoBar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 200;
-      height: var(--bar-h);
       display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 14px;
+      flex-direction: column;
       background: var(--card);
       backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border);
       box-shadow: var(--shadow);
     }
 
-    /* Compact hero in top bar */
-    .hero-inline {
-      flex-shrink: 0;
+    /* — Row 1 — */
+    #topRow1 {
+      height: var(--row1);
       display: flex;
-      flex-direction: column;
-      gap: 0px;
-      padding: 0 6px 0 2px;
-      border-right: 1px solid var(--border2);
-      margin-right: 2px;
-    }
-
-    .hero-inline .hi-namaste {
-      font-size: .58rem;
-      color: var(--txt3);
-      font-weight: 500;
-      line-height: 1.2;
-    }
-
-    .hero-inline .hi-name {
-      font-size: .9rem;
-      font-weight: 800;
-      line-height: 1.15;
-      background: linear-gradient(135deg, var(--saffron), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    /* Shared button */
-    .top-btn {
-      display: inline-flex;
       align-items: center;
-      gap: 7px;
-      padding: 6px 14px;
-      border-radius: 50px;
-      background: var(--card2);
-      border: 1px solid var(--border2);
-      cursor: pointer;
-      backdrop-filter: blur(20px);
-      transition: all .3s cubic-bezier(.22, 1, .36, 1);
-      box-shadow: var(--shadow);
-      color: var(--txt1);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: .76rem;
-      letter-spacing: .3px;
-      flex-shrink: 0;
-      white-space: nowrap;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
     }
 
-    .top-btn:hover {
-      border-color: var(--teal);
-      box-shadow: 0 0 18px var(--glow-t), var(--shadow);
-      color: var(--teal);
-      transform: translateY(-1px);
-    }
-
-    .theme-toggle {
-      margin-left: auto;
-      flex-shrink: 0;
-    }
-
-    /* Welcome tag */
+    /* Tag is centered via margin:auto on both sides */
     .welcome-tag {
-      flex-shrink: 0;
+      margin: 0 auto;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 11px;
+      gap: 8px;
+      padding: 5px 16px;
       border-radius: 50px;
       background: linear-gradient(90deg, rgba(139, 92, 246, 0.12), rgba(14, 165, 233, 0.1));
       border: 1px solid rgba(139, 92, 246, 0.25);
-      font-size: .63rem;
+      font-size: .68rem;
       font-weight: 700;
-      letter-spacing: .7px;
+      letter-spacing: .8px;
       text-transform: uppercase;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .welcome-tag .tag-hindi {
@@ -234,19 +182,47 @@
       background: var(--border2);
     }
 
-    /* Info chips */
-    .info-chips {
-      flex: 1;
-      min-width: 0;
-      display: flex;
+    /* — Shared button style — */
+    .top-btn {
+      flex-shrink: 0;
+      display: inline-flex;
       align-items: center;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      scrollbar-width: none;
-      gap: 5px;
+      gap: 7px;
+      padding: 6px 16px;
+      border-radius: 50px;
+      background: var(--card2);
+      border: 1px solid var(--border2);
+      cursor: pointer;
+      backdrop-filter: blur(20px);
+      transition: all .3s cubic-bezier(.22, 1, .36, 1);
+      box-shadow: var(--shadow);
+      color: var(--txt1);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: .76rem;
+      letter-spacing: .3px;
+      white-space: nowrap;
     }
 
-    .info-chips::-webkit-scrollbar {
+    .top-btn:hover {
+      border-color: var(--teal);
+      box-shadow: 0 0 18px var(--glow-t), var(--shadow);
+      color: var(--teal);
+      transform: translateY(-1px);
+    }
+
+    /* — Row 2: chips — */
+    #topRow2 {
+      height: var(--row2);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 7px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    #topRow2::-webkit-scrollbar {
       display: none;
     }
 
@@ -254,11 +230,11 @@
       flex-shrink: 0;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       background: var(--card2);
       border: 1px solid var(--border);
-      padding: 3px 10px;
-      border-radius: 10px;
+      padding: 5px 14px;
+      border-radius: 12px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
       transition: all .3s cubic-bezier(.22, 1, .36, 1);
@@ -314,8 +290,8 @@
     }
 
     .chip-dot {
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: var(--chip-accent);
       flex-shrink: 0;
@@ -325,72 +301,96 @@
     .chip-data {
       display: flex;
       flex-direction: column;
-      gap: 0px;
+      gap: 1px;
     }
 
     .chip-label {
-      font-size: .48rem;
+      font-size: .52rem;
       color: var(--txt3);
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: .9px;
+      letter-spacing: 1px;
     }
 
     .chip-val {
-      font-size: .74rem;
+      font-size: .82rem;
       font-weight: 700;
       color: var(--txt1);
       font-family: 'Space Grotesk', sans-serif;
     }
 
-    /* ═══════════════════════════════════════════════
-   PAGE LAYOUT
-   flex column, starts below top bar
-═══════════════════════════════════════════════ */
+    /* ════════════════════════════════════════
+   PAGE — 2-column grid, fills viewport
+════════════════════════════════════════ */
     #page {
       position: relative;
       z-index: 10;
       width: 100%;
       height: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding: calc(var(--bar-h) + 10px) 16px 12px;
+      display: grid;
+      grid-template-columns: 1.55fr 1fr;
+      gap: 18px;
+      padding: calc(var(--bar-h) + 12px) 18px 14px;
       overflow: hidden;
     }
 
-    /* ── Meta row: aligned with the 3 cards below ── */
-    .meta-row {
-      flex-shrink: 0;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 14px;
-      align-items: end;
-    }
-
-    /* Sat meta spans cols 1+2 */
-    .sat-meta {
-      grid-column: 1 / 3;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .sat-meta-left {
+    /* ════════════════════════════════════════
+   LEFT COLUMN
+════════════════════════════════════════ */
+    .left-column {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 10px;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* — Hero greeting — */
+    .hero-section {
+      flex-shrink: 0;
+    }
+
+    .hero-name {
+      line-height: 1.1;
+    }
+
+    .hero-name .namaste {
+      display: block;
+      font-size: 1.25rem;
+      color: var(--txt2);
+      font-weight: 400;
+    }
+
+    .hero-name .name-val {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--gold) 50%, #fde68a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* — Satellite section — */
+    .sat-section {
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sat-header-wrap {
+      flex-shrink: 0;
     }
 
     .sat-header-title {
-      font-size: .9rem;
+      font-size: .95rem;
       font-weight: 800;
       color: var(--txt1);
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
       font-family: 'Space Grotesk', sans-serif;
       letter-spacing: -.3px;
     }
@@ -403,7 +403,8 @@
     .sat-year-pills {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
+      margin-top: 4px;
       flex-wrap: wrap;
     }
 
@@ -411,9 +412,9 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 2px 9px;
+      padding: 2px 10px;
       border-radius: 20px;
-      font-size: .64rem;
+      font-size: .67rem;
       font-weight: 700;
       font-family: 'Space Grotesk', sans-serif;
     }
@@ -437,28 +438,29 @@
     }
 
     .sat-pill-arrow {
-      font-size: .7rem;
+      font-size: .75rem;
       color: var(--txt3);
     }
 
     .sat-pill-dist {
-      font-size: .66rem;
+      font-size: .68rem;
       color: var(--txt3);
       font-weight: 600;
     }
 
     .scope-btns {
       display: flex;
-      gap: 5px;
+      gap: 6px;
+      margin-top: 7px;
     }
 
     .scope-btn {
-      padding: 3px 11px;
+      padding: 4px 13px;
       border-radius: 20px;
       border: 1px solid var(--border2);
       background: var(--card2);
       color: var(--txt3);
-      font-size: .62rem;
+      font-size: .65rem;
       font-weight: 700;
       cursor: pointer;
       font-family: 'Space Grotesk', sans-serif;
@@ -477,46 +479,18 @@
       color: var(--teal);
     }
 
-    /* Journey meta — col 3 */
-    .journey-meta {
-      grid-column: 3 / 4;
-    }
-
-    .section-header h2 {
-      font-size: .95rem;
-      font-weight: 800;
-      color: var(--txt1);
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      margin: 0;
-      font-family: 'Space Grotesk', sans-serif;
-      letter-spacing: -.3px;
-    }
-
-    .section-header h2 .sh-hindi {
-      font-family: 'Yatra One', cursive;
-      color: var(--gold);
-    }
-
-    .section-header p {
-      font-size: .68rem;
-      color: var(--txt3);
-      margin-top: 2px;
-    }
-
-    /* ═══════════════════════════════════════════════
-   3 EQUAL CARD COLUMNS
-═══════════════════════════════════════════════ */
-    .cards-row {
+    /* — Satellite grid: two equal side-by-side cards — */
+    .sat-grid {
       flex: 1 1 0;
       min-height: 0;
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 14px;
+      grid-template-columns: 1fr 22px 1fr;
+      gap: 0;
     }
 
-    /* ── Satellite cards ── */
+    /* ════════════════════════════════════════
+   SAT CARD
+════════════════════════════════════════ */
     .sat-card {
       position: relative;
       border-radius: var(--radius);
@@ -525,7 +499,7 @@
       box-shadow: var(--shadow);
       background: #020610;
       transition: all .45s cubic-bezier(.22, 1, .36, 1);
-      /* no flex needed — grid handles height */
+      min-height: 0;
     }
 
     .sat-card:hover {
@@ -956,13 +930,81 @@
       border: 1px solid rgba(14, 165, 233, .4);
     }
 
-    /* ── Timeline card (col 3) ── */
-    .tl-card-outer {
-      /* fills grid cell completely */
+    /* Sat divider */
+    .sat-divider {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 22px;
+      flex-shrink: 0;
+    }
+
+    .sat-div-line {
+      flex: 1;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--border2), transparent);
+    }
+
+    .sat-div-label {
+      font-size: .58rem;
+      font-weight: 800;
+      color: var(--txt3);
+      letter-spacing: 1px;
+      writing-mode: vertical-lr;
+      text-transform: uppercase;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* ════════════════════════════════════════
+   RIGHT COLUMN — Timeline
+════════════════════════════════════════ */
+    .right-column {
       display: flex;
       flex-direction: column;
       height: 100%;
+      min-height: 0;
+      gap: 0;
+    }
+
+    .tl-section {
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-header h2 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--txt1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: -.3px;
+    }
+
+    .section-header h2 .sh-hindi {
+      font-family: 'Yatra One', cursive;
+      color: var(--gold);
+    }
+
+    .section-header p {
+      font-size: .72rem;
+      color: var(--txt3);
+      margin-top: 3px;
+    }
+
+    .tl-card-outer {
+      flex: 1 1 0;
+      min-height: 0;
       position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
     .tl-card {
@@ -1042,7 +1084,7 @@
 
     .tl-year {
       font-family: 'Playfair Display', serif;
-      font-size: 2.5rem;
+      font-size: 2.6rem;
       font-weight: 900;
       line-height: .95;
       letter-spacing: -1px;
@@ -1073,7 +1115,7 @@
     }
 
     .tl-card-outer:hover .tl-year-line {
-      width: 70px;
+      width: 75px;
     }
 
     .tl-year-bar-dot {
@@ -1104,8 +1146,8 @@
 
     .tl-icon-wrap {
       flex-shrink: 0;
-      width: 50px;
-      height: 50px;
+      width: 52px;
+      height: 52px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1122,7 +1164,7 @@
     }
 
     .tl-title {
-      font-size: .92rem;
+      font-size: .95rem;
       font-weight: 600;
       line-height: 1.5;
       color: var(--txt1);
@@ -1262,7 +1304,6 @@
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
-      margin-top: 8px;
     }
 
     .ctrl-btn {
@@ -1331,7 +1372,6 @@
       color: var(--txt3);
       font-weight: 500;
       letter-spacing: .4px;
-      margin-top: 6px;
     }
 
     kbd {
@@ -1344,8 +1384,10 @@
       font-size: .6rem;
     }
 
-    /* ═══ RESPONSIVE ═══ */
-    @media(max-width:1100px) {
+    /* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+    @media(max-width:1024px) {
 
       html,
       body {
@@ -1355,50 +1397,69 @@
       }
 
       #topInfoBar {
-        height: auto;
-        flex-wrap: wrap;
-        padding: 8px 12px;
-        gap: 6px;
-      }
-
-      .info-chips {
-        flex-basis: 100%;
-        order: 10;
-      }
-
-      .theme-toggle {
-        margin-left: auto;
+        position: static;
       }
 
       #page {
+        grid-template-columns: 1fr;
         height: auto;
         overflow: visible;
-        padding-top: calc(var(--bar-h) + 70px);
+        padding: 16px;
       }
 
-      .meta-row {
+      .left-column {
+        height: auto;
+        overflow: visible;
+      }
+
+      .sat-section {
+        flex: none;
+        height: auto;
+        min-height: auto;
+      }
+
+      .sat-grid {
+        flex: none;
+        height: auto;
         grid-template-columns: 1fr;
+        grid-template-rows: 260px 28px 260px;
       }
 
-      .sat-meta {
-        grid-column: 1/2;
+      .sat-divider {
+        flex-direction: row;
+        width: 100%;
+        height: 28px;
       }
 
-      .journey-meta {
-        grid-column: 1/2;
+      .sat-div-line {
+        flex: 1;
+        width: auto;
+        height: 1px;
       }
 
-      .cards-row {
-        grid-template-columns: 1fr;
-        gap: 12px;
+      .sat-div-label {
+        writing-mode: horizontal-tb;
       }
 
       .sat-card {
-        min-height: 280px;
+        min-height: 260px;
+      }
+
+      .right-column {
+        height: auto;
+      }
+
+      .tl-section {
+        flex: none;
       }
 
       .tl-card-outer {
+        flex: none;
         min-height: 280px;
+      }
+
+      #mouseGlow {
+        display: none;
       }
     }
   </style>
@@ -1407,26 +1468,29 @@
 <body>
   <div id="mouseGlow"></div>
 
-  <!-- ══ TOP BAR: Back | नमस्ते,NAME! | Diwas Tag | chips | Dark ══ -->
+  <!-- ════ TOP BAR ════ -->
   <div id="topInfoBar">
 
-    <a href="/" class="top-btn back-btn">
-      <span style="font-size:1rem;line-height:.8;">←</span> Back
-    </a>
+    <!-- Row 1: Back | Tag (centered) | Dark -->
+    <div id="topRow1">
+      <a href="/" class="top-btn back-btn">
+        <span style="font-size:1rem;line-height:.8;">←</span> Back
+      </a>
 
-    <!-- Compact hero greeting -->
-    <div class="hero-inline">
-      <span class="hi-namaste">नमस्ते,</span>
-      <span class="hi-name">{{ name }}!</span>
+      <div class="welcome-tag">
+        <span class="tag-hindi">बिहार दिवस प्रदर्शनी</span>
+        <span class="tag-dot"></span>
+        <span class="tag-en">Bihar Diwas Exhibition</span>
+      </div>
+
+      <div class="top-btn theme-toggle" onclick="toggleTheme()">
+        <span id="themeIcon">🌙</span>
+        <span id="themeText">Dark</span>
+      </div>
     </div>
 
-    <div class="welcome-tag">
-      <span class="tag-hindi">बिहार दिवस प्रदर्शनी</span>
-      <span class="tag-dot"></span>
-      <span class="tag-en">Bihar Diwas Exhibition</span>
-    </div>
-
-    <div class="info-chips">
+    <!-- Row 2: All info chips -->
+    <div id="topRow2">
       <div class="info-chip">
         <div class="chip-dot"></div>
         <div class="chip-data">
@@ -1475,22 +1539,26 @@
       {% endif %}
     </div>
 
-    <div class="top-btn theme-toggle" onclick="toggleTheme()">
-      <span id="themeIcon">🌙</span>
-      <span id="themeText">Dark</span>
-    </div>
-
   </div><!-- /topInfoBar -->
 
-  <!-- ══ PAGE ══ -->
+  <!-- ════ PAGE ════ -->
   <div id="page">
 
-    <!-- Meta row: aligned headers above each column -->
-    <div class="meta-row">
+    <!-- ══ LEFT COLUMN: Hero + Satellite ══ -->
+    <div class="left-column">
 
-      <!-- Spans cols 1+2 — sat title, pills, scope -->
-      <div class="sat-meta">
-        <div class="sat-meta-left">
+      <!-- Hero greeting -->
+      <section class="hero-section">
+        <div class="hero-name">
+          <span class="namaste">नमस्ते,</span>
+          <span class="name-val">{{ name }}!</span>
+        </div>
+      </section>
+
+      <!-- Satellite section -->
+      <section class="sat-section">
+
+        <div class="sat-header-wrap">
           <div class="sat-header-title">
             <span class="sh-hindi">अंतरिक्ष से</span> 🛰️ Satellite View
           </div>
@@ -1507,137 +1575,148 @@
             <span class="sat-pill scope">🏘️ {{ block }}</span>
             {% endif %}
           </div>
+          {% if panchayat or block %}
+          <div class="scope-btns">
+            <button class="scope-btn" id="scopeDistBtn" onclick="setScope('district')">🗺️ District</button>
+            <button class="scope-btn active" id="scopePanchBtn" onclick="setScope('panchayat')">
+              {% if panchayat %}🌾 Panchayat{% else %}🏘️ Block{% endif %}
+            </button>
+          </div>
+          {% endif %}
         </div>
-        {% if panchayat or block %}
-        <div class="scope-btns">
-          <button class="scope-btn" id="scopeDistBtn" onclick="setScope('district')">🗺️ District</button>
-          <button class="scope-btn active" id="scopePanchBtn" onclick="setScope('panchayat')">
-            {% if panchayat %}🌾 Panchayat{% else %}🏘️ Block{% endif %}
-          </button>
-        </div>
-        {% endif %}
-      </div>
 
-      <!-- Col 3 header — journey -->
-      <div class="journey-meta">
+        <!-- Side-by-side sat cards -->
+        <div class="sat-grid">
+
+          <!-- Birth Year Card -->
+          <div class="sat-card birth-card">
+            <div class="sat-skeleton" id="birthSkeleton">
+              <div class="sk-orbit">
+                <div class="sk-ring"></div>
+                <div class="sk-ring"></div>
+                <div class="sk-icon">🛰️</div>
+              </div>
+              <div class="sk-year">{{ birth_year }}</div>
+              <div class="sk-text">Fetching archive…</div>
+            </div>
+            <div class="sat-img-container">
+              <div class="sat-layer-group">
+                <img class="sat-img" id="birthImg" alt="Birth Year Satellite" />
+                <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"></svg>
+              </div>
+              <div class="sat-vignette"></div>
+            </div>
+            <div class="sat-corner-badge">
+              <div class="badge-dot"></div>{{ district }}
+            </div>
+            <div class="sat-status">ARCHIVE</div>
+            {% if panchayat %}<div class="panch-pin">
+              <div class="pp-dot"></div>{{ panchayat }}
+            </div>
+            {% elif block %}<div class="panch-pin">
+              <div class="pp-dot"></div>{{ block }}
+            </div>{% endif %}
+            <div class="scope-indicator panch" id="birthScopeInd">
+              <div class="si-dot"></div>
+              <span id="birthScopeLabel">{% if panchayat %}Panchayat{% else %}Block{% endif %}</span>
+            </div>
+            <div class="sat-label">
+              <div class="sat-label-left">
+                <div class="sat-label-year">{{ birth_year }}</div>
+                <div class="sat-label-desc">Earliest Archive (Born {{ birth_year }})</div>
+              </div>
+              <div class="sat-src" id="birthSrc">📡 Loading…</div>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="sat-divider">
+            <div class="sat-div-line"></div>
+            <div class="sat-div-label">vs</div>
+            <div class="sat-div-line"></div>
+          </div>
+
+          <!-- Present Card -->
+          <div class="sat-card now-card">
+            <div class="sat-skeleton" id="currentSkeleton">
+              <div class="sk-orbit">
+                <div class="sk-ring"></div>
+                <div class="sk-ring"></div>
+                <div class="sk-icon">🌍</div>
+              </div>
+              <div class="sk-year">2026</div>
+              <div class="sk-text">Fetching present…</div>
+            </div>
+            <div class="sat-img-container">
+              <div class="sat-layer-group">
+                <img class="sat-img" id="currentImg" alt="2026 Satellite" />
+                <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"></svg>
+              </div>
+              <div class="sat-vignette"></div>
+            </div>
+            <div class="sat-corner-badge">
+              <div class="badge-dot"></div>{{ district }}
+            </div>
+            <div class="sat-status">PRESENT</div>
+            {% if panchayat %}<div class="panch-pin">
+              <div class="pp-dot"></div>{{ panchayat }}
+            </div>
+            {% elif block %}<div class="panch-pin">
+              <div class="pp-dot"></div>{{ block }}
+            </div>{% endif %}
+            <div class="scope-indicator panch" id="currentScopeInd">
+              <div class="si-dot"></div>
+              <span id="currentScopeLabel">{% if panchayat %}Panchayat{% else %}Block{% endif %}</span>
+            </div>
+            <div class="sat-label">
+              <div class="sat-label-left">
+                <div class="sat-label-year">2026</div>
+                <div class="sat-label-desc">Present Day</div>
+              </div>
+              <div class="sat-src" id="currentSrc">📡 Loading…</div>
+            </div>
+          </div>
+
+        </div><!-- /sat-grid -->
+      </section>
+
+    </div><!-- /left-column -->
+
+    <!-- ══ RIGHT COLUMN: Timeline ══ -->
+    <div class="right-column">
+      <section class="tl-section">
+
         <div class="section-header">
           <h2><span class="sh-hindi">आपका सफर</span> &nbsp;📜 Historical Journey</h2>
           <p>Events that shaped Bihar since {{ birth_year }}</p>
         </div>
-      </div>
 
-    </div><!-- /meta-row -->
-
-    <!-- 3 EQUAL CARDS -->
-    <div class="cards-row">
-
-      <!-- Card 1: Birth Year Satellite -->
-      <div class="sat-card birth-card">
-        <div class="sat-skeleton" id="birthSkeleton">
-          <div class="sk-orbit">
-            <div class="sk-ring"></div>
-            <div class="sk-ring"></div>
-            <div class="sk-icon">🛰️</div>
-          </div>
-          <div class="sk-year">{{ birth_year }}</div>
-          <div class="sk-text">Fetching archive…</div>
-        </div>
-        <div class="sat-img-container">
-          <div class="sat-layer-group">
-            <img class="sat-img" id="birthImg" alt="Birth Year Satellite" />
-            <svg class="sat-overlay-svg" id="birthMapOverlay" xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="xMidYMid slice"></svg>
-          </div>
-          <div class="sat-vignette"></div>
-        </div>
-        <div class="sat-corner-badge">
-          <div class="badge-dot"></div>{{ district }}
-        </div>
-        <div class="sat-status">ARCHIVE</div>
-        {% if panchayat %}<div class="panch-pin">
-          <div class="pp-dot"></div>{{ panchayat }}
-        </div>
-        {% elif block %}<div class="panch-pin">
-          <div class="pp-dot"></div>{{ block }}
-        </div>{% endif %}
-        <div class="scope-indicator panch" id="birthScopeInd">
-          <div class="si-dot"></div>
-          <span id="birthScopeLabel">{% if panchayat %}Panchayat{% else %}Block{% endif %}</span>
-        </div>
-        <div class="sat-label">
-          <div class="sat-label-left">
-            <div class="sat-label-year">{{ birth_year }}</div>
-            <div class="sat-label-desc">Birth Year</div>
-          </div>
-          <div class="sat-src" id="birthSrc">📡 Loading…</div>
-        </div>
-      </div>
-
-      <!-- Card 2: Present Satellite -->
-      <div class="sat-card now-card">
-        <div class="sat-skeleton" id="currentSkeleton">
-          <div class="sk-orbit">
-            <div class="sk-ring"></div>
-            <div class="sk-ring"></div>
-            <div class="sk-icon">🌍</div>
-          </div>
-          <div class="sk-year">2026</div>
-          <div class="sk-text">Fetching present…</div>
-        </div>
-        <div class="sat-img-container">
-          <div class="sat-layer-group">
-            <img class="sat-img" id="currentImg" alt="2026 Satellite" />
-            <svg class="sat-overlay-svg" id="currentMapOverlay" xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="xMidYMid slice"></svg>
-          </div>
-          <div class="sat-vignette"></div>
-        </div>
-        <div class="sat-corner-badge">
-          <div class="badge-dot"></div>{{ district }}
-        </div>
-        <div class="sat-status">PRESENT</div>
-        {% if panchayat %}<div class="panch-pin">
-          <div class="pp-dot"></div>{{ panchayat }}
-        </div>
-        {% elif block %}<div class="panch-pin">
-          <div class="pp-dot"></div>{{ block }}
-        </div>{% endif %}
-        <div class="scope-indicator panch" id="currentScopeInd">
-          <div class="si-dot"></div>
-          <span id="currentScopeLabel">{% if panchayat %}Panchayat{% else %}Block{% endif %}</span>
-        </div>
-        <div class="sat-label">
-          <div class="sat-label-left">
-            <div class="sat-label-year">2026</div>
-            <div class="sat-label-desc">Present Day</div>
-          </div>
-          <div class="sat-src" id="currentSrc">📡 Loading…</div>
-        </div>
-      </div>
-
-      <!-- Card 3: Historical Journey -->
-      <div class="tl-card-outer">
-        <div class="tl-arrow left" onclick="prevEvent()">‹</div>
-        <div class="tl-arrow right" onclick="nextEvent()">›</div>
         {% if events %}
-        <div class="tl-card" id="tlCard">
-          <div class="tl-era-tag" id="tlEra">
-            <span class="tl-era-dot"></span>
-            <span id="tlEraText"></span>
-          </div>
-          <div class="tl-year-block">
-            <div class="tl-year" id="tlYear"></div>
-            <div class="tl-year-bar">
-              <div class="tl-year-line"></div>
-              <div class="tl-year-bar-dot"></div>
+        <div class="tl-card-outer">
+          <div class="tl-arrow left" onclick="prevEvent()">‹</div>
+          <div class="tl-arrow right" onclick="nextEvent()">›</div>
+          <div class="tl-card" id="tlCard">
+            <div class="tl-era-tag" id="tlEra">
+              <span class="tl-era-dot"></span>
+              <span id="tlEraText"></span>
             </div>
+            <div class="tl-year-block">
+              <div class="tl-year" id="tlYear"></div>
+              <div class="tl-year-bar">
+                <div class="tl-year-line"></div>
+                <div class="tl-year-bar-dot"></div>
+              </div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-icon-wrap" id="tlIcon"></div>
+              <div class="tl-title" id="tlTitle"></div>
+            </div>
+            <div class="tl-dots" id="tlDots"></div>
           </div>
-          <div class="tl-body">
-            <div class="tl-icon-wrap" id="tlIcon"></div>
-            <div class="tl-title" id="tlTitle"></div>
-          </div>
-          <div class="tl-dots" id="tlDots"></div>
         </div>
+
         <div class="tl-playbar">
           <button class="ctrl-btn" id="playBtn">⏸</button>
           <button class="ctrl-btn" id="speedBtn"
@@ -1647,20 +1726,21 @@
           </div>
           <div class="counter-txt" id="counterTxt">1 / {{ events|length }}</div>
         </div>
+
         <div class="keyboard-hints">
           <kbd>Space</kbd> Play/Pause &nbsp;|&nbsp; <kbd>←</kbd> <kbd>→</kbd> Navigate
         </div>
+
         {% else %}
-        <div class="tl-card" style="justify-content:center;align-items:center;">
+        <div class="tl-card" style="justify-content:center;align-items:center;flex:1;">
           <p style="opacity:.4;text-align:center;font-size:.85rem;">No events recorded.</p>
         </div>
         {% endif %}
-      </div>
 
-    </div><!-- /cards-row -->
+      </section>
+    </div><!-- /right-column -->
 
   </div><!-- /page -->
-
 
 
   <!-- /page -->

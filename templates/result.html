@@ -118,102 +118,84 @@
       transition: width .4s, height .4s;
     }
 
-    /* ═══ TOP BAR ═══ */
-    .top-btn {
+    /* ═══ TOP INFO BAR ═══ */
+    #topInfoBar {
       position: fixed;
-      top: 16px;
+      top: 0;
+      left: 0;
+      right: 0;
       z-index: 200;
+      height: 54px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 18px;
-      border-radius: 50px;
+      gap: 10px;
+      padding: 0 16px;
       background: var(--card);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    /* ═══ BREADCRUMB SUBBAR ═══ */
+    #subBar {
+      position: fixed;
+      top: 54px;
+      left: 0;
+      right: 0;
+      z-index: 199;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+    }
+
+    /* ═══ TOP BAR BUTTONS ═══ */
+    .top-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: 50px;
+      background: var(--card2);
       border: 1px solid var(--border2);
       cursor: pointer;
       backdrop-filter: blur(20px);
-      transition: all .35s cubic-bezier(.22, 1, .36, 1);
+      transition: all .3s cubic-bezier(.22, 1, .36, 1);
       box-shadow: var(--shadow);
       color: var(--txt1);
       text-decoration: none;
       font-weight: 600;
       font-size: .78rem;
       letter-spacing: .3px;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .top-btn:hover {
       border-color: var(--teal);
       box-shadow: 0 0 20px var(--glow-t), var(--shadow);
       color: var(--teal);
-      transform: translateY(-2px);
-    }
-
-    .back-btn {
-      left: 20px;
+      transform: translateY(-1px);
     }
 
     .theme-toggle {
-      right: 20px;
+      margin-left: auto;
     }
 
-    /* ═══ PAGE GRID ═══ */
-    #page {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      height: 100%;
-      display: grid;
-      grid-template-columns: 1.5fr 1fr;
-      /* ← was 1fr 1.2fr */
-      gap: 24px;
-      padding: 60px 32px 18px 32px;
-    }
-
-    .left-column {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    .right-column {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      min-height: 0;
-      padding-top: 8px;
-      gap: 0;
-    }
-
-    /* Hero shrinks to fit — no flex:1 so satellite gets the remaining space */
-    .hero-section {
-      flex-shrink: 0;
-    }
-
-
-    @keyframes fadeSlideUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
-    }
-
+    /* ═══ WELCOME TAG (inside top bar) ═══ */
     .welcome-tag {
+      flex-shrink: 0;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 5px 14px;
+      padding: 5px 12px;
       border-radius: 50px;
-      align-self: flex-start;
       background: linear-gradient(90deg, rgba(139, 92, 246, 0.12), rgba(14, 165, 233, 0.1));
       border: 1px solid rgba(139, 92, 246, 0.25);
-      font-size: .7rem;
+      font-size: .68rem;
       font-weight: 700;
       letter-spacing: .8px;
       text-transform: uppercase;
@@ -235,49 +217,16 @@
       background: var(--border2);
     }
 
-    .hero-name {
-      font-size: 2.2rem;
-    }
-
-    .hero-name .namaste {
-      font-size: 1.75rem;
-    }
-
-    .hero-name .name-val {
-      background: linear-gradient(135deg, var(--saffron) 0%, var(--gold) 50%, #fde68a 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    /* ═══ INFO CHIPS ═══ */
+    /* ═══ INFO CHIPS (inside top bar, horizontal scroll) ═══ */
     .info-chips {
+      flex: 1;
+      min-width: 0;
       display: flex;
-      /* ← THIS WAS MISSING */
       flex-wrap: nowrap;
       overflow-x: auto;
-      padding-bottom: 2px;
       scrollbar-width: none;
-      gap: 8px;
-    }
-
-    .info-chip {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      padding: 7px 13px;
-      border-radius: 14px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
-      transition: all .35s cubic-bezier(.22, 1, .36, 1);
-      animation: chipIn .5s cubic-bezier(.22, 1, .36, 1) both;
-    }
-
-    .info-chip:nth-child(1) {
-      animation-delay: .1s;
-      --chip-accent: var(--purple);
+      gap: 6px;
+      padding: 0;
     }
 
     .info-chips::-webkit-scrollbar {
@@ -286,11 +235,22 @@
 
     .info-chip {
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      padding: 5px 11px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      transition: all .3s cubic-bezier(.22, 1, .36, 1);
+      animation: chipIn .5s cubic-bezier(.22, 1, .36, 1) both;
     }
 
-
-    .sat-header-title {
-      font-size: 1.05rem;
+    .info-chip:nth-child(1) {
+      animation-delay: .1s;
+      --chip-accent: var(--purple);
     }
 
     .info-chip:nth-child(2) {
@@ -332,17 +292,17 @@
 
     .info-chip:hover {
       border-color: var(--chip-accent);
-      box-shadow: 0 0 18px color-mix(in srgb, var(--chip-accent) 30%, transparent), var(--shadow);
-      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 0 14px color-mix(in srgb, var(--chip-accent) 30%, transparent), var(--shadow);
+      transform: translateY(-2px);
     }
 
     .chip-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: var(--chip-accent);
       flex-shrink: 0;
-      box-shadow: 0 0 6px var(--chip-accent);
+      box-shadow: 0 0 5px var(--chip-accent);
     }
 
     .chip-data {
@@ -352,7 +312,7 @@
     }
 
     .chip-label {
-      font-size: .56rem;
+      font-size: .52rem;
       color: var(--txt3);
       font-weight: 700;
       text-transform: uppercase;
@@ -360,28 +320,21 @@
     }
 
     .chip-val {
-      font-size: .82rem;
+      font-size: .78rem;
       font-weight: 700;
       color: var(--txt1);
       font-family: 'Space Grotesk', sans-serif;
     }
 
-    /* ═══ LOCATION BREADCRUMB ═══ */
+    /* ═══ LOCATION BREADCRUMB (inside subbar) ═══ */
     .location-bc {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      flex-wrap: wrap;
-      padding: 6px 14px;
-      border-radius: 50px;
-      align-self: flex-start;
-      background: var(--card2);
-      border: 1px solid var(--border);
       font-size: .72rem;
       font-weight: 600;
       color: var(--txt2);
       font-family: 'Space Grotesk', sans-serif;
-      backdrop-filter: blur(16px);
       animation: chipIn .5s .7s both;
     }
 
@@ -397,20 +350,80 @@
     .location-bc .bc-sep {
       color: var(--txt3);
       font-size: .8rem;
+      margin: 0 2px;
     }
 
     .location-bc .bc-icon {
       font-size: .9rem;
     }
 
-    .sat-card.birth-card {
-      opacity: .92;
+    /* ═══ PAGE GRID ═══ */
+    #page {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 24px;
+      padding: 102px 32px 18px 32px;
+      /* 54 topBar + 32 subBar + 16 gap */
     }
 
-    /* Timeline fills entire right column */
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+      padding-top: 4px;
+      gap: 0;
+    }
+
+    /* ═══ HERO — just the greeting ═══ */
+    .hero-section {
+      flex-shrink: 0;
+    }
+
+    .hero-name {
+      font-size: 2rem;
+      line-height: 1.15;
+    }
+
+    .hero-name .namaste {
+      font-size: 1.6rem;
+      color: var(--txt2);
+    }
+
+    .hero-name .name-val {
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--gold) 50%, #fde68a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* ═══ TIMELINE ═══ */
     .tl-section {
       flex: 0 0 auto;
-      /* ← was "flex: 1 1 0" — this was the root cause */
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -442,9 +455,7 @@
 
     .tl-card-outer {
       flex: 0 0 auto;
-      /* ← was "flex: 1 1 0" */
       height: 290px;
-      /* fixed height — card no longer balloons */
       position: relative;
       display: flex;
       flex-direction: column;
@@ -675,11 +686,11 @@
     }
 
     .tl-arrow.left {
-      left: -12px
+      left: -12px;
     }
 
     .tl-arrow.right {
-      right: -12px
+      right: -12px;
     }
 
     .slide-out-left {
@@ -855,7 +866,7 @@
     }
 
     .sat-header-title {
-      font-size: 1.25rem;
+      font-size: 1.05rem;
       font-weight: 800;
       color: var(--txt1);
       display: flex;
@@ -901,6 +912,12 @@
       color: var(--teal);
     }
 
+    .sat-pill.scope {
+      background: rgba(16, 185, 129, .1);
+      border: 1px solid rgba(16, 185, 129, .25);
+      color: var(--green);
+    }
+
     .sat-pill-arrow {
       font-size: .8rem;
       color: var(--txt3);
@@ -912,13 +929,7 @@
       font-weight: 600;
     }
 
-    .sat-pill.scope {
-      background: rgba(16, 185, 129, .1);
-      border: 1px solid rgba(16, 185, 129, .25);
-      color: var(--green);
-    }
-
-    /* Zoom scope toggle */
+    /* Scope toggle */
     .scope-btns {
       display: flex;
       gap: 6px;
@@ -956,11 +967,9 @@
       min-height: 0;
       display: grid;
       grid-template-columns: 1fr 28px 1fr;
-      /* ← equal, same crop from SVG */
       grid-template-rows: 1fr;
       gap: 0;
     }
-
 
     /* ═══ SAT CARD ═══ */
     .sat-card {
@@ -979,6 +988,10 @@
       border-color: rgba(14, 165, 233, .4);
       box-shadow: 0 0 40px var(--glow-t), var(--shadow);
       transform: translateY(-3px) scale(1.005);
+    }
+
+    .sat-card.birth-card {
+      opacity: .92;
     }
 
     .sat-card.birth-card:hover {
@@ -1072,15 +1085,12 @@
       pointer-events: none;
     }
 
-    /* Animated paths */
-    /* FIND & REPLACE all three: */
-    /* REPLACE .animated-boundary with this: */
+    /* ── Animated paths ── */
     .animated-boundary {
       opacity: 0;
       animation: fadeInBoundary 1.2s ease forwards 0.2s;
     }
 
-    /* KEEP these two as-is (panchayat still uses dash draw): */
     .animated-boundary-panch {
       stroke-dasharray: 50000;
       stroke-dashoffset: 50000;
@@ -1093,18 +1103,15 @@
       animation: drawPath 2.8s cubic-bezier(.4, 0, .2, 1) forwards .5s;
     }
 
-    /* ADD this new keyframe: */
     @keyframes fadeInBoundary {
       from {
-        opacity: 0;
+        opacity: 0
       }
 
       to {
-        opacity: 1;
+        opacity: 1
       }
     }
-
-
 
     @keyframes drawPath {
       to {
@@ -1112,22 +1119,9 @@
       }
     }
 
-    /* Panchayat glow pulse */
     .panch-boundary-glow {
       animation: drawPath 2.5s cubic-bezier(.4, 0, .2, 1) forwards .9s;
       filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.85));
-    }
-
-    @keyframes panchGlowPulse {
-
-      0%,
-      100% {
-        filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.8))
-      }
-
-      50% {
-        filter: drop-shadow(0 0 14px rgba(16, 185, 129, 1)) drop-shadow(0 0 30px rgba(16, 185, 129, 0.4))
-      }
     }
 
     /* ── Skeleton ── */
@@ -1422,7 +1416,6 @@
     }
 
     /* ── Divider ── */
-    /* Vertical divider between the two sat cards */
     .sat-divider {
       display: flex;
       flex-direction: column;
@@ -1459,40 +1452,61 @@
         overflow-x: hidden;
       }
 
-      .page {
+      #topInfoBar {
+        height: auto;
+        flex-wrap: wrap;
+        padding: 8px 12px;
+        gap: 6px;
+      }
+
+      #subBar {
+        position: static;
+      }
+
+      .info-chips {
+        order: 3;
+        flex-basis: 100%;
+        width: 100%;
+      }
+
+      .welcome-tag {
+        order: 1;
+      }
+
+      .back-btn {
+        order: 0;
+      }
+
+      .theme-toggle {
+        order: 2;
+        margin-left: auto;
+      }
+
+      #page {
         grid-template-columns: 1fr;
         height: auto;
-        padding: 18px;
-        padding-top: 65px;
+        padding: 16px;
+        padding-top: 16px;
       }
 
-      /* FIX 1: left-column must not clip its children on mobile */
       .left-column {
         height: auto;
-        /* was: height: 100% → collapses flex children */
         overflow: visible;
-        /* was: overflow: hidden → clips sat-section */
       }
 
-      /* FIX 2: sat-section must not flex-grow into a zero-height parent */
       .sat-section {
         flex: none;
-        /* was: flex: 1 1 0 → collapses to 0 */
         height: auto;
         min-height: auto;
       }
 
-      /* FIX 3: sat-grid needs explicit height (stacked vertically on mobile) */
       .sat-grid {
         flex: none;
         height: auto;
         grid-template-columns: 1fr;
-        /* stack cards vertically */
         grid-template-rows: 260px 36px 260px;
-        /* card | divider | card */
       }
 
-      /* FIX 4: divider becomes horizontal between stacked cards */
       .sat-divider {
         flex-direction: row;
         width: 100%;
@@ -1509,7 +1523,6 @@
         writing-mode: horizontal-tb;
       }
 
-      /* Timeline */
       .tl-section,
       .tl-card-outer,
       .tl-card {
@@ -1529,179 +1542,112 @@
         display: none;
       }
     }
-
-
-    .zoom-btns {
-      display: flex;
-      gap: 6px;
-      margin-top: 6px;
-    }
-
-    .zoom-btn {
-      padding: 3px 11px;
-      border-radius: 20px;
-      border: 1px solid var(--border2);
-      background: var(--card2);
-      color: var(--txt3);
-      font-size: .72rem;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: 'Space Grotesk', sans-serif;
-      transition: all .25s;
-    }
-
-    .zoom-btn:hover {
-      border-color: var(--teal);
-      color: var(--teal);
-      box-shadow: 0 0 10px var(--glow-t);
-    }
-
-    .sat-nav-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-      flex-wrap: wrap;
-    }
-
-    .sat-nav-row {
-      display: flex;
-      gap: 5px;
-    }
-
-    .sat-nav-dpad {
-      display: grid;
-      grid-template-columns: repeat(3, 30px);
-      grid-template-rows: repeat(3, 30px);
-      gap: 3px;
-    }
-
-    .sat-nav-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      border: 1px solid var(--border2);
-      background: var(--card2);
-      color: var(--txt2);
-      font-size: .75rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all .2s;
-      font-family: 'Space Grotesk', sans-serif;
-      padding: 0;
-    }
-
-    .sat-nav-btn:hover {
-      border-color: var(--teal);
-      color: var(--teal);
-      background: rgba(14, 165, 233, .12);
-      box-shadow: 0 0 10px var(--glow-t);
-    }
-
-    .sat-nav-btn-center {
-      border-color: var(--border);
-      color: var(--txt3);
-      font-size: .6rem;
-    }
   </style>
 </head>
 
 <body>
   <div id="mouseGlow"></div>
 
-  <a href="/" class="top-btn back-btn">
-    <span style="font-size:1rem;line-height:.8;">←</span> Back
-  </a>
-  <div class="top-btn theme-toggle" onclick="toggleTheme()">
-    <span id="themeIcon">🌙</span> <span id="themeText">Dark</span>
-  </div>
+  <!-- ══ TOP INFO BAR ══ -->
+  <div id="topInfoBar">
+
+    <a href="/" class="top-btn back-btn">
+      <span style="font-size:1rem;line-height:.8;">←</span> Back
+    </a>
+
+    <div class="welcome-tag">
+      <span class="tag-hindi">बिहार दिवस प्रदर्शनी</span>
+      <span class="tag-dot"></span>
+      <span class="tag-en">Bihar Diwas Exhibition</span>
+    </div>
+
+    <!-- Info chips — horizontal scroll -->
+    <div class="info-chips">
+      <div class="info-chip">
+        <div class="chip-dot"></div>
+        <div class="chip-data">
+          <span class="chip-label">नाम / Name</span>
+          <span class="chip-val">{{ name }}</span>
+        </div>
+      </div>
+      <div class="info-chip">
+        <div class="chip-dot"></div>
+        <div class="chip-data">
+          <span class="chip-label">जन्म वर्ष / Birth Year</span>
+          <span class="chip-val">{{ birth_year }}</span>
+        </div>
+      </div>
+      <div class="info-chip">
+        <div class="chip-dot"></div>
+        <div class="chip-data">
+          <span class="chip-label">आयु / Age</span>
+          <span class="chip-val">{% if age %}{{ age }} वर्ष{% else %}—{% endif %}</span>
+        </div>
+      </div>
+      <div class="info-chip">
+        <div class="chip-dot"></div>
+        <div class="chip-data">
+          <span class="chip-label">ज़िला / District</span>
+          <span class="chip-val">{{ district }}</span>
+        </div>
+      </div>
+      {% if block %}
+      <div class="info-chip">
+        <div class="chip-dot"></div>
+        <div class="chip-data">
+          <span class="chip-label">ब्लॉक / Block</span>
+          <span class="chip-val">{{ block }}</span>
+        </div>
+      </div>
+      {% endif %}
+      {% if panchayat %}
+      <div class="info-chip">
+        <div class="chip-dot"></div>
+        <div class="chip-data">
+          <span class="chip-label">पंचायत / Panchayat</span>
+          <span class="chip-val">{{ panchayat }}</span>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="top-btn theme-toggle" onclick="toggleTheme()">
+      <span id="themeIcon">🌙</span>
+      <span id="themeText">Dark</span>
+    </div>
+
+  </div><!-- /topInfoBar -->
+
+  <!-- ══ BREADCRUMB SUBBAR ══ -->
+  <div id="subBar">
+    <div class="location-bc">
+      <span class="bc-icon">📍</span>
+      <span class="bc-item">{{ district }}</span>
+      {% if block %}
+      <span class="bc-sep">›</span>
+      <span class="bc-item">{{ block }}</span>
+      {% endif %}
+      {% if panchayat %}
+      <span class="bc-sep">›</span>
+      <span class="bc-item active">{{ panchayat }}</span>
+      {% endif %}
+    </div>
+  </div><!-- /subBar -->
 
   <div id="page">
 
     <!-- ══ LEFT COLUMN: Hero + Satellite ══ -->
     <div class="left-column">
 
-      <!-- ── Hero ── -->
+      <!-- ── Hero: just the greeting ── -->
       <section class="hero-section">
-        <div class="welcome-tag">
-          <span class="tag-hindi">बिहार दिवस प्रदर्शनी</span>
-          <span class="tag-dot"></span>
-          <span class="tag-en">Bihar Diwas Exhibition</span>
-        </div>
         <div class="hero-name">
           <span class="namaste">नमस्ते,</span><br>
           <span class="name-val">{{ name }}!</span>
         </div>
-
-        <!-- Info chips -->
-        <div class="info-chips">
-          <div class="info-chip">
-            <div class="chip-dot"></div>
-            <div class="chip-data">
-              <span class="chip-label">नाम / Name</span>
-              <span class="chip-val">{{ name }}</span>
-            </div>
-          </div>
-          <div class="info-chip">
-            <div class="chip-dot"></div>
-            <div class="chip-data">
-              <span class="chip-label">जन्म वर्ष / Birth Year</span>
-              <span class="chip-val">{{ birth_year }}</span>
-            </div>
-          </div>
-          <div class="info-chip">
-            <div class="chip-dot"></div>
-            <div class="chip-data">
-              <span class="chip-label">आयु / Age</span>
-              <span class="chip-val">{% if age %}{{ age }} वर्ष{% else %}—{% endif %}</span>
-            </div>
-          </div>
-          <div class="info-chip">
-            <div class="chip-dot"></div>
-            <div class="chip-data">
-              <span class="chip-label">ज़िला / District</span>
-              <span class="chip-val">{{ district }}</span>
-            </div>
-          </div>
-          {% if block %}
-          <div class="info-chip">
-            <div class="chip-dot"></div>
-            <div class="chip-data">
-              <span class="chip-label">ब्लॉक / Block</span>
-              <span class="chip-val">{{ block }}</span>
-            </div>
-          </div>
-          {% endif %}
-          {% if panchayat %}
-          <div class="info-chip">
-            <div class="chip-dot"></div>
-            <div class="chip-data">
-              <span class="chip-label">पंचायत / Panchayat</span>
-              <span class="chip-val">{{ panchayat }}</span>
-            </div>
-          </div>
-          {% endif %}
-        </div>
-
-        <!-- Location breadcrumb -->
-        <div class="location-bc">
-          <span class="bc-icon">📍</span>
-          <span class="bc-item">{{ district }}</span>
-          {% if block %}
-          <span class="bc-sep">›</span>
-          <span class="bc-item">{{ block }}</span>
-          {% endif %}
-          {% if panchayat %}
-          <span class="bc-sep">›</span>
-          <span class="bc-item active">{{ panchayat }}</span>
-          {% endif %}
-        </div>
       </section>
 
-      <!-- ── Satellite (now in left column) ── -->
+      <!-- ── Satellite ── -->
       <section class="sat-section">
         <div class="sat-header-wrap">
           <div class="sat-header-title">
@@ -1729,34 +1675,13 @@
             </button>
           </div>
           {% endif %}
-          <div class="sat-nav-controls">
-            <!-- Zoom -->
-            <div class="sat-nav-row">
-              <button class="sat-nav-btn" onclick="zoomSat(1.5)" title="Zoom In">＋</button>
-              <button class="sat-nav-btn" onclick="zoomSat(1/1.5)" title="Zoom Out">－</button>
-              <button class="sat-nav-btn" onclick="resetSatView()" title="Reset">⌂</button>
-            </div>
-            <!-- Pan -->
-            <div class="sat-nav-dpad">
-              <div></div>
-              <button class="sat-nav-btn" onclick="panSat(0,  1)">↑</button>
-              <div></div>
-              <button class="sat-nav-btn" onclick="panSat(-1, 0)">←</button>
-              <button class="sat-nav-btn sat-nav-btn-center" onclick="resetSatView()">◎</button>
-              <button class="sat-nav-btn" onclick="panSat( 1, 0)">→</button>
-              <div></div>
-              <button class="sat-nav-btn" onclick="panSat(0, -1)">↓</button>
-              <div></div>
-            </div>
-          </div>
 
-
-        </div>
+        </div><!-- /sat-header-wrap -->
 
         <!-- Side-by-side satellite grid -->
         <div class="sat-grid">
 
-          <!-- ── Birth Year Card (smaller, left) ── -->
+          <!-- ── Birth Year Card ── -->
           <div class="sat-card birth-card">
             <div class="sat-skeleton" id="birthSkeleton">
               <div class="sk-orbit">
@@ -1808,7 +1733,7 @@
             <div class="sat-div-line"></div>
           </div>
 
-          <!-- ── Present Card (larger, right) ── -->
+          <!-- ── Present Card ── -->
           <div class="sat-card now-card">
             <div class="sat-skeleton" id="currentSkeleton">
               <div class="sk-orbit">
@@ -1858,8 +1783,7 @@
 
     </div><!-- /left-column -->
 
-
-    <!-- ══ RIGHT COLUMN: Timeline only ══ -->
+    <!-- ══ RIGHT COLUMN: Timeline ══ -->
     <div class="right-column">
       <section class="tl-section">
         <div class="section-header">
@@ -1915,6 +1839,8 @@
     </div><!-- /right-column -->
 
   </div><!-- /page -->
+
+  <!-- /page -->
 
   <script>
     /* ══════════════════════════════════════════════════

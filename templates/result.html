@@ -1626,6 +1626,28 @@
         display: none;
       }
     }
+    .hero-chips-row {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;      /* horizontal */
+  align-items: center;
+  flex-wrap: nowrap;        /* never wrap to next line */
+  gap: 14px;
+  min-width: 0;
+  overflow: hidden;
+}
+.chips-inline {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: row;      /* horizontal */
+  align-items: center;
+  flex-wrap: nowrap;        /* KEY FIX — was wrap, causing vertical stack */
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chips-inline::-webkit-scrollbar { display: none; }
   </style>
 </head>
 

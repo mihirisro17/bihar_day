@@ -1760,12 +1760,6 @@
             </div>
           </div>
           {% if panchayat or block %}
-          <div class="scope-btns">
-            <button class="scope-btn" id="scopeDistBtn" onclick="setScope('district')">🗺️ District</button>
-            <button class="scope-btn active" id="scopePanchBtn" onclick="setScope('panchayat')">
-              {% if panchayat %}🌾 Panchayat{% else %}🏘️ Block{% endif %}
-            </button>
-          </div>
           {% endif %}
         </div>
 
@@ -1992,6 +1986,24 @@
       return (c && c.offsetWidth > 10 && c.offsetHeight > 10)
         ? c.offsetWidth / c.offsetHeight : 4 / 3;
     }
+
+    function computeFocusBbox() {
+      const ar = getCardAR();
+      const base = computedPanchBbox || RAW_FOCUS_BBOX;
+
+      // extra zoom when focusing panchayat/block
+      const ZOOM_FACTOR = 0.8; // < 1 = more zoom
+
+      const raw = {
+        minLng: base.minLng + (base.maxLng - base.minLng) * (1 - ZOOM_FACTOR) / 2,
+        maxLng: base.maxLng - (base.maxLng - base.minLng) * (1 - ZOOM_FACTOR) / 2,
+        minLat: base.minLat + (base.maxLat - base.minLat) * (1 - ZOOM_FACTOR) / 2,
+        maxLat: base.maxLat - (base.maxLat - base.minLat) * (1 - ZOOM_FACTOR) / 2
+      };
+
+      return computePaddedBbox(raw, ar);
+    }
+
 
     function computeDistrictBbox() { return computePaddedBbox(RAW_DIST_BBOX, getCardAR()); }
     function computeFocusBbox() {

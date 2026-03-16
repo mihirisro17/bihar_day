@@ -3412,49 +3412,6 @@
       setTimeout(() => el.remove(), 600);
     }
 
-    /* Page-load confetti */
-    // setTimeout(() => {
-    //   /* FIX 1 (b): guard against missing <canvas id="celebCanvas"> */
-    //   const cv = document.getElementById("celebCanvas");
-    //   if (!cv) return;
-    //   cv.width = innerWidth;
-    //   cv.height = innerHeight;
-    //   cv.style.display = "block";
-    //   const ctx = cv.getContext("2d");
-    //   const cols = ["#FFD700", "#FF6B35", "#FF9A3C", "#0ea5e9", "#22c55e", "#fff", "#FFE566", "#f59e0b"];
-    //   const ps = Array.from({ length: 140 }, () => ({
-    //     x: Math.random() * cv.width,
-    //     y: -30,
-    //     vx: (Math.random() - 0.5) * 3.5,
-    //     vy: Math.random() * 4 + 1.5,
-    //     r: Math.random() * 8 + 2,
-    //     rot: Math.random() * 360,
-    //     rs: (Math.random() - 0.5) * 7,
-    //     col: cols[~~(Math.random() * cols.length)],
-    //   }));
-    //   function d() {
-    //     ctx.clearRect(0, 0, cv.width, cv.height);
-    //     let al = false;
-    //     ps.forEach((p) => {
-    //       if (p.y > cv.height + 20) return;
-    //       al = true;
-    //       p.y += p.vy; p.x += p.vx; p.rot += p.rs;
-    //       const op = Math.max(0, 1 - p.y / (cv.height * 0.8));
-    //       ctx.save();
-    //       ctx.globalAlpha = op;
-    //       ctx.fillStyle = p.col;
-    //       ctx.translate(p.x, p.y);
-    //       ctx.rotate((p.rot * Math.PI) / 180);
-    //       ctx.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2);
-    //       ctx.restore();
-    //     });
-    //     if (al) requestAnimationFrame(d);
-    //     else cv.style.display = "none";
-    //   }
-    //   d();
-    // }, 500);
-    /* ── Page-load celebration ribbons from header ── */
-    /* ══ RIBBON CRACKERS — shoots from top-left & top-right corners ══ */
     setTimeout(() => {
       const cv = document.getElementById('celebCanvas');
       if (!cv) return;

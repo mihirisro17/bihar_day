@@ -2909,6 +2909,15 @@
       transform: translate(-50%, -50%);
       transition: width .4s, height .4s;
     }
+    /* ─── Celebration Ribbons ─── */
+#celebCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 6000;
+  pointer-events: none;
+  display: none;
+}
+
     
   </style>
 </head>
@@ -2920,7 +2929,9 @@
   </button>
   <div id="mouseGlow"></div>
   <canvas id="stars"></canvas>
-  <!-- <canvas id="celebCanvas"></canvas>
+  <canvas id="celebCanvas" style="position:fixed;inset:0;z-index:6000;pointer-events:none;display:none;"></canvas>
+
+  <!--
     <div class="orb orb1"></div>
     <div class="orb orb2"></div>
     <div class="orb orb3"></div> -->
@@ -3403,46 +3414,155 @@
     }
 
     /* Page-load confetti */
-    setTimeout(() => {
-      /* FIX 1 (b): guard against missing <canvas id="celebCanvas"> */
-      const cv = document.getElementById("celebCanvas");
-      if (!cv) return;
-      cv.width = innerWidth;
-      cv.height = innerHeight;
-      cv.style.display = "block";
-      const ctx = cv.getContext("2d");
-      const cols = ["#FFD700", "#FF6B35", "#FF9A3C", "#0ea5e9", "#22c55e", "#fff", "#FFE566", "#f59e0b"];
-      const ps = Array.from({ length: 140 }, () => ({
-        x: Math.random() * cv.width,
-        y: -30,
-        vx: (Math.random() - 0.5) * 3.5,
-        vy: Math.random() * 4 + 1.5,
-        r: Math.random() * 8 + 2,
-        rot: Math.random() * 360,
-        rs: (Math.random() - 0.5) * 7,
-        col: cols[~~(Math.random() * cols.length)],
-      }));
-      function d() {
-        ctx.clearRect(0, 0, cv.width, cv.height);
-        let al = false;
-        ps.forEach((p) => {
-          if (p.y > cv.height + 20) return;
-          al = true;
-          p.y += p.vy; p.x += p.vx; p.rot += p.rs;
-          const op = Math.max(0, 1 - p.y / (cv.height * 0.8));
-          ctx.save();
-          ctx.globalAlpha = op;
-          ctx.fillStyle = p.col;
-          ctx.translate(p.x, p.y);
-          ctx.rotate((p.rot * Math.PI) / 180);
-          ctx.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2);
-          ctx.restore();
-        });
-        if (al) requestAnimationFrame(d);
-        else cv.style.display = "none";
+    // setTimeout(() => {
+    //   /* FIX 1 (b): guard against missing <canvas id="celebCanvas"> */
+    //   const cv = document.getElementById("celebCanvas");
+    //   if (!cv) return;
+    //   cv.width = innerWidth;
+    //   cv.height = innerHeight;
+    //   cv.style.display = "block";
+    //   const ctx = cv.getContext("2d");
+    //   const cols = ["#FFD700", "#FF6B35", "#FF9A3C", "#0ea5e9", "#22c55e", "#fff", "#FFE566", "#f59e0b"];
+    //   const ps = Array.from({ length: 140 }, () => ({
+    //     x: Math.random() * cv.width,
+    //     y: -30,
+    //     vx: (Math.random() - 0.5) * 3.5,
+    //     vy: Math.random() * 4 + 1.5,
+    //     r: Math.random() * 8 + 2,
+    //     rot: Math.random() * 360,
+    //     rs: (Math.random() - 0.5) * 7,
+    //     col: cols[~~(Math.random() * cols.length)],
+    //   }));
+    //   function d() {
+    //     ctx.clearRect(0, 0, cv.width, cv.height);
+    //     let al = false;
+    //     ps.forEach((p) => {
+    //       if (p.y > cv.height + 20) return;
+    //       al = true;
+    //       p.y += p.vy; p.x += p.vx; p.rot += p.rs;
+    //       const op = Math.max(0, 1 - p.y / (cv.height * 0.8));
+    //       ctx.save();
+    //       ctx.globalAlpha = op;
+    //       ctx.fillStyle = p.col;
+    //       ctx.translate(p.x, p.y);
+    //       ctx.rotate((p.rot * Math.PI) / 180);
+    //       ctx.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2);
+    //       ctx.restore();
+    //     });
+    //     if (al) requestAnimationFrame(d);
+    //     else cv.style.display = "none";
+    //   }
+    //   d();
+    // }, 500);
+    /* ── Page-load celebration ribbons from header ── */
+setTimeout(() => {
+  const cv = document.getElementById('celebCanvas');
+  if (!cv) return;
+  cv.width  = innerWidth;
+  cv.height = innerHeight;
+  cv.style.display = 'block';
+  const ctx = cv.getContext('2d');
+
+  const COLORS = [
+    '#FFD700','#FF6B35','#FF9A3C',
+    '#0ea5e9','#22c55e','#ffffff',
+    '#FFE566','#f59e0b','#c084fc',
+    '#f472b6','#34d399'
+  ];
+
+  /* Mix of ribbons (rect), circles, and stars */
+  const SHAPES = ['ribbon','ribbon','ribbon','circle','star'];
+
+  const pieces = Array.from({ length: 160 }, () => ({
+    x:   Math.random() * cv.width,
+    y:   -20 - Math.random() * 120,        /* start above header */
+    vx:  (Math.random() - 0.5) * 3.5,
+    vy:  Math.random() * 3.5 + 1.8,
+    w:   Math.random() * 6  + 3,           /* ribbon width */
+    h:   Math.random() * 18 + 8,           /* ribbon length */
+    rot: Math.random() * 360,
+    rs:  (Math.random() - 0.5) * 8,        /* rotation speed */
+    col: COLORS[Math.floor(Math.random() * COLORS.length)],
+    shape: SHAPES[Math.floor(Math.random() * SHAPES.length)],
+    wave: Math.random() * Math.PI * 2,     /* wave phase for flutter */
+    waveSpeed: 0.08 + Math.random() * 0.08,
+    opacity: 0.85 + Math.random() * 0.15,
+  }));
+
+  function drawStar(ctx, r) {
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const a1 = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+      const a2 = ((i * 4 + 2) * Math.PI) / 5 - Math.PI / 2;
+      ctx[i === 0 ? 'moveTo' : 'lineTo'](Math.cos(a1)*r, Math.sin(a1)*r);
+      ctx.lineTo(Math.cos(a2)*(r*0.4), Math.sin(a2)*(r*0.4));
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  let alive = true;
+  function draw() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    let anyAlive = false;
+
+    pieces.forEach(p => {
+      if (p.y > cv.height + 30) return;
+      anyAlive = true;
+
+      /* Flutter: oscillate vx with sine wave */
+      p.wave += p.waveSpeed;
+      p.x  += p.vx + Math.sin(p.wave) * 0.9;
+      p.y  += p.vy;
+      p.rot += p.rs;
+
+      /* Fade out in bottom 25% of screen */
+      const fadeStart = cv.height * 0.75;
+      const op = p.y > fadeStart
+        ? p.opacity * (1 - (p.y - fadeStart) / (cv.height * 0.25))
+        : p.opacity;
+
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, op);
+      ctx.fillStyle   = p.col;
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rot * Math.PI) / 180);
+
+      if (p.shape === 'ribbon') {
+        /* Ribbon — thin rectangle with slight perspective skew */
+        const skew = Math.sin(p.wave) * 0.4;
+        ctx.transform(1, skew, 0, 1, 0, 0);
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+
+        /* Sheen highlight on ribbon */
+        ctx.globalAlpha = Math.max(0, op * 0.35);
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w * 0.35, p.h);
+      } else if (p.shape === 'circle') {
+        ctx.beginPath();
+        ctx.arc(0, 0, p.w * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (p.shape === 'star') {
+        drawStar(ctx, p.w);
       }
-      d();
-    }, 500);
+
+      ctx.restore();
+    });
+
+    if (anyAlive && alive) {
+      requestAnimationFrame(draw);
+    } else {
+      cv.style.display = 'none';
+      alive = false;
+    }
+  }
+
+  draw();
+
+  /* Auto-hide canvas after 6s regardless */
+  setTimeout(() => { alive = false; cv.style.display = 'none'; }, 6000);
+}, 400);
+
 
     /* ══════════════════════════════════════════════════════
        TOAST

@@ -2930,7 +2930,7 @@
   <canvas id="stars"></canvas>
   <canvas id="celebCanvas" style="position:fixed;inset:0;z-index:6000;pointer-events:none;display:none;"></canvas>
 
-<!-- 
+  <!-- 
   <div class="orb orb1"></div>
   <div class="orb orb2"></div>
   <div class="orb orb3"></div> -->
@@ -3243,10 +3243,7 @@
        THEME
     ══════════════════════════════════════════════════════ */
     document.getElementById("themeToggle").addEventListener("click", () => {
-      const n =
-        document.documentElement.getAttribute("data-theme") === "dark"
-          ? "light"
-          : "dark";
+      const n = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", n);
       localStorage.setItem("theme", n);
     });
@@ -3255,7 +3252,6 @@
        STARS
     ══════════════════════════════════════════════════════ */
     (function () {
-      /* FIX 1: guard against missing <canvas id="stars"> */
       const c = document.getElementById("stars");
       if (!c) return;
       const x = c.getContext("2d");
@@ -3273,16 +3269,13 @@
       }
       function d() {
         x.clearRect(0, 0, c.width, c.height);
-        const dk =
-          document.documentElement.getAttribute("data-theme") === "dark";
+        const dk = document.documentElement.getAttribute("data-theme") === "dark";
         s.forEach((p) => {
           p.a = Math.max(0.04, Math.min(1, p.a + p.da));
           if (p.a <= 0.04 || p.a >= 1) p.da *= -1;
           x.beginPath();
           x.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
-          x.fillStyle = dk
-            ? `rgba(255,215,0,${p.a})`
-            : `rgba(217,119,6,${p.a * 0.4})`;
+          x.fillStyle = dk ? `rgba(255,215,0,${p.a})` : `rgba(217,119,6,${p.a * 0.4})`;
           x.fill();
         });
         requestAnimationFrame(d);
@@ -3296,6 +3289,7 @@
        BIHAR DAY COUNTERS
     ══════════════════════════════════════════════════════ */
     function countUp(el, target, dur) {
+      if (!el) return;
       const s = Date.now();
       (function st() {
         const p = Math.min(1, (Date.now() - s) / dur),
@@ -3305,12 +3299,10 @@
       })();
     }
     (function () {
-      const now = new Date(),
-        yr = now.getFullYear();
+      const now = new Date(), yr = now.getFullYear();
       const bd = new Date(yr, 2, 22);
       if (now > bd) bd.setFullYear(yr + 1);
-      const days = Math.ceil((bd - now) / 864e5),
-        num = bd.getFullYear() - 1912;
+      const days = Math.ceil((bd - now) / 864e5), num = bd.getFullYear() - 1912;
       setTimeout(() => {
         countUp(document.getElementById("bdNum"), num, 1800);
         countUp(document.getElementById("bdYears"), num, 1800);
@@ -3319,8 +3311,7 @@
       }, 400);
       const cdEl = document.querySelector(".bh-cd");
       if (now.getMonth() === 2 && now.getDate() === 22 && cdEl)
-        cdEl.innerHTML =
-          '<span style="font-size:1.8rem">🎉</span><span class="cd-lbl" style="font-size:.95rem">आज बिहार दिवस है!</span>';
+        cdEl.innerHTML = '<span style="font-size:1.8rem">🎉</span><span class="cd-lbl" style="font-size:.95rem">आज बिहार दिवस है!</span>';
     })();
 
     /* ══════════════════════════════════════════════════════
@@ -3330,57 +3321,44 @@
       const svg = document.getElementById("biharBg");
       if (!svg) return;
       const panel = svg.parentElement;
-      const W = panel.clientWidth || 600,
-        H = panel.clientHeight || 700;
+      const W = panel.clientWidth || 600, H = panel.clientHeight || 700;
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
       svg.setAttribute("width", "100%");
       svg.setAttribute("height", "100%");
       let data;
       try {
-        const r = await fetch("/bihar_dist_ready.geojson");
-        data = await r.json();
-      } catch (e) {
-        return;
-      }
+        const res = await fetch("/bihar_dist_ready.geojson");
+        data = await res.json();
+      } catch (e) { return; }
       if (!data || data.error) return;
-      let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
-      function bb(c) {
+      let bx0 = Infinity, bx1 = -Infinity, by0 = Infinity, by1 = -Infinity;
+      function expandBg(c) {
         if (typeof c[0] === "number") {
-          x0 = Math.min(x0, c[0]); x1 = Math.max(x1, c[0]);
-          y0 = Math.min(y0, c[1]); y1 = Math.max(y1, c[1]);
-        } else c.forEach(bb);
+          bx0 = Math.min(bx0, c[0]); bx1 = Math.max(bx1, c[0]);
+          by0 = Math.min(by0, c[1]); by1 = Math.max(by1, c[1]);
+        } else c.forEach(expandBg);
       }
-      data.features.forEach((f) => bb(f.geometry.coordinates));
+      data.features.forEach((f) => expandBg(f.geometry.coordinates));
       const pad = 60,
-        sx = (W - 2 * pad) / (x1 - x0),
-        sy = (H - 2 * pad) / (y1 - y0),
+        sx = (W - 2 * pad) / (bx1 - bx0),
+        sy = (H - 2 * pad) / (by1 - by0),
         sc = Math.min(sx, sy) * 0.85;
-      const ox = (W - sc * (x1 - x0)) / 2,
-        oy = (H - sc * (y1 - y0)) / 2;
-      function proj(ln, lt) {
-        return [ox + (ln - x0) * sc, H - oy - (lt - y0) * sc];
+      const ox = (W - sc * (bx1 - bx0)) / 2, oy = (H - sc * (by1 - by0)) / 2;
+      function bgProj(ln, lt) { return [ox + (ln - bx0) * sc, H - oy - (lt - by0) * sc]; }
+      function bgRing(ring) {
+        return ring.map(([ln, lt], i) => {
+          const [px, py] = bgProj(ln, lt);
+          return (i ? "L" : "M") + px.toFixed(1) + " " + py.toFixed(1);
+        }).join("") + "Z";
       }
-      function rD(ring) {
-        return (
-          ring
-            .map(([ln, lt], i) => {
-              const [px, py] = proj(ln, lt);
-              return (i ? "L" : "M") + px.toFixed(1) + " " + py.toFixed(1);
-            })
-            .join("") + "Z"
-        );
-      }
-      function gD(g) {
-        return g.type === "Polygon"
-          ? g.coordinates.map(rD).join("")
-          : g.type === "MultiPolygon"
-            ? g.coordinates.map((p) => p.map(rD).join("")).join("")
-            : "";
+      function bgGeom(g) {
+        return g.type === "Polygon" ? g.coordinates.map(bgRing).join("") :
+          g.type === "MultiPolygon" ? g.coordinates.map((p) => p.map(bgRing).join("")).join("") : "";
       }
       const grp = document.createElementNS("http://www.w3.org/2000/svg", "g");
       data.features.forEach((f) => {
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        const d = gD(f.geometry);
+        const d = bgGeom(f.geometry);
         if (!d) return;
         path.setAttribute("d", d);
         grp.appendChild(path);
@@ -3389,92 +3367,78 @@
     })();
 
     /* ══════════════════════════════════════════════════════
-       SPARK BURST
+       SPARK BURST (ripple on district/block/panchayat click)
     ══════════════════════════════════════════════════════ */
     function sparkBurst(x, y, color) {
-      const palette = { gold: '#ffd700', teal: '#0ea5e9', green: '#22c55e' };
-      const c = palette[color] || '#ffd700';
-      const el = document.createElement('div');
+      const palette = { gold: "#ffd700", teal: "#0ea5e9", green: "#22c55e" };
+      const c = palette[color] || "#ffd700";
+      const el = document.createElement("div");
       Object.assign(el.style, {
-        position: 'fixed',
-        left: (x - 30) + 'px',
-        top: (y - 30) + 'px',
-        width: '60px',
-        height: '60px',
-        borderRadius: '50%',
-        border: '2px solid ' + c,
-        opacity: '0.8',
-        zIndex: '7000',
-        pointerEvents: 'none',
-        animation: 'rippleOut 0.55s ease-out forwards'
+        position: "fixed", left: (x - 30) + "px", top: (y - 30) + "px",
+        width: "60px", height: "60px", borderRadius: "50%",
+        border: "2px solid " + c, opacity: "0.8", zIndex: "7000",
+        pointerEvents: "none", animation: "rippleOut 0.55s ease-out forwards",
       });
       document.body.appendChild(el);
       setTimeout(() => el.remove(), 600);
     }
 
+    /* ══════════════════════════════════════════════════════
+       RIBBON CRACKER CELEBRATION  ← FIXED: cv.style.display='block'
+    ══════════════════════════════════════════════════════ */
     setTimeout(() => {
-      const cv = document.getElementById('celebCanvas');
+      const cv = document.getElementById("celebCanvas");
       if (!cv) return;
       cv.width = window.innerWidth;
       cv.height = window.innerHeight;
-      const ctx = cv.getContext('2d');
+      cv.style.display = "block"; /* ← KEY FIX */
+      const ctx = cv.getContext("2d");
 
       const COLORS = [
-        '#FFD700', '#FF6B35', '#FF3CAC', '#0ea5e9',
-        '#22c55e', '#c084fc', '#FF9A3C', '#FFE566',
-        '#f472b6', '#34d399', '#ffffff', '#FF4500'
+        "#FFD700", "#FF6B35", "#FF3CAC", "#0ea5e9",
+        "#22c55e", "#c084fc", "#FF9A3C", "#FFE566",
+        "#f472b6", "#34d399", "#ffffff", "#FF4500",
       ];
 
-      /* ── one "cracker" burst ── */
       function createBurst(originX, originY, angle, spread, count) {
         const particles = [];
         for (let i = 0; i < count; i++) {
           const a = angle + (Math.random() - 0.5) * spread;
           const spd = 6 + Math.random() * 14;
           const col = COLORS[Math.floor(Math.random() * COLORS.length)];
-          const type = Math.random() < 0.55 ? 'ribbon'
-            : Math.random() < 0.5 ? 'circle' : 'star';
+          const type = Math.random() < 0.55 ? "ribbon" : Math.random() < 0.5 ? "circle" : "star";
           particles.push({
-            x: originX,
-            y: originY,
-            vx: Math.cos(a) * spd,
-            vy: Math.sin(a) * spd,
-            grav: 0.22 + Math.random() * 0.12,   /* gravity */
-            drag: 0.97 + Math.random() * 0.015,   /* air resistance */
+            x: originX, y: originY,
+            vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
+            grav: 0.22 + Math.random() * 0.12,
+            drag: 0.97 + Math.random() * 0.015,
             rot: Math.random() * 360,
             rs: (Math.random() - 0.5) * 12,
-            w: type === 'ribbon' ? 3 + Math.random() * 5 : 4 + Math.random() * 5,
-            h: type === 'ribbon' ? 10 + Math.random() * 18 : 0,
-            col,
-            type,
+            w: type === "ribbon" ? 3 + Math.random() * 5 : 4 + Math.random() * 5,
+            h: type === "ribbon" ? 10 + Math.random() * 18 : 0,
+            col, type,
             wave: Math.random() * Math.PI * 2,
             waveSpd: 0.1 + Math.random() * 0.1,
             waveMag: 0.3 + Math.random() * 0.5,
             opacity: 1,
-            fadeDelay: 80 + Math.floor(Math.random() * 60), /* frames before fading */
+            fadeDelay: 80 + Math.floor(Math.random() * 60),
             frame: 0,
-            trail: [],
           });
         }
         return particles;
       }
 
-      /* ── secondary shower — smaller pieces fall from top after burst ── */
       function createShower(count) {
         return Array.from({ length: count }, () => {
           const col = COLORS[Math.floor(Math.random() * COLORS.length)];
-          const type = Math.random() < 0.6 ? 'ribbon' : 'circle';
+          const type = Math.random() < 0.6 ? "ribbon" : "circle";
           return {
-            x: Math.random() * cv.width,
-            y: -10 - Math.random() * 60,
-            vx: (Math.random() - 0.5) * 2,
-            vy: 2 + Math.random() * 2.5,
-            grav: 0.04,
-            drag: 0.99,
-            rot: Math.random() * 360,
-            rs: (Math.random() - 0.5) * 7,
-            w: type === 'ribbon' ? 3 + Math.random() * 4 : 3 + Math.random() * 4,
-            h: type === 'ribbon' ? 9 + Math.random() * 14 : 0,
+            x: Math.random() * cv.width, y: -10 - Math.random() * 60,
+            vx: (Math.random() - 0.5) * 2, vy: 2 + Math.random() * 2.5,
+            grav: 0.04, drag: 0.99,
+            rot: Math.random() * 360, rs: (Math.random() - 0.5) * 7,
+            w: 3 + Math.random() * 4,
+            h: type === "ribbon" ? 9 + Math.random() * 14 : 0,
             col, type,
             wave: Math.random() * Math.PI * 2,
             waveSpd: 0.07 + Math.random() * 0.07,
@@ -3482,132 +3446,107 @@
             opacity: 1,
             fadeDelay: 120 + Math.floor(Math.random() * 80),
             frame: 0,
-            trail: [],
           };
         });
       }
 
-      function drawStar(ctx, r) {
-        ctx.beginPath();
+      function drawStar(c, r) {
+        c.beginPath();
         for (let i = 0; i < 5; i++) {
           const a1 = (i * 4 * Math.PI / 5) - Math.PI / 2;
           const a2 = ((i * 4 + 2) * Math.PI / 5) - Math.PI / 2;
-          ctx[i === 0 ? 'moveTo' : 'lineTo'](Math.cos(a1) * r, Math.sin(a1) * r);
-          ctx.lineTo(Math.cos(a2) * r * 0.42, Math.sin(a2) * r * 0.42);
+          c[i === 0 ? "moveTo" : "lineTo"](Math.cos(a1) * r, Math.sin(a1) * r);
+          c.lineTo(Math.cos(a2) * r * 0.42, Math.sin(a2) * r * 0.42);
         }
-        ctx.closePath();
-        ctx.fill();
+        c.closePath();
+        c.fill();
       }
 
       function drawFlash(x, y, radius, alpha) {
         const g = ctx.createRadialGradient(x, y, 0, x, y, radius);
         g.addColorStop(0, `rgba(255,255,220,${alpha})`);
         g.addColorStop(0.4, `rgba(255,210,80,${alpha * 0.5})`);
-        g.addColorStop(1, `rgba(255,150,0,0)`);
+        g.addColorStop(1, "rgba(255,150,0,0)");
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      /* ── Bursts from top-left and top-right ── */
       const leftBurst = createBurst(0, 0, Math.PI * 0.08, Math.PI * 0.55, 90);
       const rightBurst = createBurst(cv.width, 0, Math.PI * 0.92, Math.PI * 0.55, 90);
       const midBurst = createBurst(cv.width / 2, -10, Math.PI * 0.5, Math.PI * 0.4, 60);
       const shower = createShower(80);
-
       let all = [...leftBurst, ...rightBurst, ...midBurst, ...shower];
-
-      /* Flash frames */
       let flashFrame = 0;
 
       function tick() {
         ctx.clearRect(0, 0, cv.width, cv.height);
-
-        /* Initial flash burst at corners */
         if (flashFrame < 12) {
-          const r = (12 - flashFrame) * 18;
-          const a = (12 - flashFrame) / 12 * 0.65;
-          drawFlash(0, 0, r * 2.5, a);
-          drawFlash(cv.width, 0, r * 2.5, a);
-          drawFlash(cv.width / 2, 0, r * 2, a * 0.7);
+          const rf = (12 - flashFrame) * 18;
+          const af = (12 - flashFrame) / 12 * 0.65;
+          drawFlash(0, 0, rf * 2.5, af);
+          drawFlash(cv.width, 0, rf * 2.5, af);
+          drawFlash(cv.width / 2, 0, rf * 2, af * 0.7);
           flashFrame++;
         }
-
-        all = all.filter(p => p.opacity > 0.02 && p.y < cv.height + 40);
-
-        all.forEach(p => {
+        all = all.filter((p) => p.opacity > 0.02 && p.y < cv.height + 40);
+        all.forEach((p) => {
           p.frame++;
           p.wave += p.waveSpd;
-
-          /* Physics */
-          p.vx *= p.drag;
-          p.vy *= p.drag;
+          p.vx *= p.drag; p.vy *= p.drag;
           p.vy += p.grav;
           p.x += p.vx + Math.sin(p.wave) * p.waveMag;
           p.y += p.vy;
           p.rot += p.rs;
-
-          /* Fade after delay */
-          if (p.frame > p.fadeDelay) {
-            p.opacity -= 0.012;
-          }
-
-          /* Draw */
+          if (p.frame > p.fadeDelay) p.opacity -= 0.012;
           ctx.save();
           ctx.globalAlpha = Math.max(0, p.opacity);
           ctx.fillStyle = p.col;
           ctx.translate(p.x, p.y);
           ctx.rotate((p.rot * Math.PI) / 180);
-
-          if (p.type === 'ribbon') {
-            const skew = Math.sin(p.wave) * 0.45;
-            ctx.transform(1, skew, 0, 1, 0, 0);
+          if (p.type === "ribbon") {
+            ctx.transform(1, Math.sin(p.wave) * 0.45, 0, 1, 0, 0);
             ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-            /* sheen */
             ctx.globalAlpha = Math.max(0, p.opacity * 0.3);
-            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.fillStyle = "rgba(255,255,255,0.7)";
             ctx.fillRect(-p.w / 2, -p.h / 2, p.w * 0.38, p.h);
-          } else if (p.type === 'circle') {
+          } else if (p.type === "circle") {
             ctx.beginPath();
             ctx.arc(0, 0, p.w * 0.65, 0, Math.PI * 2);
             ctx.fill();
-          } else if (p.type === 'star') {
+          } else if (p.type === "star") {
             drawStar(ctx, p.w);
           }
-
           ctx.restore();
         });
-
         if (all.length > 0) {
           requestAnimationFrame(tick);
         } else {
           ctx.clearRect(0, 0, cv.width, cv.height);
+          cv.style.display = "none"; /* hide when done */
         }
       }
 
       tick();
-
-      /* Resize guard */
-      window.addEventListener('resize', () => {
+      /* Safety: force-hide after 8s regardless */
+      setTimeout(() => { cv.style.display = "none"; }, 8000);
+      window.addEventListener("resize", () => {
         cv.width = window.innerWidth;
         cv.height = window.innerHeight;
       }, { once: true });
-
     }, 350);
-
-
 
     /* ══════════════════════════════════════════════════════
        TOAST
     ══════════════════════════════════════════════════════ */
     function showToast(msg) {
-      const el = document.getElementById('simpleToast');
+      const el = document.getElementById("simpleToast");
       if (!el) return;
       el.textContent = msg;
-      el.classList.add('show');
+      el.classList.add("show");
       clearTimeout(el._t);
-      el._t = setTimeout(() => el.classList.remove('show'), 3000);
+      el._t = setTimeout(() => el.classList.remove("show"), 3000);
     }
 
     /* ══════════════════════════════════════════════════════
@@ -3623,7 +3562,7 @@
           requestAnimationFrame(() => {
             document.getElementById("dL").classList.add("o");
             document.getElementById("dR").classList.add("o");
-          }),
+          })
         );
       }, 600);
       setTimeout(() => document.getElementById("dLt").classList.add("v"), 720);
@@ -3656,12 +3595,19 @@
       badge.className = "map-level-badge l" + level;
       txt.textContent = level === 1 ? "जिला" : level === 2 ? "ब्लॉक" : "पंचायत";
     }
+    function updateBarTitle(title, sub) {
+      const t = document.getElementById("winTitle");
+      const s = document.getElementById("winSub");
+      if (t) t.textContent = title;
+      if (s) s.textContent = sub;
+    }
 
     /* ══════════════════════════════════════════════════════
-       FORM → OPEN MAP
+       FORM VALIDATION + OPEN MAP
     ══════════════════════════════════════════════════════ */
     function shakeInput(id) {
       const el = document.getElementById(id);
+      if (!el) return;
       el.style.borderColor = "var(--accent-orange)";
       el.style.boxShadow = "0 0 0 3px rgba(234,88,12,.2)";
       el.focus();
@@ -3686,7 +3632,7 @@
     ["nameInp", "yearInp"].forEach((id) =>
       document.getElementById(id).addEventListener("keydown", (e) => {
         if (e.key === "Enter") document.getElementById("nextBtn").click();
-      }),
+      })
     );
 
     /* ══════════════════════════════════════════════════════
@@ -3696,34 +3642,27 @@
     let svgEl, mapReady = false;
     let vbX = 0, vbY = 0, vbW = 800, vbH = 600;
     let isDrag = false, dSX = 0, dSY = 0, dVX = 0, dVY = 0;
-
-    let selectedDistrict = null;
-    let selectedBlock = null;
-    let selectedPanchayat = null;
+    let selectedDistrict = null, selectedBlock = null, selectedPanchayat = null;
     let mapLevel = 1;
-
-    let distGroup = null;
-    let blockGroup = null;
-    let panchGroup = null;
-    let biharProj = null;
-    let biharBB = null;
+    let distGroup = null, blockGroup = null, panchGroup = null;
+    let biharProj = null, biharBB = null;
 
     function setSt(t, picked = false) {
-      document.getElementById("sTxt").innerHTML = t;
-      document.getElementById("mapStatus").classList.toggle("picked", picked);
+      const el = document.getElementById("sTxt");
+      if (el) el.innerHTML = t;
+      const ms = document.getElementById("mapStatus");
+      if (ms) ms.classList.toggle("picked", picked);
     }
     function applyVB() {
-      svgEl.setAttribute("viewBox", `${vbX} ${vbY} ${vbW} ${vbH}`);
+      if (svgEl) svgEl.setAttribute("viewBox", `${vbX} ${vbY} ${vbW} ${vbH}`);
     }
 
     /* ── Geometry helpers ── */
     function rToD(ring, proj) {
-      return (
-        ring.map(([ln, lt], i) => {
-          const [px, py] = proj(ln, lt);
-          return (i ? "L" : "M") + px.toFixed(2) + " " + py.toFixed(2);
-        }).join("") + "Z"
-      );
+      return ring.map(([ln, lt], i) => {
+        const [px, py] = proj(ln, lt);
+        return (i ? "L" : "M") + px.toFixed(2) + " " + py.toFixed(2);
+      }).join("") + "Z";
     }
     function gToD(geom, proj) {
       if (geom.type === "Polygon")
@@ -3750,25 +3689,18 @@
     }
     function getCenter(geom) {
       try {
-        const c =
-          geom.type === "MultiPolygon"
-            ? geom.coordinates.reduce(
-              (b, p) => (p[0].length > b[0].length ? p : b),
-              geom.coordinates[0],
-            )[0]
-            : geom.coordinates[0];
+        const c = geom.type === "MultiPolygon"
+          ? geom.coordinates.reduce((b, p) => (p[0].length > b[0].length ? p : b), geom.coordinates[0])[0]
+          : geom.coordinates[0];
         return centroid(c);
-      } catch (e) {
-        return [85.5, 25.5];
-      }
+      } catch (e) { return [85.5, 25.5]; }
     }
 
     /* ── ViewBox animation ── */
     function animVB(tx, ty, tw, th, dur = 500) {
       const sx = vbX, sy = vbY, sw = vbW, sh = vbH, t0 = Date.now();
       (function step() {
-        const p = Math.min(1, (Date.now() - t0) / dur),
-          e = 1 - Math.pow(1 - p, 3);
+        const p = Math.min(1, (Date.now() - t0) / dur), e = 1 - Math.pow(1 - p, 3);
         vbX = sx + (tx - sx) * e; vbY = sy + (ty - sy) * e;
         vbW = sw + (tw - sw) * e; vbH = sh + (th - sh) * e;
         applyVB();
@@ -3785,11 +3717,8 @@
         const svgW = Math.abs(px1 - px0), svgH = Math.abs(py1 - py0);
         const mg = Math.max(svgW, svgH) * margin + 15;
         let tw = svgW + mg * 2, th = svgH + mg * 2;
-        /* FIX 2: mapArea → mapMain */
         const mapEl = document.getElementById("mapMain");
-        const ar = mapEl
-          ? (mapEl.clientWidth || 800) / (mapEl.clientHeight || 600)
-          : 800 / 600;
+        const ar = mapEl ? (mapEl.clientWidth || 800) / (mapEl.clientHeight || 600) : 800 / 600;
         if (tw / th > ar) th = tw / ar; else tw = th * ar;
         const cx = svgX + svgW / 2, cy = svgY + svgH / 2;
         animVB(cx - tw / 2, cy - th / 2, tw, th, dur);
@@ -3797,7 +3726,7 @@
     }
 
     /* ══════════════════════════════════════════════════════
-       LEVEL 1 — INIT MAP (districts)
+       LEVEL 1 — INIT MAP
     ══════════════════════════════════════════════════════ */
     async function initMap() {
       mapReady = true;
@@ -3808,9 +3737,9 @@
 
       let data;
       try {
-        const r = await fetch("/bihar_dist_ready.geojson");
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        data = await r.json();
+        const res = await fetch("/bihar_dist_ready.geojson");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        data = await res.json();
       } catch (e) {
         setSt("⚠️ Map failed — please refresh.");
         document.getElementById("mLoad").classList.add("h");
@@ -3828,20 +3757,15 @@
       biharBB = { x0: gx0, x1: gx1, y0: gy0, y1: gy1 };
 
       const W = 800, H = 600, pad = 28;
-      const scx = (W - 2 * pad) / (gx1 - gx0),
-        scy = (H - 2 * pad) / (gy1 - gy0),
-        sc = Math.min(scx, scy);
-      const ox = (W - sc * (gx1 - gx0)) / 2,
-        oy = (H - sc * (gy1 - gy0)) / 2;
+      const scx = (W - 2 * pad) / (gx1 - gx0), scy = (H - 2 * pad) / (gy1 - gy0), sc = Math.min(scx, scy);
+      const ox = (W - sc * (gx1 - gx0)) / 2, oy = (H - sc * (gy1 - gy0)) / 2;
       biharProj = (lng, lat) => [ox + (lng - gx0) * sc, H - oy - (lat - gy0) * sc];
 
       distGroup = document.createElementNS(NS, "g");
       distGroup.setAttribute("id", "distGroup");
 
       data.features.forEach((feat) => {
-        const name =
-          feat.properties.name || feat.properties.NAME ||
-          feat.properties.district || "Unknown";
+        const name = feat.properties.name || feat.properties.NAME || feat.properties.district || "Unknown";
         const d = gToD(feat.geometry, biharProj);
         if (!d) return;
 
@@ -3855,16 +3779,16 @@
           const [cln, clt] = getCenter(feat.geometry);
           const [cx, cy] = biharProj(cln, clt);
           const lbl = document.createElementNS(NS, "text");
-          lbl.setAttribute("x", cx.toFixed(1)); lbl.setAttribute("y", cy.toFixed(1));
-          lbl.setAttribute("class", "dist-lbl"); lbl.setAttribute("data-dist", name);
+          lbl.setAttribute("x", cx.toFixed(1));
+          lbl.setAttribute("y", cy.toFixed(1));
+          lbl.setAttribute("class", "dist-lbl");
+          lbl.setAttribute("data-dist", name);
           lbl.textContent = name;
           distGroup.appendChild(lbl);
         } catch (e) { }
 
         path.addEventListener("click", (e) => { e.stopPropagation(); onDistrictClick(feat, path, name); });
-        path.addEventListener("touchend", (e) => {
-          if (!isDrag) { e.preventDefault(); onDistrictClick(feat, path, name); }
-        }, { passive: false });
+        path.addEventListener("touchend", (e) => { if (!isDrag) { e.preventDefault(); onDistrictClick(feat, path, name); } }, { passive: false });
         path.addEventListener("mouseenter", (e) => showTip(e, "📍 " + name));
         path.addEventListener("mousemove", moveTip);
         path.addEventListener("mouseleave", hideTip);
@@ -3874,18 +3798,14 @@
       document.getElementById("mLoad").classList.add("h");
       setSt("अपना <b>जिला</b> चुनने के लिए क्लिक करें");
 
-      const distNames = Array.from(distGroup.querySelectorAll(".dp"))
-        .map((p) => p.dataset.name).sort();
-      populateMapList(distNames, "district", null, (name) => {
-        const p = distGroup.querySelector(`.dp[data-name="${name}"]`);
+      const distNames = Array.from(distGroup.querySelectorAll(".dp")).map((p) => p.dataset.name).sort();
+      populateMapList(distNames, "district", null, (nm) => {
+        const p = distGroup.querySelector(`.dp[data-name="${nm}"]`);
         if (p) p.dispatchEvent(new MouseEvent("click", { bubbles: true }));
       });
 
-      setWinSteps(0);
-      setLevelBadge(1);
-      mapLevel = 1;
-      setupPanZoom();
-      setupZoomBtns();
+      setWinSteps(0); setLevelBadge(1); mapLevel = 1;
+      setupPanZoom(); setupZoomBtns();
     }
 
     /* ══════════════════════════════════════════════════════
@@ -3895,17 +3815,12 @@
       if (mapLevel !== 1) return;
       distGroup.querySelectorAll(".dp.active").forEach((p) => p.setAttribute("class", "dp"));
       path.setAttribute("class", "dp active");
-      setTimeout(() => {
-        path.setAttribute('class', 'dp active');
-        path.style.willChange = 'auto'; // release GPU layer after animation
-      }, 520);
+      setTimeout(() => { path.setAttribute("class", "dp active"); path.style.willChange = "auto"; }, 520);
 
       const bb = geoBBox(feat.geometry.coordinates);
       selectedDistrict = { name, path, bb, feat };
       document.getElementById("fDist").value = name;
-      document.getElementById("fBbox").value = JSON.stringify({
-        minLng: bb.x0, minLat: bb.y0, maxLng: bb.x1, maxLat: bb.y1,
-      });
+      document.getElementById("fBbox").value = JSON.stringify({ minLng: bb.x0, minLat: bb.y0, maxLng: bb.x1, maxLat: bb.y1 });
 
       hideTip();
       setSt("✔ <b>" + name + "</b> — ब्लॉक लोड हो रहा है…", true);
@@ -3916,7 +3831,6 @@
       const rect = path.getBoundingClientRect();
       sparkBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, "gold");
       showToast("📍 " + name + " — ब्लॉक चुनें!");
-
       zoomToBBox(bb, 0.45, 600);
       setTimeout(() => loadBlocks(name, bb), 650);
     }
@@ -3936,9 +3850,9 @@
       const stem = districtName.toUpperCase().replace(/\s+/g, "_");
       let data = null;
       try {
-        const r = await fetch("/blocks/" + stem + ".geojson");
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        data = await r.json();
+        const res = await fetch("/blocks/" + stem + ".geojson");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        data = await res.json();
         if (data?.error || !data?.features?.length) data = null;
       } catch (e) { data = null; }
 
@@ -3958,8 +3872,7 @@
         if (!d) return;
 
         const path = document.createElementNS(NS, "path");
-        path.setAttribute("d", d); path.setAttribute("class", "dp-block");
-        path.setAttribute("data-name", name);
+        path.setAttribute("d", d); path.setAttribute("class", "dp-block"); path.setAttribute("data-name", name);
         blockGroup.appendChild(path);
 
         try {
@@ -3973,19 +3886,16 @@
         } catch (e) { }
 
         path.addEventListener("click", (e) => { e.stopPropagation(); onBlockClick(feat, path, name); });
-        path.addEventListener("touchend", (e) => {
-          if (!isDrag) { e.preventDefault(); onBlockClick(feat, path, name); }
-        }, { passive: false });
+        path.addEventListener("touchend", (e) => { if (!isDrag) { e.preventDefault(); onBlockClick(feat, path, name); } }, { passive: false });
         path.addEventListener("mouseenter", (e) => showTip(e, "🏘️ " + name));
         path.addEventListener("mousemove", moveTip);
         path.addEventListener("mouseleave", hideTip);
       });
 
       svgEl.appendChild(blockGroup);
-      const blkNames = Array.from(blockGroup.querySelectorAll("[data-name]"))
-        .map((p) => p.dataset.name).sort();
-      populateMapList(blkNames, "block", null, (name) => {
-        const p = blockGroup.querySelector(`[data-name="${name}"]`);
+      const blkNames = Array.from(blockGroup.querySelectorAll("[data-name]")).map((p) => p.dataset.name).sort();
+      populateMapList(blkNames, "block", null, (nm) => {
+        const p = blockGroup.querySelector(`[data-name="${nm}"]`);
         if (p) p.dispatchEvent(new MouseEvent("click", { bubbles: true }));
       });
       setSt("अपना <b>ब्लॉक</b> चुनें — " + districtName, true);
@@ -4002,9 +3912,7 @@
       const bb = geoBBox(feat.geometry.coordinates);
       selectedBlock = { name, path, bb, feat };
       document.getElementById("fBlock").value = name;
-      document.getElementById("fBlockBbox").value = JSON.stringify({
-        minLng: bb.x0, minLat: bb.y0, maxLng: bb.x1, maxLat: bb.y1
-      });
+      document.getElementById("fBlockBbox").value = JSON.stringify({ minLng: bb.x0, minLat: bb.y0, maxLng: bb.x1, maxLat: bb.y1 });
 
       hideTip();
       setSt("✔ <b>" + name + "</b> — पंचायत लोड हो रहा है…", true);
@@ -4014,7 +3922,6 @@
       const rect = path.getBoundingClientRect();
       sparkBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, "teal");
       showToast("🏘️ " + name + " — पंचायत चुनें!");
-
       zoomToBBox(bb, 0.35, 500);
       setTimeout(() => loadPanchayats(selectedDistrict.name, name, bb), 550);
     }
@@ -4035,9 +3942,9 @@
       const bStem = blockName.toUpperCase().replace(/\s+/g, "_");
       let data = null;
       try {
-        const r = await fetch("/panchayats/" + dStem + "__" + bStem + ".geojson");
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        data = await r.json();
+        const res = await fetch("/panchayats/" + dStem + "__" + bStem + ".geojson");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        data = await res.json();
         if (data?.error || !data?.features?.length) data = null;
       } catch (e) { data = null; }
 
@@ -4057,8 +3964,7 @@
         if (!d) return;
 
         const path = document.createElementNS(NS, "path");
-        path.setAttribute("d", d); path.setAttribute("class", "dp-panchayat");
-        path.setAttribute("data-name", name);
+        path.setAttribute("d", d); path.setAttribute("class", "dp-panchayat"); path.setAttribute("data-name", name);
         panchGroup.appendChild(path);
 
         try {
@@ -4072,19 +3978,16 @@
         } catch (e) { }
 
         path.addEventListener("click", (e) => { e.stopPropagation(); onPanchayatClick(feat, path, name); });
-        path.addEventListener("touchend", (e) => {
-          if (!isDrag) { e.preventDefault(); onPanchayatClick(feat, path, name); }
-        }, { passive: false });
+        path.addEventListener("touchend", (e) => { if (!isDrag) { e.preventDefault(); onPanchayatClick(feat, path, name); } }, { passive: false });
         path.addEventListener("mouseenter", (e) => showTip(e, "🌾 " + name));
         path.addEventListener("mousemove", moveTip);
         path.addEventListener("mouseleave", hideTip);
       });
 
       svgEl.appendChild(panchGroup);
-      const pNames = Array.from(panchGroup.querySelectorAll("[data-name]"))
-        .map((p) => p.dataset.name).sort();
-      populateMapList(pNames, "panchayat", null, (name) => {
-        const p = panchGroup.querySelector(`[data-name="${name}"]`);
+      const pNames = Array.from(panchGroup.querySelectorAll("[data-name]")).map((p) => p.dataset.name).sort();
+      populateMapList(pNames, "panchayat", null, (nm) => {
+        const p = panchGroup.querySelector(`[data-name="${nm}"]`);
         if (p) p.dispatchEvent(new MouseEvent("click", { bubbles: true }));
       });
       setSt("अपनी <b>पंचायत</b> चुनें — " + blockName, true);
@@ -4101,9 +4004,7 @@
       const bb = geoBBox(feat.geometry.coordinates);
       selectedPanchayat = { name, path, bb, feat };
       document.getElementById("fPanch").value = name;
-      document.getElementById("fPanchBbox").value = JSON.stringify({
-        minLng: bb.x0, minLat: bb.y0, maxLng: bb.x1, maxLat: bb.y1
-      });
+      document.getElementById("fPanchBbox").value = JSON.stringify({ minLng: bb.x0, minLat: bb.y0, maxLng: bb.x1, maxLat: bb.y1 });
 
       hideTip();
       const rect = path.getBoundingClientRect();
@@ -4118,9 +4019,12 @@
        CONFIRM PANEL
     ══════════════════════════════════════════════════════ */
     function openConfirmPanel() {
-      document.getElementById("cpDistName").textContent = selectedDistrict?.name || "—";
-      document.getElementById("cpBlockName").textContent = selectedBlock?.name || "—";
-      document.getElementById("cpPanchName").textContent = selectedPanchayat?.name || "—";
+      const cpDist = document.getElementById("cpDistName");
+      const cpBlock = document.getElementById("cpBlockName");
+      const cpPanch = document.getElementById("cpPanchName");
+      if (cpDist) cpDist.textContent = selectedDistrict?.name || "—";
+      if (cpBlock) cpBlock.textContent = selectedBlock?.name || "—";
+      if (cpPanch) cpPanch.textContent = selectedPanchayat?.name || "—";
       document.getElementById("confirmPanel").classList.add("open");
       updateBarTitle("✅ यात्रा के लिए तैयार!", "Confirm your selection");
     }
@@ -4167,74 +4071,11 @@
       setFpStep(2); setWinSteps(0); setLevelBadge(1);
       updateBarTitle(
         "📍 " + (document.getElementById("fName").value || "") + " — जिला चुनें",
-        "Bihar — Click/tap your district",
+        "Bihar — Click/tap your district"
       );
       setSt("अपना <b>जिला</b> चुनने के लिए क्लिक करें");
       resetZoom(500);
     }
-
-    /* ══════════════════════════════════════════════════════
-       FALLBACK INPUT OVERLAY
-    ══════════════════════════════════════════════════════ */
-    function showFallback(type, parentName) {
-      const fb = document.getElementById("fallbackInput");
-      document.getElementById("fbIcon").textContent = type === "block" ? "🏘️" : "🌾";
-      document.getElementById("fbTitle").textContent = type === "block" ? parentName + " — ब्लॉक लिखें" : parentName + " — पंचायत लिखें";
-      document.getElementById("fbSub").textContent = type === "block" ? "अपना ब्लॉक का नाम लिखें" : "पंचायत / गाँव का नाम लिखें";
-      document.getElementById("fbInp").value = "";
-      document.getElementById("fbInp").placeholder = type === "block" ? "जैसे — Danapur, Bikram…" : "जैसे — Rampur, Khagaul…";
-      fb.style.display = "flex";
-      requestAnimationFrame(() => requestAnimationFrame(() => { fb.style.opacity = "1"; }));
-      setTimeout(() => document.getElementById("fbInp").focus(), 200);
-
-      document.getElementById("fbConfirm").onclick = () => {
-        const val = document.getElementById("fbInp").value.trim();
-        if (!val) {
-          document.getElementById("fbInp").style.borderColor = "var(--accent-orange)";
-          setTimeout(() => (document.getElementById("fbInp").style.borderColor = ""), 1200);
-          return;
-        }
-        hideFallback();
-        if (type === "block") {
-          selectedBlock = { name: val, path: null, bb: selectedDistrict?.bb, feat: null };
-          document.getElementById("fBlock").value = val;
-          if (selectedDistrict?.bb) {
-            const b = selectedDistrict.bb;
-            document.getElementById("fBlockBbox").value = JSON.stringify({
-              minLng: b.x0, minLat: b.y0, maxLng: b.x1, maxLat: b.y1
-            });
-          }
-          setFpStep(4); setWinSteps(2); setLevelBadge(3);
-          updateBarTitle("🌾 " + val + " — पंचायत चुनें", "Panchayat — Click/tap or type");
-          setSt("✔ ब्लॉक: <b>" + val + "</b> — पंचायत लोड हो रहा है…", true);
-          showToast("🏘️ " + val + " — पंचायत चुनें!");
-          sparkBurst(innerWidth / 2, innerHeight / 2, "teal");
-          loadPanchayats(selectedDistrict.name, val, selectedDistrict.bb);
-        } else {
-          selectedPanchayat = { name: val, path: null, bb: selectedBlock?.bb, feat: null };
-          document.getElementById("fPanch").value = val;
-          if (selectedBlock?.bb) {
-            const b = selectedBlock.bb;
-            document.getElementById("fPanchBbox").value = JSON.stringify({
-              minLng: b.x0, minLat: b.y0, maxLng: b.x1, maxLat: b.y1
-            });
-          }
-          showToast("🌾 " + val + " — यात्रा शुरू करें!");
-          sparkBurst(innerWidth / 2, innerHeight / 2, "green");
-          setTimeout(() => openConfirmPanel(), 400);
-        }
-      };
-    }
-
-    function hideFallback() {
-      const fb = document.getElementById("fallbackInput");
-      fb.style.opacity = "0";
-      setTimeout(() => { fb.style.display = "none"; }, 350);
-    }
-
-    document.getElementById("fbInp").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") document.getElementById("fbConfirm").click();
-    });
 
     /* ══════════════════════════════════════════════════════
        CLOSE MAP
@@ -4252,12 +4093,71 @@
     });
 
     /* ══════════════════════════════════════════════════════
-       BAR TITLE HELPER
+       FALLBACK INPUT OVERLAY
     ══════════════════════════════════════════════════════ */
-    function updateBarTitle(title, sub) {
-      document.getElementById("winTitle").textContent = title;
-      document.getElementById("winSub").textContent = sub;
+    function showFallback(type, parentName) {
+      const fb = document.getElementById("fallbackInput");
+      if (!fb) return;
+      const fbIcon = document.getElementById("fbIcon");
+      const fbTitle = document.getElementById("fbTitle");
+      const fbSub = document.getElementById("fbSub");
+      const fbInp = document.getElementById("fbInp");
+      if (fbIcon) fbIcon.textContent = type === "block" ? "🏘️" : "🌾";
+      if (fbTitle) fbTitle.textContent = type === "block" ? parentName + " — ब्लॉक लिखें" : parentName + " — पंचायत लिखें";
+      if (fbSub) fbSub.textContent = type === "block" ? "अपना ब्लॉक का नाम लिखें" : "पंचायत / गाँव का नाम लिखें";
+      if (fbInp) {
+        fbInp.value = "";
+        fbInp.placeholder = type === "block" ? "जैसे — Danapur, Bikram…" : "जैसे — Rampur, Khagaul…";
+      }
+      fb.style.display = "flex";
+      requestAnimationFrame(() => requestAnimationFrame(() => { fb.style.opacity = "1"; }));
+      setTimeout(() => fbInp && fbInp.focus(), 200);
+
+      document.getElementById("fbConfirm").onclick = () => {
+        const val = document.getElementById("fbInp").value.trim();
+        if (!val) {
+          document.getElementById("fbInp").style.borderColor = "var(--accent-orange)";
+          setTimeout(() => (document.getElementById("fbInp").style.borderColor = ""), 1200);
+          return;
+        }
+        hideFallback();
+        if (type === "block") {
+          selectedBlock = { name: val, path: null, bb: selectedDistrict?.bb, feat: null };
+          document.getElementById("fBlock").value = val;
+          if (selectedDistrict?.bb) {
+            const b = selectedDistrict.bb;
+            document.getElementById("fBlockBbox").value = JSON.stringify({ minLng: b.x0, minLat: b.y0, maxLng: b.x1, maxLat: b.y1 });
+          }
+          setFpStep(4); setWinSteps(2); setLevelBadge(3);
+          updateBarTitle("🌾 " + val + " — पंचायत चुनें", "Panchayat — Click/tap or type");
+          setSt("✔ ब्लॉक: <b>" + val + "</b> — पंचायत लोड हो रहा है…", true);
+          showToast("🏘️ " + val + " — पंचायत चुनें!");
+          sparkBurst(innerWidth / 2, innerHeight / 2, "teal");
+          loadPanchayats(selectedDistrict.name, val, selectedDistrict.bb);
+        } else {
+          selectedPanchayat = { name: val, path: null, bb: selectedBlock?.bb, feat: null };
+          document.getElementById("fPanch").value = val;
+          if (selectedBlock?.bb) {
+            const b = selectedBlock.bb;
+            document.getElementById("fPanchBbox").value = JSON.stringify({ minLng: b.x0, minLat: b.y0, maxLng: b.x1, maxLat: b.y1 });
+          }
+          showToast("🌾 " + val + " — यात्रा शुरू करें!");
+          sparkBurst(innerWidth / 2, innerHeight / 2, "green");
+          setTimeout(() => openConfirmPanel(), 400);
+        }
+      };
     }
+
+    function hideFallback() {
+      const fb = document.getElementById("fallbackInput");
+      if (!fb) return;
+      fb.style.opacity = "0";
+      setTimeout(() => { fb.style.display = "none"; }, 350);
+    }
+
+    document.getElementById("fbInp").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") document.getElementById("fbConfirm").click();
+    });
 
     /* ══════════════════════════════════════════════════════
        ZOOM BUTTONS
@@ -4280,7 +4180,6 @@
        PAN + PINCH ZOOM
     ══════════════════════════════════════════════════════ */
     function setupPanZoom() {
-      /* FIX 3: mapArea → mapMain */
       const area = document.getElementById("mapMain");
       if (!area) { console.warn("[setupPanZoom] #mapMain not found"); return; }
 
@@ -4322,15 +4221,15 @@
         applyVB();
       }, { passive: false });
 
-      let t0 = null, t1 = null, iDist = 0, iVBW = 0, iVBH = 0, iVBX = 0, iVBY = 0;
+      let tp0 = null, tp1 = null, iDist = 0, iVBW = 0, iVBH = 0, iVBX = 0, iVBY = 0;
       area.addEventListener("touchstart", (e) => {
         isDrag = false;
         if (e.touches.length === 1) {
-          t0 = e.touches[0]; dSX = t0.clientX; dSY = t0.clientY; dVX = vbX; dVY = vbY;
+          tp0 = e.touches[0]; dSX = tp0.clientX; dSY = tp0.clientY; dVX = vbX; dVY = vbY;
         }
         if (e.touches.length === 2) {
-          t0 = e.touches[0]; t1 = e.touches[1];
-          iDist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+          tp0 = e.touches[0]; tp1 = e.touches[1];
+          iDist = Math.hypot(tp1.clientX - tp0.clientX, tp1.clientY - tp0.clientY);
           iVBW = vbW; iVBH = vbH; iVBX = vbX; iVBY = vbY;
         }
       }, { passive: true });
@@ -4347,8 +4246,8 @@
         }
         if (e.touches.length === 2) {
           e.preventDefault();
-          const d = Math.hypot(e.touches[1].clientX - e.touches[0].clientX, e.touches[1].clientY - e.touches[0].clientY);
-          const sc = iDist / d;
+          const dist = Math.hypot(e.touches[1].clientX - e.touches[0].clientX, e.touches[1].clientY - e.touches[0].clientY);
+          const sc = iDist / dist;
           vbW = Math.min(Math.max(iVBW * sc, 60), 1800);
           vbH = Math.min(Math.max(iVBH * sc, 45), 1350);
           const rect = area.getBoundingClientRect();
@@ -4372,12 +4271,10 @@
       moveTip(e);
     }
     function moveTip(e) {
-      /* FIX 4: mapArea → mapMain */
       const mapEl = document.getElementById("mapMain");
       if (!mapEl || !tip) return;
       const rect = mapEl.getBoundingClientRect();
-      let tx = e.clientX - rect.left + 14,
-        ty = e.clientY - rect.top - 36;
+      let tx = e.clientX - rect.left + 14, ty = e.clientY - rect.top - 36;
       if (tx + 170 > rect.width) tx = e.clientX - rect.left - 175;
       if (ty < 0) ty = e.clientY - rect.top + 10;
       tip.style.left = tx + "px";
@@ -4391,66 +4288,63 @@
        MAP LIST SIDEBAR
     ══════════════════════════════════════════════════════ */
     function populateMapList(items, icon, activeItem, onClickFn) {
-      /* FIX 5: was accidentally set to 'mapMain' — restore to 'mlItems' */
-      const container = document.getElementById('mlItems');
+      const container = document.getElementById("mlItems");
       if (!container) return;
-      const countEl = document.getElementById('mlCount');
-      const titleEl = document.getElementById('mlTitle');
-      const icons = { district: '📍', block: '🏘️', panchayat: '🌾' };
-      const labels = { district: 'जिला', block: 'ब्लॉक', panchayat: 'पंचायत' };
-      if (titleEl) titleEl.textContent = (icons[icon] || '📋') + ' ' + (labels[icon] || 'सूची');
-      let html = '';
+      const countEl = document.getElementById("mlCount");
+      const titleEl = document.getElementById("mlTitle");
+      const icons = { district: "📍", block: "🏘️", panchayat: "🌾" };
+      const labels = { district: "जिला", block: "ब्लॉक", panchayat: "पंचायत" };
+      if (titleEl) titleEl.textContent = (icons[icon] || "📋") + " " + (labels[icon] || "सूची");
+      let html = "";
       items.forEach(function (name) {
-        const active = name === activeItem ? ' active' : '';
+        const active = name === activeItem ? " active" : "";
         html += '<div class="ml-item' + active + '" data-name="' + name + '">'
-          + '<span class="ml-ico">' + (icons[icon] || '•') + '</span>' + name
-          + '</div>';
+          + '<span class="ml-ico">' + (icons[icon] || "•") + "</span>" + name
+          + "</div>";
       });
       container.innerHTML = html;
-      if (countEl) countEl.textContent = items.length + ' ' +
-        (icon === 'district' ? 'जिले' : icon === 'block' ? 'ब्लॉक' : 'पंचायतें');
-      container.querySelectorAll('.ml-item').forEach(function (el) {
-        el.addEventListener('click', function () { onClickFn(el.dataset.name); });
+      if (countEl) countEl.textContent = items.length + " " +
+        (icon === "district" ? "जिले" : icon === "block" ? "ब्लॉक" : "पंचायतें");
+      container.querySelectorAll(".ml-item").forEach(function (el) {
+        el.addEventListener("click", function () { onClickFn(el.dataset.name); });
       });
-      const inp = document.getElementById('mlSearchInp');
+      const inp = document.getElementById("mlSearchInp");
       if (inp) {
-        inp.value = '';
+        inp.value = "";
         inp.oninput = function () {
           const q = inp.value.toLowerCase();
-          container.querySelectorAll('.ml-item').forEach(function (el) {
-            el.style.display = el.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+          container.querySelectorAll(".ml-item").forEach(function (el) {
+            el.style.display = el.dataset.name.toLowerCase().includes(q) ? "" : "none";
           });
         };
       }
-      const act = container.querySelector('.ml-item.active');
-      if (act) act.scrollIntoView({ block: 'nearest' });
+      const act = container.querySelector(".ml-item.active");
+      if (act) act.scrollIntoView({ block: "nearest" });
     }
 
     function highlightListItem(name) {
-      document.querySelectorAll('#mlItems .ml-item').forEach(function (el) {
-        el.classList.toggle('active', el.dataset.name === name);
+      document.querySelectorAll("#mlItems .ml-item").forEach(function (el) {
+        el.classList.toggle("active", el.dataset.name === name);
       });
-      const act = document.querySelector('#mlItems .ml-item.active');
-      if (act) act.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      const act = document.querySelector("#mlItems .ml-item.active");
+      if (act) act.scrollIntoView({ block: "nearest", behavior: "smooth" });
     }
 
     /* ══════════════════════════════════════════════════════
        KEYBOARD SHORTCUTS
     ══════════════════════════════════════════════════════ */
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        if (document.getElementById("confirmPanel").classList.contains("open")) {
-          handleConfirmBack(); return;
-        }
-        if (document.getElementById("fallbackInput").style.display === "flex") {
-          hideFallback(); return;
-        }
-        if (document.getElementById("mapOverlay").classList.contains("open")) {
-          if (mapLevel > 1) handleMapBack(); else closeMap();
-        }
-      }
+      if (e.key !== "Escape") return;
+      const confirmOpen = document.getElementById("confirmPanel")?.classList.contains("open");
+      const fallbackOpen = document.getElementById("fallbackInput")?.style.display === "flex";
+      const mapOpen = document.getElementById("mapOverlay")?.classList.contains("open");
+      if (confirmOpen) { handleConfirmBack(); return; }
+      if (fallbackOpen) { hideFallback(); return; }
+      if (mapOpen) { if (mapLevel > 1) handleMapBack(); else closeMap(); }
     });
   </script>
+
+
 
 </body>
 

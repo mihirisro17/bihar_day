@@ -1622,6 +1622,7 @@
 
       .right-column {
         height: auto;
+        min-height: 0;
       }
 
       .tl-section {
@@ -1635,6 +1636,64 @@
 
       #mouseGlow {
         display: none;
+      }
+
+      /* ── District Pride: mobile overrides ── */
+      .place-showcase {
+        flex: none;
+        min-height: 0;
+        height: auto;
+        overflow: visible;
+      }
+
+      .place-img-carousel {
+        flex: none;
+        height: 280px;
+        min-height: 280px;
+        max-height: 280px;
+      }
+
+      .place-info-card {
+        flex: none;
+        height: auto;
+        overflow: visible;
+        max-height: none;
+      }
+
+      .place-description {
+        font-size: 0.72rem;
+        line-height: 1.7;
+      }
+
+      /* Show nav buttons always on mobile (no hover) */
+      .place-img-carousel .place-nav-btns {
+        opacity: 1;
+        pointer-events: all;
+      }
+    }
+
+    /* ── Extra small phones ── */
+    @media (max-width: 480px) {
+      .place-img-carousel {
+        height: 220px;
+        min-height: 220px;
+        max-height: 220px;
+      }
+
+      .place-full-name {
+        font-size: 1rem;
+      }
+
+      .place-description {
+        font-size: 0.68rem;
+      }
+
+      .place-coord-val {
+        font-size: 0.66rem;
+      }
+
+      .section-header h2 {
+        font-size: 0.85rem;
       }
     }
 

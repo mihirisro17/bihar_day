@@ -2283,7 +2283,7 @@
     .dp-panchayat {
       fill: rgba(34, 197, 94, 0.07);
       stroke: rgba(34, 197, 94, 0.45);
-      stroke-width: 0.7;
+      stroke-width: 0.4;
       cursor: pointer;
       /* transition:
         fill 0.3s,
@@ -2295,14 +2295,14 @@
     .dp-panchayat:hover {
       fill: rgba(34, 197, 94, 0.24);
       stroke: rgba(34, 197, 94, 0.95);
-      stroke-width: 2.5;
+      stroke-width: 1;
     }
 
 
     .dp-panchayat.active {
       fill: rgba(16, 185, 129, 0.3) !important;
       stroke: #10b981 !important;
-      stroke-width: 2px !important;
+      stroke-width:  1.2px !important;
       /* no animation here */
     }
 
@@ -2765,6 +2765,12 @@
     @media (max-width: 768px) {
       #mapList {
         display: none;
+        /* sidebar hidden, but we show names via status bar */
+      }
+
+      /* Show a floating name badge on mobile when something is selected */
+      #mobileSelBadge {
+        display: flex;
       }
     }
 
@@ -2917,6 +2923,23 @@
       z-index: 6000;
       pointer-events: none;
       display: none;
+    }
+
+    @media (max-width: 768px) {
+      #listToggleBtn {
+        display: flex !important;
+      }
+
+      #mapList.mobile-open {
+        display: flex !important;
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        width: 100%;
+        flex: none;
+        border-left: none;
+        background: var(--map-win-bg);
+      }
     }
   </style>
 </head>
@@ -3149,6 +3172,27 @@
       <!-- SVG map area -->
       <div id="mapBody">
         <div id="mapMain">
+          <!-- Mobile selection name badge -->
+          <div id="mobileSelBadge" style="
+  display:none;
+  position:absolute;
+  top:8px; left:50%; transform:translateX(-50%);
+  z-index:10;
+  background:var(--tip-bg);
+  border:1px solid var(--accent-gold);
+  border-radius:20px;
+  padding:5px 16px;
+  font-size:0.72rem;
+  font-weight:700;
+  color:var(--accent-gold);
+  white-space:nowrap;
+  backdrop-filter:blur(10px);
+  box-shadow:0 4px 16px rgba(0,0,0,0.3);
+  pointer-events:none;
+  gap:6px;
+  align-items:center;
+"></div>
+
           <svg id="biharSvg" xmlns="http://www.w3.org/2000/svg"></svg>
           <div id="mTip"></div>
           <div id="mZoom">
@@ -3229,6 +3273,22 @@
           </div>
           <div id="mlItems"></div>
           <div id="mlCount" class="ml-count"></div>
+          <!-- Mobile list toggle button -->
+          <button id="listToggleBtn" onclick="toggleMapList()" style="
+  display:none;
+  position:fixed;
+  bottom:80px; right:14px;
+  z-index:20;
+  width:44px; height:44px;
+  border-radius:50%;
+  background:var(--grad-btn);
+  border:none;
+  font-size:1.2rem;
+  cursor:pointer;
+  box-shadow:0 4px 18px var(--accent-gold-glow);
+  align-items:center; justify-content:center;
+">📋</button>
+
         </aside>
       </div><!-- /mapBody -->
 
@@ -3831,6 +3891,7 @@
       const rect = path.getBoundingClientRect();
       sparkBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, "gold");
       showToast("📍 " + name + " — ब्लॉक चुनें!");
+      setMobileBadge("📍", name);
       zoomToBBox(bb, 0.45, 600);
       setTimeout(() => loadBlocks(name, bb), 650);
     }
@@ -3922,6 +3983,7 @@
       const rect = path.getBoundingClientRect();
       sparkBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, "teal");
       showToast("🏘️ " + name + " — पंचायत चुनें!");
+      setMobileBadge("🏘️", name);
       zoomToBBox(bb, 0.35, 500);
       setTimeout(() => loadPanchayats(selectedDistrict.name, name, bb), 550);
     }
@@ -4010,6 +4072,7 @@
       const rect = path.getBoundingClientRect();
       sparkBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, "green");
       showToast("🌾 " + name + " — यात्रा शुरू करें!");
+      setMobileBadge("🌾", name);
       setSt("✔ <b>" + name + "</b> — सब सही है, आगे बढ़ें!", true);
       zoomToBBox(bb, 0.3, 400);
       setTimeout(() => openConfirmPanel(), 500);
@@ -4322,6 +4385,15 @@
       if (act) act.scrollIntoView({ block: "nearest" });
     }
 
+    // ── Helper to update mobile badge ──
+    function setMobileBadge(icon, text) {
+      const b = document.getElementById('mobileSelBadge');
+      if (!b) return;
+      b.innerHTML = `<span>${icon}</span><span>${text}</span>`;
+      b.style.display = 'flex';
+    }
+
+
     function highlightListItem(name) {
       document.querySelectorAll("#mlItems .ml-item").forEach(function (el) {
         el.classList.toggle("active", el.dataset.name === name);
@@ -4329,6 +4401,15 @@
       const act = document.querySelector("#mlItems .ml-item.active");
       if (act) act.scrollIntoView({ block: "nearest", behavior: "smooth" });
     }
+    function toggleMapList() {
+      const ml = document.getElementById('mapList');
+      ml.classList.toggle('mobile-open');
+    }
+    // Close list when an item is tapped on mobile
+    document.getElementById('mlItems').addEventListener('click', () => {
+      document.getElementById('mapList').classList.remove('mobile-open');
+    });
+
 
     /* ══════════════════════════════════════════════════════
        KEYBOARD SHORTCUTS

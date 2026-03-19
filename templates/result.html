@@ -1654,8 +1654,9 @@
 
     .place-img-carousel {
       position: relative;
-      flex-shrink: 0;
-      height: 240px;
+      flex: 1 1 0;
+      min-height: 200px;
+      max-height: 480px;
       border-radius: var(--radius);
       overflow: hidden;
       border: 1px solid var(--border2);
@@ -1728,7 +1729,7 @@
 
     .place-name-label {
       position: absolute;
-      bottom: 34px;
+      bottom: 42px;
       left: 14px;
       right: 14px;
       z-index: 3;
@@ -1812,7 +1813,7 @@
 
     /* ── Place info card ── */
     .place-info-card {
-      flex: 1 1 0;
+      flex: 0 0 auto;
       min-height: 0;
       border-radius: var(--radius);
       padding: 13px 15px;
@@ -2425,10 +2426,21 @@
         if (data.url) {
           const img = new Image();
           img.onload = () => {
-            drawAllOverlays(svgEl, bbox);
-            if (SIG_PLACE && SIG_PLACE.lat != null) {
-              const _proj = (ln, lt) => [...]; // built from local bbox/card size
-              drawLandmarkPin(svgEl, SIG_PLACE.lat, SIG_PLACE.lon, SIG_PLACE.name, _proj);
+            imgEl.src = img.src; imgEl.classList.add('loaded');
+            skEl.classList.add('hidden'); srcEl.textContent = data.src_label || '📡 Loaded';
+            drawAllOverlays(svgEl, currentBbox || computeDistrictBbox());
+            // Landmark pin for significant place
+            if (SIG_PLACE && SIG_PLACE.lat != null && SIG_PLACE.lon != null) {
+              try {
+                const _bbox = currentBbox || computeDistrictBbox();
+                const _card = svgEl.closest('.sat-card');
+                const _W = (_card && _card.offsetWidth > 10) ? _card.offsetWidth : 1600;
+                const _H = (_card && _card.offsetHeight > 10) ? _card.offsetHeight : 900;
+                const _sx = _W / (_bbox.maxLng - _bbox.minLng);
+                const _sy = _H / (_bbox.maxLat - _bbox.minLat);
+                const _proj = function (ln, lt) { return [(ln - _bbox.minLng) * _sx, _H - (lt - _bbox.minLat) * _sy]; };
+                drawLandmarkPin(svgEl, SIG_PLACE.lat, SIG_PLACE.lon, SIG_PLACE.name, _proj);
+              } catch (_e) { console.warn('[pin]', _e); }
             }
           };
           img.onerror = () => { skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Unavailable'; };
@@ -2437,13 +2449,6 @@
       } catch (e) {
         console.warn('[SAT]', e);
         skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Error';
-      }
-
-
-
-      // Significant place landmark pin
-      if (SIG_PLACE && SIG_PLACE.lat != null && SIG_PLACE.lon != null) {
-        drawLandmarkPin(svgEl, SIG_PLACE.lat, SIG_PLACE.lon, SIG_PLACE.name, proj);
       }
     }
 
@@ -2922,56 +2927,59 @@
     /* ═══════════════════════════════════════════
        CAROUSEL
     ═══════════════════════════════════════════ */
-    let carouselIdx = 0;
-    let carouselTimer = null;
+    var carouselIdx = 0;
+    var carouselTimer = null;
 
     function carouselGoTo(idx, fromAuto) {
       const imgs = document.querySelectorAll('.carousel-img');
       const dots = document.querySelectorAll('.carousel-dot');
-      if (!imgs.length) return;
       const total = imgs.length;
-      idx = ((idx % total) + total) % total;
+      if (!total) return;
       imgs[carouselIdx].classList.remove('active');
       if (dots[carouselIdx]) dots[carouselIdx].classList.remove('active');
-      carouselIdx = idx;
+      carouselIdx = ((idx % total) + total) % total;
       imgs[carouselIdx].classList.add('active');
       if (dots[carouselIdx]) dots[carouselIdx].classList.add('active');
       const counter = document.getElementById('carouselCounter');
-      if (counter) counter.textContent = `${carouselIdx + 1} / ${total}`;
+      if (counter) counter.textContent = (carouselIdx + 1) + ' / ' + total;
       if (!fromAuto) resetCarouselTimer();
     }
 
     function carouselNext(fromAuto) {
       const total = document.querySelectorAll('.carousel-img').length;
-      carouselGoTo((carouselIdx + 1) % total, fromAuto);
+      if (!total) return;
+      carouselGoTo(carouselIdx + 1, fromAuto);
     }
 
     function carouselPrev() {
       const total = document.querySelectorAll('.carousel-img').length;
-      carouselGoTo((carouselIdx - 1 + total) % total, false);
+      if (!total) return;
+      carouselGoTo(carouselIdx - 1, false);
     }
 
     function goToSlide(idx) { carouselGoTo(idx, false); }
 
     function resetCarouselTimer() {
       clearInterval(carouselTimer);
-      carouselTimer = setInterval(() => carouselNext(true), 3800);
+      carouselTimer = setInterval(function () { carouselNext(true); }, 5000);
     }
 
-
-
     /* ═══════════════════════════════════════════
-       INIT
-    ═══════════════════════════════════════════ */
-    document.addEventListener('DOMContentLoaded', () => {
+   INIT
+═══════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', function () {
 
       /* Load satellite images */
       reloadSatImages();
 
-      /* Start place carousel */
-      if (document.querySelectorAll('.carousel-img').length > 0) {
-        resetCarouselTimer();
-      }
+      /* Start place carousel - auto-rotates every 5 seconds */
+      (function startCarousel() {
+        var imgs = document.querySelectorAll('.carousel-img');
+        if (imgs.length > 0) {
+          carouselGoTo(0, true);   // ensure first image active
+          resetCarouselTimer();    // kick off 5s auto-rotate
+        }
+      })();
 
       /* Load GeoJSON overlays */
       loadGeoJson();

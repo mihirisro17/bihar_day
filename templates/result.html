@@ -1548,154 +1548,6 @@
       font-size: .6rem;
     }
 
-    /* ═══ RESPONSIVE ═══ */
-    @media (max-width: 1024px) {
-
-      html,
-      body {
-        height: auto;
-        overflow-y: auto;
-        overflow-x: hidden;
-      }
-
-      #topInfoBar {
-        position: static;
-      }
-
-      #page {
-        grid-template-columns: 1fr;
-        height: auto;
-        overflow: visible;
-        padding: 12px;
-      }
-
-      .hero-chips-row {
-        flex-wrap: wrap;
-      }
-
-      .hero-divider {
-        display: none;
-      }
-
-      .chips-inline {
-        flex-wrap: wrap;
-        overflow-x: visible;
-      }
-
-      .left-column {
-        height: auto;
-        overflow: visible;
-      }
-
-      .sat-section {
-        flex: none;
-        height: auto;
-        min-height: auto;
-      }
-
-      .sat-grid {
-        flex: none;
-        height: auto;
-        grid-template-columns: 1fr;
-        grid-template-rows: 260px 20px 260px;
-      }
-
-      .sat-divider {
-        flex-direction: row;
-        width: 100%;
-        height: 20px;
-      }
-
-      .sat-div-line {
-        flex: 1;
-        width: auto;
-        height: 1px;
-      }
-
-      .sat-div-label {
-        writing-mode: horizontal-tb;
-      }
-
-      .sat-card {
-        min-height: 260px;
-      }
-
-      .right-column {
-        height: auto;
-        min-height: 0;
-      }
-
-      .tl-section {
-        flex: none;
-      }
-
-      .tl-card-outer {
-        flex: none;
-        min-height: 260px;
-      }
-
-      #mouseGlow {
-        display: none;
-      }
-
-      /* ── District Pride: mobile overrides ── */
-      .place-showcase {
-        flex: none;
-        min-height: 0;
-        height: auto;
-        overflow: visible;
-      }
-
-      .place-img-carousel {
-        flex: none;
-        height: 280px;
-        min-height: 280px;
-        max-height: 280px;
-      }
-
-      .place-info-card {
-        flex: none;
-        height: auto;
-        overflow: visible;
-        max-height: none;
-      }
-
-      .place-description {
-        font-size: 0.72rem;
-        line-height: 1.7;
-      }
-
-      /* Show nav buttons always on mobile (no hover) */
-      .place-img-carousel .place-nav-btns {
-        opacity: 1;
-        pointer-events: all;
-      }
-    }
-
-    /* ── Extra small phones ── */
-    @media (max-width: 480px) {
-      .place-img-carousel {
-        height: 220px;
-        min-height: 220px;
-        max-height: 220px;
-      }
-
-      .place-full-name {
-        font-size: 1rem;
-      }
-
-      .place-description {
-        font-size: 0.68rem;
-      }
-
-      .place-coord-val {
-        font-size: 0.66rem;
-      }
-
-      .section-header h2 {
-        font-size: 0.85rem;
-      }
-    }
 
     /* ═══ SIGNIFICANT PLACE SHOWCASE ═══ */
     .right-column {
@@ -2023,6 +1875,155 @@
       50% {
         opacity: 0.2;
         r: 22;
+      }
+    }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media (max-width: 1024px) {
+
+      html,
+      body {
+        height: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      #topInfoBar {
+        position: static;
+      }
+
+      #page {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+        padding: 12px;
+      }
+
+      .hero-chips-row {
+        flex-wrap: wrap;
+      }
+
+      .hero-divider {
+        display: none;
+      }
+
+      .chips-inline {
+        flex-wrap: wrap;
+        overflow-x: visible;
+      }
+
+      .left-column {
+        height: auto;
+        overflow: visible;
+      }
+
+      .sat-section {
+        flex: none;
+        height: auto;
+        min-height: auto;
+      }
+
+      .sat-grid {
+        flex: none;
+        height: auto;
+        grid-template-columns: 1fr;
+        grid-template-rows: 260px 20px 260px;
+      }
+
+      .sat-divider {
+        flex-direction: row;
+        width: 100%;
+        height: 20px;
+      }
+
+      .sat-div-line {
+        flex: 1;
+        width: auto;
+        height: 1px;
+      }
+
+      .sat-div-label {
+        writing-mode: horizontal-tb;
+      }
+
+      .sat-card {
+        min-height: 260px;
+      }
+
+      .right-column {
+        height: auto;
+        min-height: 0;
+      }
+
+      .tl-section {
+        flex: none;
+      }
+
+      .tl-card-outer {
+        flex: none;
+        min-height: 260px;
+      }
+
+      #mouseGlow {
+        display: none;
+      }
+
+      /* ── District Pride: mobile overrides ── */
+      .place-showcase {
+        flex: none;
+        min-height: 0;
+        height: auto;
+        overflow: visible;
+      }
+
+      .place-img-carousel {
+        flex: none;
+        height: 280px;
+        min-height: 280px;
+        max-height: 280px;
+      }
+
+      .place-info-card {
+        flex: none;
+        height: auto;
+        overflow: visible;
+        max-height: none;
+      }
+
+      .place-description {
+        font-size: 0.72rem;
+        line-height: 1.7;
+      }
+
+      /* Show nav buttons always on mobile (no hover) */
+      .place-img-carousel .place-nav-btns {
+        opacity: 1;
+        pointer-events: all;
+      }
+    }
+
+    /* ── Extra small phones ── */
+    @media (max-width: 480px) {
+      .place-img-carousel {
+        height: 220px;
+        min-height: 220px;
+        max-height: 220px;
+      }
+
+      .place-full-name {
+        font-size: 1rem;
+      }
+
+      .place-description {
+        font-size: 0.68rem;
+      }
+
+      .place-coord-val {
+        font-size: 0.66rem;
+      }
+
+      .section-header h2 {
+        font-size: 0.85rem;
       }
     }
   </style>

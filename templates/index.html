@@ -1539,29 +1539,60 @@
 
     .dist-lbl {
       font-family: "Poppins", sans-serif;
-      font-size: 5px;
-      font-weight: 700;
+      font-size: 7px;
+      font-weight: 800;
       fill: var(--accent-gold);
       text-anchor: middle;
       dominant-baseline: central;
       pointer-events: none;
       paint-order: stroke;
-      stroke: var(--bg-color);
-      stroke-width: 4px;
+      stroke: rgba(255, 255, 255, 0.85);
+      /* white halo works on both themes */
+      stroke-width: 2.5px;
       stroke-linejoin: round;
       display: none;
+      letter-spacing: 0.2px;
+    }
+
+    /* Desktop: also show on hover/active district */
+    .dist-lbl.act {
+      display: block;
+      fill: var(--text-main);
+      font-size: 9px;
+      stroke: rgba(255, 255, 255, 0.9);
+      stroke-width: 3px;
+    }
+
+    [data-theme="dark"] .dist-lbl {
+      stroke: rgba(1, 1, 16, 0.85);
+      /* dark halo for dark theme */
     }
 
     @media (max-width: 768px) {
       .dist-lbl {
         display: block;
+        /* show ALL labels on mobile */
+        font-size: 9px;
+        /* larger — readable at mobile scale */
+        stroke-width: 2.5px;
+        fill: var(--accent-gold);
       }
 
       .dist-lbl.act {
-        fill: var(--text-main);
-        font-size: 8px;
+        fill: var(--accent-orange);
+        font-size: 11px;
+        stroke-width: 3px;
+        font-weight: 900;
       }
     }
+
+    @media (max-width: 480px) {
+      .dist-lbl {
+        font-size: 7.5px;
+        /* slightly smaller on very small phones */
+      }
+    }
+
 
     #mTip {
       position: absolute;
@@ -2302,7 +2333,7 @@
     .dp-panchayat.active {
       fill: rgba(16, 185, 129, 0.3) !important;
       stroke: #10b981 !important;
-      stroke-width:  1.2px !important;
+      stroke-width: 1.2px !important;
       /* no animation here */
     }
 

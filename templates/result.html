@@ -2425,9 +2425,11 @@
         if (data.url) {
           const img = new Image();
           img.onload = () => {
-            imgEl.src = img.src; imgEl.classList.add('loaded');
-            skEl.classList.add('hidden'); srcEl.textContent = data.src_label || '📡 Loaded';
-            drawAllOverlays(svgEl, currentBbox || computeDistrictBbox());
+            drawAllOverlays(svgEl, bbox);
+            if (SIG_PLACE && SIG_PLACE.lat != null) {
+              const _proj = (ln, lt) => [...]; // built from local bbox/card size
+              drawLandmarkPin(svgEl, SIG_PLACE.lat, SIG_PLACE.lon, SIG_PLACE.name, _proj);
+            }
           };
           img.onerror = () => { skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Unavailable'; };
           img.src = data.url;
@@ -2436,12 +2438,13 @@
         console.warn('[SAT]', e);
         skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Error';
       }
-    }
 
 
-    // Significant place landmark pin
-    if (SIG_PLACE && SIG_PLACE.lat != null && SIG_PLACE.lon != null) {
-      drawLandmarkPin(svgEl, SIG_PLACE.lat, SIG_PLACE.lon, SIG_PLACE.name, proj);
+
+      // Significant place landmark pin
+      if (SIG_PLACE && SIG_PLACE.lat != null && SIG_PLACE.lon != null) {
+        drawLandmarkPin(svgEl, SIG_PLACE.lat, SIG_PLACE.lon, SIG_PLACE.name, proj);
+      }
     }
 
     /* Pan / Zoom / Reset */

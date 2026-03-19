@@ -2957,17 +2957,31 @@
 
 
 
-    /* Load GeoJSON overlays */
-    loadGeoJson();
-    loadPanchGeoJson();
+    /* ═══════════════════════════════════════════
+       INIT
+    ═══════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', () => {
 
-    /* Reload on window resize (bbox needs recalculation) */
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => reloadSatImages(), 400);
-    });
-    });
+      /* Load satellite images */
+      reloadSatImages();
+
+      /* Start place carousel */
+      if (document.querySelectorAll('.carousel-img').length > 0) {
+        resetCarouselTimer();
+      }
+
+      /* Load GeoJSON overlays */
+      loadGeoJson();
+      loadPanchGeoJson();
+
+      /* Reload on window resize (bbox needs recalculation) */
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => reloadSatImages(), 400);
+      });
+
+    }); // DOMContentLoaded
   </script>
 
 </body>

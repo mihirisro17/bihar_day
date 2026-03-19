@@ -1637,6 +1637,334 @@
         display: none;
       }
     }
+
+    /* ═══ SIGNIFICANT PLACE SHOWCASE ═══ */
+    .right-column {
+      gap: 8px;
+    }
+
+    .place-showcase {
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      overflow: hidden;
+    }
+
+    .place-img-carousel {
+      position: relative;
+      flex-shrink: 0;
+      height: 240px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border2);
+      box-shadow: var(--shadow), 0 0 30px rgba(249, 115, 22, 0.08);
+      background: #020610;
+      cursor: pointer;
+    }
+
+    .carousel-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.9s ease;
+      transform: scale(1.04);
+      transition: opacity 0.9s ease, transform 6s ease;
+    }
+
+    .carousel-img.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .carousel-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(2, 6, 16, 0.94) 0%, rgba(2, 6, 16, 0.2) 55%, transparent 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .carousel-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 4;
+      font-size: 0.57rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.95);
+      background: linear-gradient(90deg, rgba(249, 115, 22, 0.85), rgba(245, 158, 11, 0.8));
+      border: 1px solid rgba(249, 115, 22, 0.5);
+      padding: 3px 10px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
+    }
+
+    .carousel-counter {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 4;
+      font-size: 0.58rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.75);
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 3px 9px;
+      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .place-name-label {
+      position: absolute;
+      bottom: 34px;
+      left: 14px;
+      right: 14px;
+      z-index: 3;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.2;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+    }
+
+    .place-nav-btns {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      transform: translateY(-50%);
+      pointer-events: none;
+      justify-content: space-between;
+      padding: 0 8px;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex;
+    }
+
+    .place-img-carousel:hover .place-nav-btns {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .place-nav-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s;
+    }
+
+    .place-nav-btn:hover {
+      background: var(--saffron);
+      border-color: var(--saffron);
+      transform: scale(1.18);
+      box-shadow: 0 0 14px rgba(249, 115, 22, 0.6);
+    }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 4;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .carousel-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transition: all 0.35s cubic-bezier(.22, 1, .36, 1);
+      cursor: pointer;
+    }
+
+    .carousel-dot.active {
+      background: var(--gold);
+      width: 18px;
+      border-radius: 3px;
+      box-shadow: 0 0 8px var(--gold);
+    }
+
+    /* ── Place info card ── */
+    .place-info-card {
+      flex: 1 1 0;
+      min-height: 0;
+      border-radius: var(--radius);
+      padding: 13px 15px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(28px) saturate(160%);
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border2) transparent;
+      position: relative;
+    }
+
+    .place-info-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--saffron), var(--gold), transparent);
+      opacity: .7;
+    }
+
+    .place-info-card::after {
+      content: '';
+      position: absolute;
+      bottom: -50px;
+      right: -50px;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, var(--glow-s) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .place-tag-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .place-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.58rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .place-tag.district-tag {
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      color: var(--saffron);
+    }
+
+    .place-tag.block-tag {
+      background: rgba(14, 165, 233, 0.12);
+      border: 1px solid rgba(14, 165, 233, 0.3);
+      color: var(--teal);
+    }
+
+    .place-full-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--gold) 45%, #fde68a 70%, var(--saffron) 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmerName 4s linear infinite;
+      line-height: 1.25;
+      position: relative;
+      z-index: 1;
+    }
+
+    .place-description {
+      font-size: 0.73rem;
+      line-height: 1.8;
+      color: var(--txt2);
+      font-weight: 400;
+      position: relative;
+      z-index: 1;
+      padding-left: 14px;
+      border-left: 2px solid rgba(249, 115, 22, 0.3);
+    }
+
+    .place-coords-strip {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 8px 12px;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      position: relative;
+      z-index: 1;
+      flex-shrink: 0;
+    }
+
+    .place-coord-item {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      flex: 1;
+    }
+
+    .place-coord-label {
+      font-size: 0.45rem;
+      color: var(--txt3);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .place-coord-val {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--purple);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .place-coord-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--border2);
+      margin: 0 12px;
+      flex-shrink: 0;
+    }
+
+    /* ── Landmark pin keyframes ── */
+    @keyframes landmarkRingPulse {
+
+      0%,
+      100% {
+        opacity: 0.8;
+        r: 12;
+      }
+
+      50% {
+        opacity: 0.2;
+        r: 22;
+      }
+    }
   </style>
 </head>
 
@@ -1861,60 +2189,65 @@
 
     </div><!-- /left-column -->
 
-    <!-- ══ RIGHT COLUMN: Timeline ══ -->
+    <!-- ══ RIGHT COLUMN: Place Showcase + Events ══ -->
     <div class="right-column">
-      <section class="tl-section">
+
+      {% if sig_place %}
+      <!-- ── Significant Place Showcase ── -->
+      <div class="place-showcase">
 
         <div class="section-header">
-          <h2><span class="sh-hindi">आपका सफर</span> &nbsp;📜 Historical Journey</h2>
-          <p>Events that shaped Bihar since {{ birth_year }}</p>
+          <h2><span class="sh-hindi">जिले का गौरव</span> &nbsp;🏛️ District Pride</h2>
+          <p>Significant landmark of {{ district }}</p>
         </div>
 
-        {% if events %}
-        <div class="tl-card-outer">
-          <div class="tl-arrow left" onclick="prevEvent()">‹</div>
-          <div class="tl-arrow right" onclick="nextEvent()">›</div>
-          <div class="tl-card" id="tlCard">
-            <div class="tl-era-tag" id="tlEra">
-              <span class="tl-era-dot"></span>
-              <span id="tlEraText"></span>
-            </div>
-            <div class="tl-year-block">
-              <div class="tl-year" id="tlYear"></div>
-              <div class="tl-year-bar">
-                <div class="tl-year-line"></div>
-                <div class="tl-year-bar-dot"></div>
-              </div>
-            </div>
-            <div class="tl-body">
-              <div class="tl-icon-wrap" id="tlIcon"></div>
-              <div class="tl-title" id="tlTitle"></div>
-            </div>
-            <div class="tl-dots" id="tlDots"></div>
+        <!-- Image Carousel -->
+        <div class="place-img-carousel" id="placeCarousel">
+          {% for img_url in sig_place.images %}
+          <img class="carousel-img {% if loop.first %}active{% endif %}" src="{{ img_url }}" alt="{{ sig_place.name }}"
+            onerror="this.style.display='none'" />
+          {% endfor %}
+          <div class="carousel-overlay"></div>
+          <div class="carousel-badge">📍 {{ district }}</div>
+          <div class="carousel-counter" id="carouselCounter">1 / {{ sig_place.images|length }}</div>
+          <div class="place-name-label">{{ sig_place.name }}</div>
+          <div class="place-nav-btns">
+            <button class="place-nav-btn" onclick="carouselPrev()">‹</button>
+            <button class="place-nav-btn" onclick="carouselNext(false)">›</button>
+          </div>
+          <div class="carousel-dots" id="carouselDots">
+            {% for img_url in sig_place.images %}
+            <div class="carousel-dot {% if loop.first %}active{% endif %}" onclick="goToSlide({{ loop.index0 }})"></div>
+            {% endfor %}
           </div>
         </div>
 
-        <div class="tl-playbar">
-          <button class="ctrl-btn" id="playBtn">⏸</button>
-          <button class="ctrl-btn" id="speedBtn"
-            style="font-size:.72rem;font-family:'Space Grotesk',sans-serif;">1×</button>
-          <div class="tl-progress-track">
-            <div class="tl-progress-fill" id="progressFill"></div>
+        <!-- Info Card -->
+        <div class="place-info-card">
+          <div class="place-tag-row">
+            <span class="place-tag district-tag">🗺️ {{ district }}</span>
+            <span class="place-tag block-tag">🏘️ {{ sig_place.block }}</span>
           </div>
-          <div class="counter-txt" id="counterTxt">1 / {{ events|length }}</div>
+          <div class="place-full-name">{{ sig_place.name }}</div>
+          <div class="place-description">{{ sig_place.desc }}</div>
+          <div class="place-coords-strip">
+            <div class="place-coord-item">
+              <span class="place-coord-label">🌐 Latitude</span>
+              <span class="place-coord-val">{{ "%.4f" | format(sig_place.lat) }}°N</span>
+            </div>
+            <div class="place-coord-divider"></div>
+            <div class="place-coord-item">
+              <span class="place-coord-label">🌐 Longitude</span>
+              <span class="place-coord-val">{{ "%.4f" | format(sig_place.lon) }}°E</span>
+            </div>
+          </div>
         </div>
 
-        <div class="keyboard-hints">
-          <kbd>Space</kbd> Play/Pause &nbsp;|&nbsp; <kbd>←</kbd> <kbd>→</kbd> Navigate
-        </div>
+      </div><!-- /place-showcase -->
+      {% endif %}
 
-        {% else %}
-        <div class="tl-card" style="justify-content:center;align-items:center;flex:1;">
-          <p style="opacity:.4;text-align:center;font-size:.85rem;">No events recorded.</p>
-        </div>
-        {% endif %}
 
-      </section>
+
     </div><!-- /right-column -->
 
   </div><!-- /page -->
@@ -1927,6 +2260,9 @@
     const PANCHAYAT = "{{ panchayat or '' }}";
     const BIRTH_YEAR = {{ birth_year }};
     const CURRENT_YEAR = 2026;
+
+    const SIG_PLACE = {{ sig_place | tojson if sig_place else 'null' }};
+
 
     const SAT_BIRTH_YEAR = BIRTH_YEAR < 1997 ? 1997 : BIRTH_YEAR;
     const BIRTH_YEAR_CLAMPED = BIRTH_YEAR < 1997;
@@ -2100,6 +2436,12 @@
         console.warn('[SAT]', e);
         skEl.classList.add('hidden'); srcEl.textContent = '⚠️ Error';
       }
+    }
+
+
+    // Significant place landmark pin
+    if (SIG_PLACE && SIG_PLACE.lat != null && SIG_PLACE.lon != null) {
+      drawLandmarkPin(svgEl, SIG_PLACE.lat, SIG_PLACE.lon, SIG_PLACE.name, proj);
     }
 
     /* Pan / Zoom / Reset */
@@ -2330,6 +2672,68 @@
       } catch (e) { console.warn('[marker]', e); }
     }
 
+
+    function drawLandmarkPin(svgEl, lat, lon, label, proj) {
+      try {
+        const [cx, cy] = proj(lon, lat);
+
+        // Pulsing rings
+        [28, 18, 10].forEach((r, i) => {
+          const ring = document.createElementNS(NS, 'circle');
+          ring.setAttribute('cx', cx.toFixed(1)); ring.setAttribute('cy', cy.toFixed(1));
+          ring.setAttribute('r', r); ring.setAttribute('fill', 'none');
+          ring.setAttribute('stroke', `rgba(245,158,11,${0.5 - i * 0.12})`);
+          ring.setAttribute('stroke-width', '1.5');
+          ring.style.animation = `landmarkRingPulse ${1.8 + i * 0.4}s ease-in-out ${i * 0.35}s infinite`;
+          svgEl.appendChild(ring);
+        });
+
+        // Drop-pin path
+        const pinPath = document.createElementNS(NS, 'path');
+        pinPath.setAttribute('d',
+          `M${cx},${cy - 2} C${cx - 9},${cy - 14} ${cx - 9},${cy - 26} ${cx},${cy - 26} C${cx + 9},${cy - 26} ${cx + 9},${cy - 14} ${cx},${cy - 2}Z`
+        );
+        pinPath.setAttribute('fill', '#f59e0b');
+        pinPath.style.filter = 'drop-shadow(0 0 10px rgba(245,158,11,0.95)) drop-shadow(0 2px 4px rgba(0,0,0,0.7))';
+        svgEl.appendChild(pinPath);
+
+        // White inner circle
+        const dot = document.createElementNS(NS, 'circle');
+        dot.setAttribute('cx', cx.toFixed(1)); dot.setAttribute('cy', (cy - 17).toFixed(1));
+        dot.setAttribute('r', '4'); dot.setAttribute('fill', '#fff');
+        dot.style.filter = 'drop-shadow(0 0 3px rgba(255,255,255,0.8))';
+        svgEl.appendChild(dot);
+
+        // Label pill
+        if (label) {
+          const shortLabel = label.length > 22 ? label.substring(0, 20) + '…' : label;
+          const textW = Math.min(Math.max(shortLabel.length * 7.2, 55), 170), textH = 22;
+          const bg = document.createElementNS(NS, 'rect');
+          bg.setAttribute('x', (cx - textW / 2).toFixed(1)); bg.setAttribute('y', (cy - 52).toFixed(1));
+          bg.setAttribute('width', textW.toFixed(1)); bg.setAttribute('height', textH);
+          bg.setAttribute('rx', '11'); bg.setAttribute('fill', 'rgba(245,158,11,0.94)');
+          bg.style.filter = 'drop-shadow(0 2px 8px rgba(0,0,0,0.6))';
+          svgEl.appendChild(bg);
+
+          const txt = document.createElementNS(NS, 'text');
+          txt.setAttribute('x', cx.toFixed(1)); txt.setAttribute('y', (cy - 36).toFixed(1));
+          txt.setAttribute('text-anchor', 'middle'); txt.setAttribute('dominant-baseline', 'middle');
+          txt.setAttribute('font-size', '9'); txt.setAttribute('font-weight', '800');
+          txt.setAttribute('font-family', 'Space Grotesk,sans-serif');
+          txt.setAttribute('fill', '#1a0a00'); txt.setAttribute('letter-spacing', '0.5');
+          txt.textContent = shortLabel.toUpperCase();
+          svgEl.appendChild(txt);
+
+          // Connector line
+          const line = document.createElementNS(NS, 'line');
+          line.setAttribute('x1', cx.toFixed(1)); line.setAttribute('y1', (cy - 30).toFixed(1));
+          line.setAttribute('x2', cx.toFixed(1)); line.setAttribute('y2', (cy - 26).toFixed(1));
+          line.setAttribute('stroke', 'rgba(245,158,11,0.7)'); line.setAttribute('stroke-width', '1.5');
+          svgEl.appendChild(line);
+        }
+      } catch (e) { console.warn('[landmark]', e); }
+    }
+
     function drawBboxRect(svgEl, rawBbox, proj) {
       try {
         if (!rawBbox || rawBbox.minLng == null) return;
@@ -2511,79 +2915,58 @@
     if (playBtn) playBtn.addEventListener('click', togglePlay);
     if (speedBtn) speedBtn.addEventListener('click', cycleSpeed);
 
+
     /* ═══════════════════════════════════════════
-       SPARKLE CELEBRATION
+       CAROUSEL
     ═══════════════════════════════════════════ */
-    function spawnSparkles() {
-      const container = document.getElementById('sparkleContainer');
-      if (!container) return;
-      const colors = [
-        '#f97316', '#f59e0b', '#fde68a',
-        '#10b981', '#0ea5e9', '#8b5cf6',
-        '#ec4899', '#06b6d4', '#a3e635'
-      ];
-      const shapes = ['circle', 'star', 'square'];
+    let carouselIdx = 0;
+    let carouselTimer = null;
 
-      for (let i = 0; i < 40; i++) {
-        setTimeout(() => {
-          const el = document.createElement('div');
-          el.className = 'sparkle';
-          const size = 4 + Math.random() * 8;
-          const color = colors[Math.floor(Math.random() * colors.length)];
-          const shape = shapes[Math.floor(Math.random() * shapes.length)];
-          const duration = 3 + Math.random() * 5;
-          const delay = Math.random() * 4;
-          const left = Math.random() * 100;
-
-          el.style.cssText = `
-            left:${left}%;
-            bottom:-10px;
-            width:${size}px;
-            height:${size}px;
-            background:${color};
-            border-radius:${shape === 'circle' ? '50%' : shape === 'square' ? '2px' : '0'};
-            box-shadow:0 0 ${size * 1.5}px ${color};
-            animation-duration:${duration}s;
-            animation-delay:${delay}s;
-            ${shape === 'star' ? 'clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)' : ''}
-          `;
-          container.appendChild(el);
-
-          /* Remove after animation completes to avoid DOM bloat */
-          setTimeout(() => el.remove(), (duration + delay + 1) * 1000);
-        }, i * 80);
-      }
+    function carouselGoTo(idx, fromAuto) {
+      const imgs = document.querySelectorAll('.carousel-img');
+      const dots = document.querySelectorAll('.carousel-dot');
+      if (!imgs.length) return;
+      const total = imgs.length;
+      idx = ((idx % total) + total) % total;
+      imgs[carouselIdx].classList.remove('active');
+      if (dots[carouselIdx]) dots[carouselIdx].classList.remove('active');
+      carouselIdx = idx;
+      imgs[carouselIdx].classList.add('active');
+      if (dots[carouselIdx]) dots[carouselIdx].classList.add('active');
+      const counter = document.getElementById('carouselCounter');
+      if (counter) counter.textContent = `${carouselIdx + 1} / ${total}`;
+      if (!fromAuto) resetCarouselTimer();
     }
 
-    /* ═══════════════════════════════════════════
-       INIT
-    ═══════════════════════════════════════════ */
-    document.addEventListener('DOMContentLoaded', () => {
+    function carouselNext(fromAuto) {
+      const total = document.querySelectorAll('.carousel-img').length;
+      carouselGoTo((carouselIdx + 1) % total, fromAuto);
+    }
 
-      /* Kick off celebration sparkles on load */
-      spawnSparkles();
-      /* Repeat burst every 12 seconds for ongoing festivity */
-      setInterval(spawnSparkles, 12000);
+    function carouselPrev() {
+      const total = document.querySelectorAll('.carousel-img').length;
+      carouselGoTo((carouselIdx - 1 + total) % total, false);
+    }
 
-      /* Start timeline */
-      if (EVENTS.length > 0) {
-        renderEvent(0, 'right');
-        tlTimer = setInterval(nextEvent, tlInterval);
-      }
+    function goToSlide(idx) { carouselGoTo(idx, false); }
 
-      /* Load satellite images */
-      reloadSatImages();
+    function resetCarouselTimer() {
+      clearInterval(carouselTimer);
+      carouselTimer = setInterval(() => carouselNext(true), 3800);
+    }
 
-      /* Load GeoJSON overlays */
-      loadGeoJson();
-      loadPanchGeoJson();
 
-      /* Reload on window resize (bbox needs recalculation) */
-      let resizeTimer;
-      window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => reloadSatImages(), 400);
-      });
+
+    /* Load GeoJSON overlays */
+    loadGeoJson();
+    loadPanchGeoJson();
+
+    /* Reload on window resize (bbox needs recalculation) */
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => reloadSatImages(), 400);
+    });
     });
   </script>
 

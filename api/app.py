@@ -1258,18 +1258,22 @@ from pathlib import Path
 from PIL import Image
 
 
+
 _file_dir = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR   = os.path.dirname(_file_dir) if os.path.basename(_file_dir) == "api" else _file_dir
 PUBLIC_DIR = os.path.join(BASE_DIR, "public")
 
+
 sys.path.insert(0, BASE_DIR)
 import config as C
+
 
 app = Flask(
     __name__,
     template_folder=os.path.join(BASE_DIR, "templates"),
     static_folder=os.path.join(BASE_DIR, "static")
 )
+
 
 # ── District name aliases ──
 DISTRICT_ALIASES = {
@@ -1283,17 +1287,20 @@ DISTRICT_ALIASES = {
     "KAIMUR (BHABUA)":    "KAIMUR_(BHABUA)",
 }
 
+
 def resolve_district_stem(district: str) -> str:
     upper = district.strip().upper()
     if upper in DISTRICT_ALIASES:
         return DISTRICT_ALIASES[upper]
     return norm_name(district)
 
+
 # ── Cache ──
 IS_VERCEL     = bool(os.environ.get("VERCEL", ""))
 SAT_CACHE_DIR = Path("/tmp/sat_cache") if IS_VERCEL else Path(BASE_DIR) / "static" / "sat_cache"
 SAT_CACHE_URL = "/sat_cache"           if IS_VERCEL else "/static/sat_cache"
 SAT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
 
 EOX_AVAIL    = [2016,2017,2018,2019,2020,2021,2022,2023,2024]
 SAT_W, SAT_H = 1600, 900
@@ -1304,8 +1311,10 @@ RIDAM_COLS = 4
 RIDAM_ROWS = 3
 
 
+
 def norm_name(s: str) -> str:
     return s.strip().upper().replace(" ", "_")
+
 
 
 def find_geojson(directory: Path, filename_stem: str) -> Path | None:
@@ -1324,7 +1333,7 @@ def find_geojson(directory: Path, filename_stem: str) -> Path | None:
     return None
 
 
-# ══ FIX 2: read_geojson defined EARLY — before any route uses it ══
+
 def read_geojson(url_path: str):
     """
     On Vercel: fetch GeoJSON via HTTP using same host as incoming request.
@@ -1333,7 +1342,7 @@ def read_geojson(url_path: str):
     if IS_VERCEL:
         try:
             from flask import request as _req
-            base = _req.host_url.rstrip('/')          # ← uses actual request host, no VERCEL_URL needed
+            base = _req.host_url.rstrip('/')
             r = requests.get(f"{base}{url_path}", timeout=15,
                              headers={"User-Agent": "BiharDiwas/1.0"})
             print(f"[read_geojson] {url_path} → {r.status_code}")
@@ -1347,6 +1356,7 @@ def read_geojson(url_path: str):
         if local.exists():
             return json.loads(local.read_text(encoding="utf-8"))
         return None
+
 
 
 
@@ -1371,6 +1381,7 @@ def compute_padded_bbox(raw_bbox, pad_factor=1.5):
     }
 
 
+
 def parse_bbox(raw_str):
     if not raw_str or raw_str in ("{}", "null", ""):
         return None
@@ -1383,9 +1394,11 @@ def parse_bbox(raw_str):
     return None
 
 
+
 def _bq(bbox):
     b = f"{bbox['minLng']},{bbox['minLat']},{bbox['maxLng']},{bbox['maxLat']}"
     return f"&STYLES=&SRS=EPSG:4326&BBOX={b}&WIDTH={SAT_W}&HEIGHT={SAT_H}&FORMAT=image/jpeg"
+
 
 
 def get_sentinel_url(year, bbox):
@@ -1399,6 +1412,7 @@ def get_sentinel_url(year, bbox):
     )
 
 
+
 def get_modis_url(year, bbox):
     y = min(max(year, 2000), 2024)
     return (
@@ -1408,6 +1422,7 @@ def get_modis_url(year, bbox):
         f"&TIME={y}-06-15{_bq(bbox)}",
         "MODIS Terra"
     )
+
 
 
 def _ridam_tile_url(year, tile_bbox):
@@ -1439,6 +1454,7 @@ def _ridam_tile_url(year, tile_bbox):
         "&CRS=EPSG%3A4326&STYLES="
         f"&BBOX={bbox_str}"
     )
+
 
 
 def fetch_ridam_tiled(year, bbox):
@@ -1497,6 +1513,7 @@ def fetch_ridam_tiled(year, bbox):
     return buf.getvalue(), "jpg"
 
 
+
 def _image_to_url(img_bytes, cache_key, ext):
     if not IS_VERCEL:
         filename   = hashlib.md5(cache_key.encode()).hexdigest() + f".{ext}"
@@ -1508,6 +1525,7 @@ def _image_to_url(img_bytes, cache_key, ext):
         mime = "image/png" if ext == "png" else "image/jpeg"
         b64  = base64.b64encode(img_bytes).decode("utf-8")
         return f"data:{mime};base64,{b64}"
+
 
 
 def fetch_and_cache(url, cache_key, ext="jpg"):
@@ -1543,15 +1561,18 @@ def fetch_and_cache(url, cache_key, ext="jpg"):
         return None, False
 
 
+
 # ══ Sat cache static routes ══
 
 @app.route("/sat_cache/<filename>")
 def sat_cache_vercel(filename):
     return send_from_directory(str(SAT_CACHE_DIR), filename)
 
+
 @app.route("/static/sat_cache/<filename>")
 def sat_cache_local(filename):
     return send_from_directory(str(SAT_CACHE_DIR), filename)
+
 
 
 # ══ API: satellite image ══
@@ -1630,12 +1651,13 @@ def api_sat_image():
     return jsonify({"url": local or "", "src_label": f"📡 {src}", "bbox": bbox})
 
 
-# ══ Static GeoJSON routes — on Vercel these are handled by vercel.json static routes
-#    On local these serve from disk via Flask ══
+
+# ══ Static GeoJSON routes ══
 
 @app.route("/bihar_dist_ready.geojson")
 def bihar_geojson():
     return send_from_directory(PUBLIC_DIR, "bihar_dist_ready.geojson")
+
 
 @app.route("/blocks/<path:filename>")
 def serve_block_file(filename):
@@ -1646,6 +1668,7 @@ def serve_block_file(filename):
     if not geo_path:
         return jsonify({"error": f"{resolved}.geojson not found"}), 404
     return send_from_directory(str(blocks_dir), geo_path.name)
+
 
 @app.route("/panchayats/<path:filename>")
 def serve_panchayat_file(filename):
@@ -1662,7 +1685,8 @@ def serve_panchayat_file(filename):
     return send_from_directory(str(panch_dir), geo_path.name)
 
 
-# ══ GeoJSON API routes (all use read_geojson — works on Vercel + local) ══
+
+# ══ GeoJSON API routes ══
 
 @app.route("/api/blocks")
 def api_blocks():
@@ -1674,6 +1698,7 @@ def api_blocks():
     if not gj:
         return jsonify({"error": "not found", "features": []}), 404
     return jsonify(gj)
+
 
 @app.route("/api/panchayats")
 def api_panchayats():
@@ -1687,7 +1712,7 @@ def api_panchayats():
         return jsonify({"error": "not found", "features": []}), 404
     return jsonify(gj)
 
-# ══ FIX 1: Only ONE definition of api_block_geojson ══
+
 @app.route("/api/block_geojson")
 def api_block_geojson():
     district = request.args.get("district", "").strip()
@@ -1706,6 +1731,7 @@ def api_block_geojson():
                      f.get("properties",{}).get("BLOCK_NAME","") or
                      f.get("properties",{}).get("name","")) == norm(block)]
     return jsonify({"type": "FeatureCollection", "features": feats})
+
 
 @app.route("/api/panchayat_geojson")
 def api_panchayat_geojson():
@@ -1728,6 +1754,7 @@ def api_panchayat_geojson():
     return jsonify({"type": "FeatureCollection", "features": feats})
 
 
+
 # ══ Debug endpoints ══
 
 @app.route("/api/debug_ridam")
@@ -1739,6 +1766,7 @@ def debug_ridam():
         b64 = base64.b64encode(img_bytes).decode("utf-8")
         return f'<img src="data:image/jpeg;base64,{b64}" style="max-width:100%;"/>'
     return "RIDAM tiled fetch failed — check server logs", 500
+
 
 @app.route("/api/debug_paths")
 def debug_paths():
@@ -1757,6 +1785,7 @@ def debug_paths():
         "file_path":         __file__,
     })
 
+
 @app.route("/api/debug_list")
 def debug_list():
     blocks_dir = Path(PUBLIC_DIR) / "blocks"
@@ -1767,6 +1796,7 @@ def debug_list():
         "total_blocks":  len(list(blocks_dir.glob("*.geojson"))) if blocks_dir.exists() else 0,
         "total_panchs":  len(list(panch_dir.glob("*.geojson"))) if panch_dir.exists() else 0,
     })
+
 
 @app.route("/api/debug_district")
 def debug_district():
@@ -1786,7 +1816,8 @@ def debug_district():
     })
 
 
-# ══ FIX 3: api_block_names / api_panchayat_names use read_geojson on Vercel ══
+
+# ══ Block / Panchayat name helpers ══
 
 @app.route("/api/block_names")
 def api_block_names():
@@ -1797,7 +1828,6 @@ def api_block_names():
     norm_dist = resolve_district_stem(district)
 
     if IS_VERCEL:
-        # On Vercel: parse block names from the district's blocks GeoJSON
         gj = read_geojson(f"/blocks/{norm_dist}.geojson")
         if not gj:
             return jsonify({"district": district, "blocks": []}), 200
@@ -1865,7 +1895,11 @@ def api_panchayat_names():
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
-# ══ Load Events ══
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# LOAD EVENTS
+# ══════════════════════════════════════════════════════════════════════════
 
 def load_events():
     events   = []
@@ -1904,10 +1938,102 @@ def load_events():
     events.sort(key=lambda x: x["year"])
     return events
 
+
 ALL_EVENTS = load_events()
 
 
-# ══ Routes ══
+# ══════════════════════════════════════════════════════════════════════════
+# LOAD SIGNIFICANT PLACES  ← NEW
+# ══════════════════════════════════════════════════════════════════════════
+
+_SIG_PLACES_CACHE: dict = {}
+
+def load_sig_places() -> dict:
+    """
+    Reads data/significant_places.csv once, returns a dict keyed by
+    district name (lowercase, spaces → underscores removed for comparison).
+    Each value is the dict passed as `sig_place` to the template.
+    """
+    global _SIG_PLACES_CACHE
+    if _SIG_PLACES_CACHE:
+        return _SIG_PLACES_CACHE
+
+    csv_path = os.path.join(BASE_DIR, "data", "significant_places.csv")
+    if not os.path.exists(csv_path):
+        print(f"[sig_places] CSV not found at {csv_path}")
+        return _SIG_PLACES_CACHE
+
+    _BAD_EXT = (".pdf", ".djvu", ".svg", ".djvu")
+
+    try:
+        with open(csv_path, newline="", encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                # ── collect valid image URLs ──────────────────────────────
+                images = []
+                for i in range(1, 6):
+                    raw = (row.get(f"img_url_{i}") or "").strip()
+                    # strip surrounding [ ] markdown link wrappers if present
+                    if raw.startswith("["):
+                        import re
+                        m = re.search(r"\(([^)]+)\)", raw)
+                        raw = m.group(1) if m else ""
+                    if (raw
+                            and raw.startswith("http")
+                            and not raw.lower().endswith(_BAD_EXT)
+                            and "wikipedia" not in raw.lower().split("?")[0].endswith((".pdf",))):
+                        images.append(raw)
+
+                if not images:
+                    continue   # skip rows with no usable images
+
+                district_raw = row.get("District", "").strip()
+                if not district_raw:
+                    continue
+
+                # store under both the raw name and a normalised key
+                entry = {
+                    "name":   row.get("Significant Place", "").strip(),
+                    "block":  row.get("Block", "").strip(),
+                    "lat":    float(row.get("Latitude",  0) or 0),
+                    "lon":    float(row.get("Longitude", 0) or 0),
+                    "desc":   row.get("Description", "").strip(),
+                    "images": images,
+                }
+
+                # two keys: exact title-case  +  upper_underscore normalised
+                _SIG_PLACES_CACHE[district_raw.lower()] = entry
+                _SIG_PLACES_CACHE[norm_name(district_raw).lower()] = entry
+
+        print(f"[sig_places] Loaded {len(_SIG_PLACES_CACHE)//2} districts "
+              f"from {csv_path}")
+    except Exception as e:
+        print(f"[sig_places] Error loading CSV: {e}")
+
+    return _SIG_PLACES_CACHE
+
+
+def get_sig_place(district: str):
+    """Return the significant-place dict for *district*, or None."""
+    places = load_sig_places()
+    if not places:
+        return None
+    key = district.strip().lower()
+    return (
+        places.get(key)
+        or places.get(key.replace(" ", "_"))
+        or places.get(key.replace("_", " "))
+        or places.get(norm_name(district).lower())
+    )
+
+
+ALL_SIG_PLACES = load_sig_places()   # warm cache at startup
+
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# ROUTES
+# ══════════════════════════════════════════════════════════════════════════
 
 @app.route("/")
 def index():
@@ -1918,13 +2044,16 @@ def index():
         app_footer   = C.APP_FOOTER
     )
 
+
 @app.route("/map")
 def map_page():
     name       = request.args.get("name", "").strip()
     birth_year = request.args.get("birth_year", "").strip()
     if not name or not birth_year:
         return redirect(url_for("index"))
-    return render_template("map.html", name=name, birth_year=birth_year, app_title=C.APP_TITLE)
+    return render_template("map.html", name=name, birth_year=birth_year,
+                           app_title=C.APP_TITLE)
+
 
 @app.route("/analyse", methods=["GET", "POST"])
 def analyse():
@@ -1956,6 +2085,9 @@ def analyse():
 
     evs = [e for e in ALL_EVENTS if e["year"] >= by]
 
+    # ── Significant place for this district  ← NEW ──────────────────────
+    sig_place = get_sig_place(district)
+
     return render_template(
         "result.html",
         name         = name,
@@ -1972,4 +2104,5 @@ def analyse():
         tl_interval  = C.TIMELINE_INTERVAL_MS,
         current_year = today.year,
         app_title    = C.APP_TITLE,
+        sig_place    = sig_place,   # ← NEW: None if district not in CSV
     )

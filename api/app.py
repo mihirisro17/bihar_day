@@ -1953,7 +1953,7 @@ ALL_EVENTS = load_events()
 # ══════════════════════════════════════════════════════════════════════════
 
 _SIG_PLACES_CACHE: dict = {}
-
+import re
 def load_sig_places() -> dict:
     """
     Reads data/significant_places.csv once, returns a dict keyed by
@@ -1987,7 +1987,7 @@ def load_sig_places() -> dict:
                     if (raw
                             and raw.startswith("http")
                             and not raw.lower().endswith(_BAD_EXT)
-                            and "wikipedia" not in raw.lower().split("?")[0].endswith((".pdf",))):
+                            and not raw.lower().split("?")[0].endswith(_BAD_EXT)):
                         images.append(raw)
 
                 if not images:

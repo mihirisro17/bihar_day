@@ -1917,8 +1917,12 @@ def load_events():
             if e["start"] <= yr <= e["end"]: return e["label"], e["color"]
         return "Recent", C.ERAS[-1]["color"]
 
-    with open(csv_path, newline="", encoding="utf-8") as f:
+    with open(csv_path, newline="", encoding="utf-8-sig") as f:
         for row in csv.DictReader(f):
+            # Normalise keys: strip BOM, spaces, case
+            row = {k.strip().lstrip("\ufeff"): v for k, v in row.items()}
+            if "Year" not in row:
+                continue
             yr     = int(row["Year"])
             el, ec = get_era(yr)
             cands  = []
@@ -1930,6 +1934,8 @@ def load_events():
                     except: sc = 5
                     cands.append({"title": ev, "score": sc})
             cands.sort(key=lambda x: x["score"], reverse=True)
+            if not cands:
+                continue
             for ev in cands[:C.EVENTS_PER_YEAR]:
                 events.append({
                     "year": yr, "title": ev["title"], "icon": icon(ev["title"]),

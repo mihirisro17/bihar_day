@@ -1953,7 +1953,7 @@ ALL_EVENTS = load_events()
 # ══════════════════════════════════════════════════════════════════════════
 
 _SIG_PLACES_CACHE: dict = {}
-import re
+
 def load_sig_places() -> dict:
     """
     Reads data/significant_places.csv once, returns a dict keyed by
@@ -1964,7 +1964,7 @@ def load_sig_places() -> dict:
     if _SIG_PLACES_CACHE:
         return _SIG_PLACES_CACHE
 
-    csv_path = os.path.join(BASE_DIR, "data", "significant_places.csv")
+    csv_path = os.path.join(BASE_DIR, "data", "events.csv")
     if not os.path.exists(csv_path):
         print(f"[sig_places] CSV not found at {csv_path}")
         return _SIG_PLACES_CACHE
@@ -1987,7 +1987,8 @@ def load_sig_places() -> dict:
                     if (raw
                             and raw.startswith("http")
                             and not raw.lower().endswith(_BAD_EXT)
-                            and not raw.lower().split("?")[0].endswith(_BAD_EXT)):
+                            and not raw.lower().split("?")[0].endswith(_BAD_EXT)
+):
                         images.append(raw)
 
                 if not images:

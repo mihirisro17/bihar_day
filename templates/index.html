@@ -1538,21 +1538,20 @@
     } */
 
     .dist-lbl {
-      font-family: "Poppins", sans-serif;
-      font-size: 7px;
-      font-weight: 800;
-      fill: var(--accent-gold);
-      text-anchor: middle;
-      dominant-baseline: central;
-      pointer-events: none;
-      paint-order: stroke;
-      stroke: rgba(255, 255, 255, 0.85);
-      /* white halo works on both themes */
-      stroke-width: 2.5px;
-      stroke-linejoin: round;
-      display: none;
-      letter-spacing: 0.2px;
-    }
+  font-family: "Poppins", sans-serif;
+  font-size: 11px;              /* larger for mobile */
+  font-weight: 800;
+  fill: #d97706;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  display: none;
+}
+
 
     /* Desktop: also show on hover/active district */
     .dist-lbl.act {
@@ -1563,28 +1562,23 @@
       stroke-width: 3px;
     }
 
+
     [data-theme="dark"] .dist-lbl {
-      stroke: rgba(1, 1, 16, 0.85);
-      /* dark halo for dark theme */
-    }
+  fill: #ffd700;
+  stroke: rgba(1, 1, 16, 0.88);
+}
 
-    @media (max-width: 768px) {
-      .dist-lbl {
-        display: block;
-        /* show ALL labels on mobile */
-        font-size: 9px;
-        /* larger — readable at mobile scale */
-        stroke-width: 2.5px;
-        fill: var(--accent-gold);
-      }
-
-      .dist-lbl.act {
-        fill: var(--accent-orange);
-        font-size: 11px;
-        stroke-width: 3px;
-        font-weight: 900;
-      }
-    }
+@media (max-width: 768px) {
+  .dist-lbl {
+    display: block;
+    font-size: 13px;
+  }
+  .dist-lbl.act {
+    fill: #ea580c;
+    font-size: 15px;
+    font-weight: 900;
+  }
+}
 
     @media (max-width: 480px) {
       .dist-lbl {
@@ -3762,11 +3756,14 @@
         return geom.coordinates.map((p) => p.map((r) => rToD(r, proj)).join("")).join("");
       return "";
     }
+
+    // ✅ FIXED — iterate over the ring directly, not coords[0]
     function centroid(coords) {
       let tx = 0, ty = 0, n = 0;
-      coords[0].forEach(([ln, lt]) => { tx += ln; ty += lt; n++; });
+      coords.forEach(([ln, lt]) => { tx += ln; ty += lt; n++; });
       return [tx / n, ty / n];
     }
+
     function geoBBox(coords) {
       let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
       function ex(c) {
